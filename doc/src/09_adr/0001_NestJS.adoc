@@ -1,0 +1,68 @@
+## ADR 0001: Using NestJS as the primary framwork for the LicenceConnect Project 
+
+Date: 2024-04-25
+
+### Status
+
+Accepted
+
+### Context
+
+* API-Framework
+* No Data persistance
+* Extensibility
+* High Development Velocity
+
+### Considered Options
+
+#### Liferay DXP
+
+The Liferay DXP infrastructure and technology is used in the VIDIS Portal project.
+One possible solution for LicenceConnect would be the reuse of the VIDIS Portal infrastructure.
+
+*Pros*:
+* Reuse of Liferay DXP
+
+*Cons*:
+* Does not conform to seperations of LüV
+* Stronger Coupling with VIDIS Core Developer Team
+* Commercial Product
+* Different, incomplete Versions of Documentation
+
+#### express.js
+
+*Pros*:
+* Lightweight solution for building a simple API
+
+*Cons*:
+* Extensability is lower compared to the other considered options
+* lack of a common structure for bigger systems
+
+#### NestJS
+
+*Pros*:
+* Rich ecosystem with easy to use extensions (Swagger, Validations, ORMs)
+* Module system with dependency injection for cleaner structure
+* Common structure suitable for production systems
+
+*Cons*:
+* More setup effort than express
+
+#### ASP.net Core
+
+*Pros*:
+* Compiled Language (C#) with a statically higher performance than JavaScript-based Frameworks
+* Strongly typed language offers reduces errors in the development process
+* Highly extensible via the .net eco-system
+
+*Cons*:
+* Slower development velocity due to compilation
+* Higher setup effort than javascript based development
+* Heavier than JavaScript based Frameworks
+
+### Decision
+
+Use NestJs because it has a relatively simple setup, high development speed and is easy to extend.
+
+### Consequences
+

@@ -30,13 +30,12 @@ See https://docs.arc42.org/section-12/[Glossary] in the arc42 documentation.
 
 ****
 
-[cols="e,2e" options="header"]
+[cols="e,2e,2e" options="header"]
 |===
-|Term |Definition
+|Term |Definition |Remarks
 
-|<Term-1>
-|<definition-1>
+|LüV
+|Länderübergreifendes Vorhaben
+|More information can be found on https://www.kmk.org/de/themen/bildung-in-der-digitalen-welt/laenderuebergreifende-projekte.html
 
-|<Term-2>
-|<definition-2>
 |===
