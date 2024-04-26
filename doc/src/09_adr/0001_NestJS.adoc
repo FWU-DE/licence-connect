@@ -1,17 +1,17 @@
 ## ADR 0001: Using NestJS as the primary framwork for the LicenceConnect Project 
 
-Date: 2024-04-25
+Date: 2024-04-26
 
 ### Status
 
-Accepted
+Draft
 
 ### Context
 
-* API-Framework
-* No Data persistance
-* Extensibility
-* High Development Velocity
+For the Start of the LicenceConnect Project we need a Framework for licence connect.
+This Framework should provide API-Functionality.
+Currently no data persistance is needed, nevertheless, a high level of extensability is required as this project should be the foundation of a fully functional LicenceConnect system.
+Due to limited time and budget the Framework to choose should provide as mutch development velocity as possible. 
 
 ### Considered Options
 
@@ -26,8 +26,9 @@ One possible solution for LicenceConnect would be the reuse of the VIDIS Portal 
 *Cons*:
 * Does not conform to seperations of LüV
 * Stronger Coupling with VIDIS Core Developer Team
-* Commercial Product
+* Liferay DXP is a Commercial Product
 * Different, incomplete Versions of Documentation
+* Lower familiarity on dev side compared with JavaScript based approaches
 
 #### express.js
 
@@ -66,3 +67,8 @@ Use NestJs because it has a relatively simple setup, high development speed and 
 
 ### Consequences
 
+The Licence Project will use TypeScript and NestJS as its backbone.
+The Liferay infrastructure will not be reused.
+Every Communication between VIDIS and LC will require some sort of API.
+
+### Further Links
