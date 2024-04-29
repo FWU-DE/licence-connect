@@ -72,3 +72,7 @@ The Liferay infrastructure will not be reused.
 Every Communication between VIDIS and LC will require some sort of API.
 
 ### Further Links
+* [Liferay DXP](https://www.liferay.com/de/platform)
+* [Express.js](https://expressjs.com/de/)
+* [NestJs](https://nestjs.com/)
+* [ASP.net Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
