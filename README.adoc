@@ -1,0 +1,17 @@
+# LicenceConnect
+
+## Getting Started
+
+### Local Setup
+
+### Deployed Setup
+
+## Further Documentation
+
+See link:https://github.com/FWU-DE/licence-connect/blob/main/doc/architecture_documentation.adoc[here] for the architecture documentation.
+
+## How to contribute
+
+### Commit Messages
+
+The commit messages should follow the link:https://www.conventionalcommits.org/en/v1.0.0/[conventional commit convention].
