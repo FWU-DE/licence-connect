@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "asciidoctor.asciidoctor-vscode",
+    "hediet.vscode-drawio",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "wayou.vscode-todo-highlight"
+  ]
+}
