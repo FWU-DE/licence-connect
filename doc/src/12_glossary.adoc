@@ -7,6 +7,10 @@ ifndef::imagesdir[:imagesdir: ../images]
 |===
 |Term |Definition |Remarks
 
+|LC
+|Licence Connect
+|
+
 |LüV
 |Länderübergreifendes Vorhaben
 |More information can be found on https://www.kmk.org/de/themen/bildung-in-der-digitalen-welt/laenderuebergreifende-projekte.html

@@ -3,8 +3,17 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
+Licence Connect enables schools, school boards and federal German states to manage educational ressources by buying them, assigning them and making them available to users at schools.
+
+The MVP will link the licence management of Mecklenburg-Vorpommern with VIDIS and BiLo.
+
 === Requirements Overview
 
+LC provides an endpoint to retrieve licence data for a VIDIS user. 
+This endpoint will be used by VIDIS.
+
 === Quality Goals
+
+* User data and licences may only be handed out securely and only to authorized systems
 
 === Stakeholders
