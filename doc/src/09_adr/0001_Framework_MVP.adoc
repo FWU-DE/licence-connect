@@ -8,19 +8,19 @@ Draft
 
 ### Context
 
-For the start of the "Licence Connect" project we need to develop an MVP.
+For the start of the "Licence Connect" (LC) project we need to develop an MVP.
 For this, we need to choose a suitable framework.
 The scope of the MVP will be to provide a REST-API and make calls to other REST-APIs.
-Currently no data persistance or UI is needed.
-Nevertheless, a high level of extensability is required as the MVP is the foundation of a fully functional "Licence Connect" system.
-Due to limited time and budget the Framework to choose should provide as much development velocity as possible.
+Currently no data persistence or UI is needed.
+Due to limited time and budget the framework to choose should provide as much development velocity as possible.
+Nevertheless, a high level of extensability is desirable as the MVP is the foundation of a fully functional LC system.
 
 ### Considered Options
 
 #### Liferay DXP
 
 The link:https://www.liferay.com/de/resources/product-info/Liferay+DXP%3A+The+Complete+Platform+for+Tailored+Solutions[Liferay DXP] infrastructure and technology is used in the VIDIS Portal project.
-One possible solution for "Licence Connect" would be the reuse of the VIDIS Portal infrastructure.
+One possible solution for LC would be the reuse of the VIDIS Portal infrastructure.
 
 *Pros*:
 
@@ -28,7 +28,7 @@ One possible solution for "Licence Connect" would be the reuse of the VIDIS Port
 
 *Cons*:
 
-* Would intertwine the two link:https://www.digitalpaktschule.de/de/digitalpakt-schule-landerubergreifende-vorhaben-1848.html[LüV] of VIDIS and "Licence Connect" more than necessary
+* Would intertwine the two link:https://www.digitalpaktschule.de/de/digitalpakt-schule-landerubergreifende-vorhaben-1848.html[LüVs] of VIDIS and LC more than necessary
 * Stronger coupling with VIDIS Portal developer team
 * Liferay DXP is a commercial product with costs
 * Documentation of Liferay itself and VIDIS Portal is lackluster right now
@@ -49,17 +49,17 @@ The MVP could be realized in link:https://expressjs.com[express.js], a very ligh
 * Extensability is lower compared to the other considered options.
 * It does not provide more than the possibility to provide endpoints.
 Everything else has to be added manually with different libraries.
-* Lack of a preexisting architecture for bigger systems.
+* Lack of a preexisting architecture enabling growth into a bigger system.
 
 #### NestJS
 
-Another alternative is link:https://nestjs.com/[NestJS], a express-based framework for scalable and extensible Nods.js applications.
+Another alternative is link:https://nestjs.com/[NestJS], an express-based framework for scalable and extensible Node.js applications.
 
 *Pros*:
 
 * Rich ecosystem with easy to use extensions (Swagger, Validations, ORMs)
-* Module system with dependency injection for cleaner structure
-* Structure and architecture suitable for growing and bigger systems
+* Module system with dependency injection for clean structure
+* Structure and architecture suitable for growing bigger
 
 *Cons*:
 
@@ -71,15 +71,15 @@ Another possibility is link:https://dotnet.microsoft.com/en-us/apps/aspnet[ASP.N
 
 *Pros*:
 
-* Compiled language (C#) with a statistically higher performance than JavaScript-based frameworks
+* Compiled language (C#) with a statistically higher performance than Node.js-based frameworks
 * Strongly typed language offers reduced errors in the development process
 * Highly extensible via the .net eco-system
 
 *Cons*:
 
 * Slower development velocity due to compilation
-* Higher setup effort compared to JavaScript based development
-* Heavier than JavaScript based Frameworks
+* Higher setup effort compared to Node.js-based development
+* Heavier than Node.js-based frameworks
 
 ### Decision
 
@@ -87,13 +87,7 @@ Use NestJS because it has a relatively simple setup, high development speed and 
 
 ### Consequences
 
-The "Licence Connect" project will use TypeScript and NestJS as its backbone, at least for the MVP.
-The MVP will not provide it's own UI out of the box.
+The LC project will use TypeScript and NestJS as its backbone, at least for the MVP.
+The MVP will not provide its own UI out of the box.
 The Liferay infrastructure of VIDIS Portal will not be reused unless absolutely necessary.
-Every Communication between VIDIS and LC will require some sort of API.
-
-### Further Links
-* [Liferay DXP](https://www.liferay.com/de/platform)
-* [Express.js](https://expressjs.com/de/)
-* [NestJS](https://nestjs.com/)
-* [ASP.net Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
+Every communication between VIDIS and LC will require some sort of API.
