@@ -1,0 +1,21 @@
+{
+  "name": "licence-connect",
+  "version": "0.0.1",
+  "repository": "git@github.com:FWU-DE/licence-connect.git",
+  "author": "Felix Bohn <felix.bohn@xitaso.com>",
+  "license": "Apache-2.0",
+  "private": true,
+  "workspaces": [
+    "doc, src"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "commitlint": "^19.3.0",
+    "husky": "^9.0.11"
+  },
+  "dependencies": {},
+  "scripts": {
+    "prepare": "husky"
+  }
+}
