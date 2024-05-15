@@ -4,6 +4,10 @@
 
 ### Local Setup
 
+#### VS Code
+
+If you use VS Code for development, you can install the recommended extensions from the popup showing up, as soon as you open the project folder. 
+
 ### Deployed Setup
 
 ## Further Documentation
