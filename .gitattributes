@@ -1,0 +1,2 @@
+# use lf as default as it matches with prettier line endings
+* text eol=lf
