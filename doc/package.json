@@ -1,5 +1,6 @@
 {
-    "name": "doc",
-    "version": "0.0.1",
-    "dependencies": {}
-  }
+  "name": "doc",
+  "version": "0.0.1",
+  "dependencies": {},
+  "scripts": {}
+}

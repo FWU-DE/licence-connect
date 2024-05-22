@@ -6,7 +6,8 @@
   "license": "Apache-2.0",
   "private": true,
   "workspaces": [
-    "doc, src"
+    "doc",
+    "licence-connect"
   ],
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
@@ -16,6 +17,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "prepare": "husky"
+    "postinstall": "husky install",
+    "pre-commit": "yarn workspace licence-connect run pre-commit"
   }
 }
