@@ -19,6 +19,8 @@ install_dependencies:
   stage: build
   script:
     - yarn
+  cache:
+    policy: push
 
 build_licence_connect:
   stage: build
@@ -26,6 +28,8 @@ build_licence_connect:
     - install_dependencies
   script:
     - yarn workspace licence-connect build
+  cache:
+    policy: pull
 
 test_licence_connect:
   stage: build
@@ -33,6 +37,8 @@ test_licence_connect:
     - build_licence_connect
   script:
     - yarn workspace licence-connect test
+  cache:
+    policy: pull
 
 test_e2e_licence_connect:
   stage: build
@@ -40,3 +46,5 @@ test_e2e_licence_connect:
     - build_licence_connect
   script:
     - yarn workspace licence-connect test:e2e
+  cache:
+    policy: pull
