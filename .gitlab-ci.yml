@@ -37,6 +37,6 @@ test_licence_connect:
 test_e2e_licence_connect:
   stage: build
   needs:
-    - test_licence_connect
+    - build_licence_connect
   script:
     - yarn workspace licence-connect test:e2e
