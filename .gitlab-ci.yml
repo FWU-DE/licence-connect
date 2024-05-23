@@ -1,0 +1,42 @@
+# This file is a template, and might need editing before it works on your project.
+# You can copy and paste this template into a new `.gitlab-ci.yml` file.
+# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
+image: node:20
+
+stages:
+  - build
+
+# This folder is cached between builds
+# https://docs.gitlab.com/ee/ci/yaml/index.html#cache
+cache:
+  paths:
+    - node_modules/
+  key:
+    files:
+      - yarn.lock
+
+install_dependencies:
+  stage: build
+  script:
+    - yarn
+
+build_licence_connect:
+  stage: build
+  needs:
+    - install_dependencies
+  script:
+    - yarn workspace licence-connect build
+
+test_licence_connect:
+  stage: build
+  needs:
+    - build_licence_connect
+  script:
+    - yarn workspace licence-connect test
+
+test_e2e_licence_connect:
+  stage: build
+  needs:
+    - test_licence_connect
+  script:
+    - yarn workspace licence-connect test:e2e
