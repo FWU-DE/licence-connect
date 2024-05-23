@@ -50,6 +50,6 @@ test_e2e_licence_connect:
   needs:
     - build_licence_connect
   script:
-    - yarn workspace licence-connect test:e2e
+    - yarn workspace licence-connect test
   cache:
     policy: pull
