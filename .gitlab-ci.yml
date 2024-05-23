@@ -6,60 +6,50 @@ image: node:20
 stages:
   - build
 
-# This folder is cached between builds
-# https://docs.gitlab.com/ee/ci/yaml/index.html#cache
-cache:
-  paths:
-    - node_modules/
-  key:
-    files:
-      - yarn.lock
+.node_cached:
+  cache:
+    paths:
+      - node_modules/
+    key:
+      files:
+        - yarn.lock
 
 install_dependencies:
-  stage: build
+  stage: .pre
+  extends:
+    - .node_cached
   script:
     - yarn
-  cache:
-    policy: push
 
 build_licence_connect:
   stage: build
+  extends:
+    - .node_cached
   needs:
     - install_dependencies
   script:
     - yarn workspace licence-connect build
   cache:
-    paths:
-      - node_modules/
-    key:
-      files:
-        - yarn.lock
     policy: pull
 
 test_licence_connect:
   stage: build
+  extends:
+    - .node_cached
   needs:
     - build_licence_connect
   script:
     - yarn workspace licence-connect test
   cache:
-    paths:
-      - node_modules/
-    key:
-      files:
-        - yarn.lock
     policy: pull
 
 test_e2e_licence_connect:
   stage: build
+  extends:
+    - .node_cached
   needs:
     - build_licence_connect
   script:
     - yarn workspace licence-connect test:e2e
   cache:
-    paths:
-      - node_modules/
-    key:
-      files:
-        - yarn.lock
     policy: pull
