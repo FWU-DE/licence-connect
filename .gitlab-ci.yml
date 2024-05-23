@@ -32,17 +32,6 @@ build_licence_connect:
   cache:
     policy: pull
 
-test_licence_connect:
-  stage: build
-  extends:
-    - .node_cached
-  needs:
-    - build_licence_connect
-  script:
-    - yarn workspace licence-connect test
-  cache:
-    policy: pull
-
 test_e2e_licence_connect:
   stage: build
   extends:
@@ -50,6 +39,6 @@ test_e2e_licence_connect:
   needs:
     - build_licence_connect
   script:
-    - yarn workspace licence-connect test
+    - yarn workspace licence-connect test:e2e
   cache:
     policy: pull
