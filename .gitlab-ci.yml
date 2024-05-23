@@ -29,6 +29,11 @@ build_licence_connect:
   script:
     - yarn workspace licence-connect build
   cache:
+    paths:
+      - node_modules/
+    key:
+      files:
+        - yarn.lock
     policy: pull
 
 test_licence_connect:
@@ -38,6 +43,11 @@ test_licence_connect:
   script:
     - yarn workspace licence-connect test
   cache:
+    paths:
+      - node_modules/
+    key:
+      files:
+        - yarn.lock
     policy: pull
 
 test_e2e_licence_connect:
@@ -47,4 +57,9 @@ test_e2e_licence_connect:
   script:
     - yarn workspace licence-connect test:e2e
   cache:
+    paths:
+      - node_modules/
+    key:
+      files:
+        - yarn.lock
     policy: pull
