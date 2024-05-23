@@ -4,7 +4,7 @@ import { LicenceService } from './licences.service';
 
 @Controller('licence')
 export class LicencesController {
-  constructor(public readonly licenceService: LicenceService) {}
+  constructor(private readonly licenceService: LicenceService) {}
 
   @Get()
   public getLicences(): Licences {
