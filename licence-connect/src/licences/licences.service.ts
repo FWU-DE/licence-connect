@@ -6,7 +6,11 @@ import { HttpService } from '@nestjs/axios';
 export class LicenceService {
   constructor(private readonly httpService: HttpService) {}
 
-  getLicences(): Licences {
+  public getLicences(_id: string): Licences {
     return { hasLicence: false, licences: [] };
+  }
+
+  private getAuthentificationToken(): string {
+    return '';
   }
 }
