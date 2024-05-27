@@ -1,8 +1,10 @@
 export type Licence = string;
 
-export type Licences = {
+export type LCLicence = Licence;
+
+export type LCLicences = {
   hasLicence: boolean;
-  licences: Licence[];
+  licences: LCLicence[];
 };
 
 /**

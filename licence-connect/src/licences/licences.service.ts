@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Licences } from './types';
+import { LCLicences } from './types';
 import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class LicenceService {
   constructor(private readonly httpService: HttpService) {}
 
-  public getLicences(_id: string): Licences {
+  public getLicences(_id: string): LCLicences {
     return { hasLicence: false, licences: [] };
   }
 

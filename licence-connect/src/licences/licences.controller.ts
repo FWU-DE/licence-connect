@@ -1,5 +1,5 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { IncomingLicenceRequest, Licences } from './types';
+import { IncomingLicenceRequest, LCLicences } from './types';
 import { LicenceService } from './licences.service';
 
 @Controller('licence')
@@ -9,7 +9,7 @@ export class LicencesController {
   @Get()
   public getLicences(
     @Req() request: { body: IncomingLicenceRequest },
-  ): Licences {
+  ): LCLicences {
     const id = request.body.sub;
     return this.licenceService.getLicences(id);
   }
