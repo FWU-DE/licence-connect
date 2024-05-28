@@ -7,6 +7,8 @@ export type LCLicences = {
   licences: LCLicence[];
 };
 
+export type BundeslandIdentificationString = string;
+
 /**
  * An incoming licence request for a specific user
  * This follows the JWT Token fields, see https://www.iana.org/assignments/jwt/jwt.xhtml
@@ -25,7 +27,7 @@ export type IncomingLicenceRequest = {
   email: string;
   sid: string; // session id
   schulkennung: string;
-  bundesland: string;
+  bundesland: BundeslandIdentificationString;
   vorname: string;
   nachname: string;
 };
