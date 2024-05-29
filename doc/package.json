@@ -2,6 +2,7 @@
   "name": "doc",
   "version": "0.0.1",
   "dependencies": {},
+  "license": "Apache-2.0",
   "scripts": {},
   "devDependencies": {
     "adr": "^1.4.5"
