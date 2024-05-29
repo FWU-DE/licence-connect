@@ -1,0 +1,95 @@
+ifndef::imagesdir[:imagesdir: ../../images]
+
+# ADR 0001: Primary framework for the "Licence Connect" MVP
+
+Date: 2024-04-26
+
+## Status
+
+Accepted
+
+## Context
+
+For the start of the "Licence Connect" (LC) project we need to develop an MVP.
+For this, we need to choose a suitable framework.
+The scope of the MVP will be to provide a REST-API and make calls to other REST-APIs.
+Currently no data persistence or UI is needed.
+Due to limited time and budget the framework to choose should provide as much development velocity as possible.
+Nevertheless, a high level of extensability is desirable as the MVP is the foundation of a fully functional LC system.
+
+## Considered Options
+
+### Liferay DXP
+
+The link:https://www.liferay.com/de/resources/product-info/Liferay+DXP%3A+The+Complete+Platform+for+Tailored+Solutions[Liferay DXP] infrastructure and technology is used in the VIDIS Portal project.
+One possible solution for LC would be the reuse of the VIDIS Portal infrastructure.
+
+_Pros_:
+
+- Reuse of Liferay DXP
+
+_Cons_:
+
+- Would intertwine the two link:https://www.digitalpaktschule.de/de/digitalpakt-schule-landerubergreifende-vorhaben-1848.html[LüVs] of VIDIS and LC more than necessary
+- Stronger coupling with VIDIS Portal developer team
+- Liferay DXP is a commercial product with costs
+- Documentation of Liferay itself and VIDIS Portal is lackluster right now
+- Small pool of developers experienced with Liferay globally
+- Many techniques in Liferay do not follow DevOps approaches
+- Lower familiarity on dev side compared with Node.js based approaches
+
+### express.js
+
+The MVP could be realized in link:https://expressjs.com[express.js], a very lightweight web framework for Node.js.
+
+_Pros_:
+
+- Lightweight solution for building a simple API
+
+_Cons_:
+
+- Extensability is lower compared to the other considered options.
+- It does not provide more than the possibility to provide endpoints.
+  Everything else has to be added manually with different libraries.
+- Lack of a preexisting architecture enabling growth into a bigger system.
+
+### NestJS
+
+Another alternative is link:https://nestjs.com/[NestJS], an express-based framework for scalable and extensible Node.js applications.
+
+_Pros_:
+
+- Rich ecosystem with easy to use extensions (Swagger, Validations, ORMs)
+- Module system with dependency injection for clean structure
+- Structure and architecture suitable for growing bigger
+
+_Cons_:
+
+- More setup effort than express
+
+### ASP.NET Core
+
+Another possibility is link:https://dotnet.microsoft.com/en-us/apps/aspnet[ASP.NET Core], a framework for building web apps and services with .NET and C#.
+
+_Pros_:
+
+- Compiled language (C#) with a statistically higher performance than Node.js-based frameworks
+- Strongly typed language offers reduced errors in the development process
+- Highly extensible via the .net eco-system
+
+_Cons_:
+
+- Slower development velocity due to compilation
+- Higher setup effort compared to Node.js-based development
+- Heavier than Node.js-based frameworks
+
+## Decision
+
+Use NestJS because it has a relatively simple setup, high development speed and is easy to extend.
+
+## Consequences
+
+The LC project will use TypeScript and NestJS as its backbone, at least for the MVP.
+The MVP will not provide its own UI out of the box.
+The Liferay infrastructure of VIDIS Portal will not be reused unless absolutely necessary.
+Every communication between VIDIS and LC will require some sort of API.

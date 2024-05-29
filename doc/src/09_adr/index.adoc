@@ -3,4 +3,5 @@ ifndef::imagesdir[:imagesdir: ../../images]
 [[section-design-decisions]]
 == Architecture Decisions
 
-xref:./0001_Framework_MVP.adoc[0001. Framework MVP]
+include::README.md[Architectural Decision Records]
+

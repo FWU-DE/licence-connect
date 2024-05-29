@@ -2,5 +2,8 @@
   "name": "doc",
   "version": "0.0.1",
   "dependencies": {},
-  "scripts": {}
+  "scripts": {},
+  "devDependencies": {
+    "adr": "^1.4.5"
+  }
 }
