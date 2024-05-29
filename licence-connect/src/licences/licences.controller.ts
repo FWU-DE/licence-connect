@@ -1,16 +1,16 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { IncomingLicenceRequest, LCLicences } from './types';
-import { LicenceService } from './licences.service';
+import { IncomingLicenceRequest, LCLicences } from './licence-types';
+import { MVLicenceService } from './mv-licence.service';
 
 @Controller('licence')
 export class LicencesController {
-  constructor(private readonly licenceService: LicenceService) {}
+  constructor(private readonly mvLicenceService: MVLicenceService) {}
 
   @Get()
   public getLicences(
     @Req() request: { body: IncomingLicenceRequest },
   ): LCLicences {
     const id = request.body.sub;
-    return this.licenceService.getLicences(id);
+    return this.mvLicenceService.getLicences(id);
   }
 }

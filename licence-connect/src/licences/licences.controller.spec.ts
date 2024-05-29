@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LicencesController } from './licences.controller';
-import { LicenceService } from './licences.service';
 import { HttpService } from '@nestjs/axios';
 import { incomingVidisCoreRequest } from './test_data';
 import { AxiosResponse } from 'axios';
-import { Licence } from './types';
+import { Licence } from './licence-types';
+import { MVLicenceService } from './mv-licence.service';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
@@ -63,7 +63,7 @@ describe('LicencesController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [LicencesController],
       providers: [
-        LicenceService,
+        MVLicenceService,
         {
           provide: HttpService,
           useValue: {

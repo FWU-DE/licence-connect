@@ -1,6 +1,6 @@
 export type Licence = string;
 
-export type LCLicence = Licence;
+export type LCLicence = { licenceId: Licence };
 
 export type LCLicences = {
   hasLicence: boolean;
