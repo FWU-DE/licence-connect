@@ -1,6 +1,4 @@
-ifndef::imagesdir[:imagesdir: ../../images]
-
-# ADR 0001: Primary framework for the "Licence Connect" MVP
+# ADR 1: Primary framework for the "Licence Connect" MVP
 
 Date: 2024-04-26
 

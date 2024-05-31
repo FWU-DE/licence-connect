@@ -1,10 +1,10 @@
-# ADR 2: Authentication
+# ADR 2: Authentication for MVP API
 
 Date: 2024-05-29
 
 ## Status
 
-2024-05-29 Draft
+Draft
 
 ## Context
 
