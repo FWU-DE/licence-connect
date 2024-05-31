@@ -11,6 +11,7 @@ export class LicencesController {
   public getLicences(
     @Req() request: { body: IncomingLicenceRequest },
   ): LCLicences {
+    // TODO: use correct field for id
     const id = request.body.sub;
     return this.mvLicenceService.getLicences(id);
   }
