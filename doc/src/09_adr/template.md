@@ -4,7 +4,7 @@ Date: {DATE}
 
 ## Status
 
-{DATE} Draft
+Draft
 
 ## Context
 
