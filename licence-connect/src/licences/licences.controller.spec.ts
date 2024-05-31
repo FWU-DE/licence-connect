@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LicencesController } from './licences.controller';
 import { HttpService } from '@nestjs/axios';
-import { incomingVidisCoreRequest } from './test_data';
+import { UCSResponseWithLicences, incomingVidisCoreRequest } from './test_data';
 import { AxiosResponse } from 'axios';
 import { Licence } from './licence-types';
 import { MVLicenceService } from './mv-licence.service';
@@ -9,42 +9,20 @@ import { MVLicenceService } from './mv-licence.service';
 describe('LicencesController', () => {
   let licencesController: LicencesController;
 
-  const licences: Licence[] = ['0', '1', '2', '3'];
-
   type MVStudent = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    licences: [Licence];
-    context: {
+    string: {
+      id: string;
+      first_name: string;
+      last_name: string;
       licences: [Licence];
-      classes: [{ licences: [Licence] }];
-      workgroups: [{ licences: [Licence] }];
+      context: {
+        string: {
+          licences: [Licence];
+          classes: [{ licences: [Licence] }];
+          workgroups: [{ licences: [Licence] }];
+        };
+      };
     };
-  };
-
-  const studentWithLicences: MVStudent = {
-    id: '421c4a1a-c140-420c-aed1-622832211a11',
-    first_name: 'Maya',
-    last_name: 'WithLicence',
-    licences: [licences[0]],
-    context: {
-      licences: [licences[1]],
-      classes: [{ licences: [licences[2]] }],
-      workgroups: [{ licences: [licences[3]] }],
-    },
-  };
-
-  const _studentWithoutLicences = {
-    id: '421c4a1a-c140-420c-aed1-622832211a12',
-    first_name: 'Maya',
-    last_name: 'WithoutLicence',
-    licences: [],
-    context: {
-      licences: [],
-      classes: [],
-      workgroups: [],
-    },
   };
 
   const buildSuccessfullResponse: (MVStudent) => AxiosResponse = (
@@ -72,7 +50,7 @@ describe('LicencesController', () => {
                 url ===
                 `/ucsschool/apis/bildungslogin/v1/user/${incomingVidisCoreRequest.sub}`
               ) {
-                return buildSuccessfullResponse(studentWithLicences);
+                return buildSuccessfullResponse(UCSResponseWithLicences);
               }
             }),
           },

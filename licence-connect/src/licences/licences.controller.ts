@@ -6,6 +6,7 @@ import { MVLicenceService } from './mv-licence.service';
 export class LicencesController {
   constructor(private readonly mvLicenceService: MVLicenceService) {}
 
+  // TODO: Add Authentication
   @Get()
   public getLicences(
     @Req() request: { body: IncomingLicenceRequest },

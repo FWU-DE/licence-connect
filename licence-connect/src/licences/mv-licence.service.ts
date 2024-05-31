@@ -11,6 +11,7 @@ export class MVLicenceService implements LicenceService {
   constructor(private readonly httpService: HttpService) {}
 
   public getLicences(_id: string): LCLicences {
+    // TODO: Request real data at UCS@School
     return { hasLicence: false, licences: [] };
   }
 
