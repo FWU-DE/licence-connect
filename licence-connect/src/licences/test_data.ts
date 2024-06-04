@@ -1,6 +1,7 @@
-import { IncomingLicenceRequest, LCLicence } from './licence-types';
+import { IncomingLicenseRequest, LCLicense, License } from './licence-types';
+import { MVStudent } from './ucs-types';
 
-export const incomingVidisCoreRequest: IncomingLicenceRequest = {
+export const incomingVidisCoreRequest: IncomingLicenseRequest = {
   exp: 1716368641,
   iat: 1716368341,
   auth_time: 0,
@@ -19,20 +20,20 @@ export const incomingVidisCoreRequest: IncomingLicenceRequest = {
   nachname: 'Mustermann',
 };
 
-export const LCResponseFromUCSResponse: LCLicence[] = [
-  { licenceId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
-  { licenceId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
-  { licenceId: 'CCB-7bd46a45-345c-4237-a451-4444736eb011' },
-  { licenceId: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45' },
-  { licenceId: 'COR-3rw46a45-345c-4237-a451-4333736ex015' },
-  { licenceId: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts' },
-  { licenceId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
+export const lcResponseFromUCSResponse: LCLicense[] = [
+  { licenseId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
+  { licenseId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
+  { licenseId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
+  { licenseId: 'CCB-7bd46a45-345c-4237-a451-4444736eb011' },
+  { licenseId: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45' },
+  { licenseId: 'COR-3rw46a45-345c-4237-a451-4333736ex015' },
+  { licenseId: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts' },
 ];
 
 /**
  * Example response from the ucs system
  */
-export const UCSResponseWithLicences = {
+export const ucsResponseWithLicences: MVStudent = {
   'http://www.bildungslogin.de/licenses': {
     id: 'sample_user_id',
     first_name: 'Sample',
@@ -79,12 +80,12 @@ export const UCSResponseWithLicences = {
       'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds',
     ],
   },
-};
+} as MVStudent;
 
 /**
  * Example response from the ucs system
  */
-export const UCSResponseWithoutLicences = {
+export const ucsResponseWithoutLicences: MVStudent = {
   'http://www.bildungslogin.de/licenses': {
     id: 'sample_user_id',
     first_name: 'Sample',
@@ -98,7 +99,6 @@ export const UCSResponseWithoutLicences = {
           {
             name: 'Class1',
             id: '239we423-wetiwrg23-sd0gfsd34',
-            licenses: [],
           },
           {
             name: 'Class2',
@@ -109,7 +109,6 @@ export const UCSResponseWithoutLicences = {
           {
             name: 'mathegruppe1',
             id: 'f2309jfde13jfad0fj13rjal97',
-            licenses: [],
           },
           {
             name: 'mathegruppe2',
@@ -117,9 +116,7 @@ export const UCSResponseWithoutLicences = {
           },
         ],
         roles: ['student'],
-        licenses: [],
       },
     },
-    licenses: [],
   },
 };

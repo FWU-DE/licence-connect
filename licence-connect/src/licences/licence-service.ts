@@ -1,5 +1,5 @@
-import { LCLicences } from './licence-types';
+import { LCLicenses } from './licence-types';
 
-export interface LicenceService {
-  getLicences(userId: string): LCLicences;
+export interface LicenseService {
+  getLicenses(userId: string): LCLicenses;
 }

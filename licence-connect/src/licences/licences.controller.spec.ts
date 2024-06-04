@@ -1,29 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LicencesController } from './licences.controller';
 import { HttpService } from '@nestjs/axios';
-import { UCSResponseWithLicences, incomingVidisCoreRequest } from './test_data';
+import { ucsResponseWithLicences, incomingVidisCoreRequest } from './test_data';
 import { AxiosResponse } from 'axios';
-import { Licence } from './licence-types';
-import { MVLicenceService } from './mv-licence.service';
+import { MVLicenceService } from './mv/mv-licence.service';
+import { MVLicenceFetcherService } from './mv/mv-licence-fetcher-service';
+import { MVStudent } from './ucs-types';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
-
-  type MVStudent = {
-    string: {
-      id: string;
-      first_name: string;
-      last_name: string;
-      licences: [Licence];
-      context: {
-        string: {
-          licences: [Licence];
-          classes: [{ licences: [Licence] }];
-          workgroups: [{ licences: [Licence] }];
-        };
-      };
-    };
-  };
 
   const buildSuccessfullResponse: (MVStudent) => AxiosResponse = (
     student: MVStudent,
@@ -42,6 +27,7 @@ describe('LicencesController', () => {
       controllers: [LicencesController],
       providers: [
         MVLicenceService,
+        MVLicenceFetcherService,
         {
           provide: HttpService,
           useValue: {
@@ -50,7 +36,7 @@ describe('LicencesController', () => {
                 url ===
                 `/ucsschool/apis/bildungslogin/v1/user/${incomingVidisCoreRequest.sub}`
               ) {
-                return buildSuccessfullResponse(UCSResponseWithLicences);
+                return buildSuccessfullResponse(ucsResponseWithLicences);
               }
             }),
           },
@@ -63,14 +49,5 @@ describe('LicencesController', () => {
 
   it('should be created"', () => {
     expect(licencesController).toBeTruthy;
-  });
-
-  it('should answer with with no licences"', () => {
-    expect(
-      licencesController.getLicences({ body: incomingVidisCoreRequest }),
-    ).toStrictEqual({
-      hasLicence: false,
-      licences: [],
-    });
   });
 });

@@ -1,10 +1,10 @@
-export type Licence = string;
+export type License = string;
 
-export type LCLicence = { licenceId: Licence };
+export type LCLicense = { licenseId: License };
 
-export type LCLicences = {
-  hasLicence: boolean;
-  licences: LCLicence[];
+export type LCLicenses = {
+  hasLicense: boolean;
+  licenses: LCLicense[];
 };
 
 export type BundeslandIdentificationString = string;
@@ -13,7 +13,7 @@ export type BundeslandIdentificationString = string;
  * An incoming licence request for a specific user
  * This follows the JWT Token fields, see https://www.iana.org/assignments/jwt/jwt.xhtml
  */
-export type IncomingLicenceRequest = {
+export type IncomingLicenseRequest = {
   exp: number; // "Expiration Time"
   iat: number; // "Issued At"
   auth_time: number; // "Time when the authentication occurred"
