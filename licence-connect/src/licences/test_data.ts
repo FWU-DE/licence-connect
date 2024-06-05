@@ -31,7 +31,7 @@ export const lcResponseFromUCSResponse: LCLicense[] = [
 ];
 
 /**
- * Example response from the ucs system
+ * Example response from the ucs system with licences
  */
 export const ucsResponseWithLicences: MVStudent = {
   'http://www.bildungslogin.de/licenses': {
@@ -83,7 +83,7 @@ export const ucsResponseWithLicences: MVStudent = {
 } as MVStudent;
 
 /**
- * Example response from the ucs system
+ * Example response from the ucs system without licences
  */
 export const ucsResponseWithoutLicences: MVStudent = {
   'http://www.bildungslogin.de/licenses': {
@@ -120,3 +120,46 @@ export const ucsResponseWithoutLicences: MVStudent = {
     },
   },
 };
+
+/**
+ * Example response from the ucs system with empty license Arrays
+ */
+export const ucsResponseWithEmptyLicences: MVStudent = {
+  'http://www.bildungslogin.de/licenses': {
+    id: 'sample_user_id',
+    first_name: 'Sample',
+    last_name: 'User',
+    context: {
+      oaijfds32f09sjef32rfasd: {
+        school_authority: 'BBK_IN',
+        school_identifier: 'HE-135109231418124',
+        school_name: 'Schule A',
+        classes: [
+          {
+            name: 'Class1',
+            id: '239we423-wetiwrg23-sd0gfsd34',
+            licenses: [],
+          },
+          {
+            name: 'Class2',
+            id: '255we323-wetiafs-2dsd0gsk20d',
+          },
+        ],
+        workgroups: [
+          {
+            name: 'mathegruppe1',
+            id: 'f2309jfde13jfad0fj13rjal97',
+            licenses: [],
+          },
+          {
+            name: 'mathegruppe2',
+            id: 'f2309jfde13jfad0fj13rjal97',
+          },
+        ],
+        roles: ['student'],
+        licenses: [],
+      },
+    },
+    licenses: [],
+  },
+} as MVStudent;

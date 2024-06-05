@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MVLicenceService } from './mv-licence.service';
 import {
   lcResponseFromUCSResponse,
+  ucsResponseWithEmptyLicences,
   ucsResponseWithLicences,
   ucsResponseWithoutLicences,
 } from '../test_data';
@@ -17,11 +18,11 @@ describe('LicenseService', () => {
     licensesService = app.get<MVLicenceService>(MVLicenceService);
   });
 
-  it('should be created"', () => {
+  it('should be created', () => {
     expect(licensesService).toBeTruthy;
   });
 
-  it('should extract all licenses"', () => {
+  it('should extract all licenses', () => {
     // act
     const extractedLicenses = licensesService.extractLicenceData(
       ucsResponseWithLicences,
@@ -34,9 +35,18 @@ describe('LicenseService', () => {
     });
   });
 
-  it('should extract no licenses"', () => {
+  it('should extract no licenses when no licenses are present', () => {
     expect(
       licensesService.extractLicenceData(ucsResponseWithoutLicences),
+    ).toStrictEqual({
+      hasLicense: false,
+      licenses: [],
+    });
+  });
+
+  it('should extract no licenses when empty license arrays are present', () => {
+    expect(
+      licensesService.extractLicenceData(ucsResponseWithEmptyLicences),
     ).toStrictEqual({
       hasLicense: false,
       licenses: [],
