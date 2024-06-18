@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MVLicenceService } from './mv-licence.service';
+
+import { MVLicenceService } from './mv-license-service.service';
 import {
-  lcResponseFromUCSResponse,
-  ucsResponseWithEmptyLicences,
   ucsResponseWithLicences,
+  lcResponseFromUCSResponse,
   ucsResponseWithoutLicences,
-} from '../test_data';
+  ucsResponseWithEmptyLicences,
+} from '../test/example_data';
 
 describe('LicenseService', () => {
   let licensesService: MVLicenceService;
@@ -29,27 +30,18 @@ describe('LicenseService', () => {
     );
 
     // assert
-    expect(extractedLicenses).toMatchObject({
-      hasLicense: true,
-      licenses: lcResponseFromUCSResponse,
-    });
+    expect(extractedLicenses).toMatchObject(lcResponseFromUCSResponse);
   });
 
   it('should extract no licenses when no licenses are present', () => {
     expect(
       licensesService.extractLicenceData(ucsResponseWithoutLicences),
-    ).toStrictEqual({
-      hasLicense: false,
-      licenses: [],
-    });
+    ).toStrictEqual([]);
   });
 
   it('should extract no licenses when empty license arrays are present', () => {
     expect(
       licensesService.extractLicenceData(ucsResponseWithEmptyLicences),
-    ).toStrictEqual({
-      hasLicense: false,
-      licenses: [],
-    });
+    ).toStrictEqual([]);
   });
 });

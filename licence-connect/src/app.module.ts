@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { LicencesModule } from './licences/licences.module';
+import { LicencesModule } from './infrastructure/licences.module';
 
 @Module({
   imports: [LicencesModule],

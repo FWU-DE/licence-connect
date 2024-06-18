@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { LCLicense, LCLicenses, License } from '../licence-types';
-import { MVStudent, UCSStudent } from '../ucs-types';
+import { ResponseFromUCS, UCSStudent } from '../UCSTypes';
+import { AvailableLicenses, License } from '../../../domain/Licence';
 
 /**
  * Licence Service providing access to the UCS system of Mecklenburg-Vorpommern
@@ -9,7 +9,7 @@ import { MVStudent, UCSStudent } from '../ucs-types';
 export class MVLicenceService {
   constructor() {}
 
-  public extractLicenceData(ucsStudent: MVStudent): LCLicenses {
+  public extractLicenceData(ucsStudent: ResponseFromUCS): AvailableLicenses {
     const student = ucsStudent['http://www.bildungslogin.de/licenses'];
 
     const licensesAssignedToStudent = this.extractLicensesFromStudent(student);
@@ -27,20 +27,19 @@ export class MVLicenceService {
       ...licensesAssignedToWorkgroups,
     ];
 
-    return {
-      hasLicense: accumulatedLicences.length > 0,
-      licenses: accumulatedLicences,
-    };
+    return accumulatedLicences;
   }
 
-  private extractLicensesFromStudent(student: UCSStudent): LCLicense[] {
+  private extractLicensesFromStudent(student: UCSStudent): AvailableLicenses {
     return (
       student.licenses?.map((license) => this.createLicenseObject(license)) ??
       []
     );
   }
 
-  private extractLicensesFromStudentsContext(student: UCSStudent): LCLicense[] {
+  private extractLicensesFromStudentsContext(
+    student: UCSStudent,
+  ): AvailableLicenses {
     const studentContexts = this.extractStudentContexts(student);
     return studentContexts
       .filter((context) => !!context.licenses)
@@ -49,7 +48,9 @@ export class MVLicenceService {
       );
   }
 
-  private extractLicensesFromStudentsClasses(student: UCSStudent): LCLicense[] {
+  private extractLicensesFromStudentsClasses(
+    student: UCSStudent,
+  ): AvailableLicenses {
     const studentContexts = this.extractStudentContexts(student);
     return studentContexts.flatMap((context) =>
       context.classes
@@ -62,7 +63,7 @@ export class MVLicenceService {
 
   private extractLicensesFromStudentsWorkgroups(
     student: UCSStudent,
-  ): LCLicense[] {
+  ): AvailableLicenses {
     const studentContexts = this.extractStudentContexts(student);
     return studentContexts.flatMap((context) =>
       context.workgroups
@@ -82,7 +83,7 @@ export class MVLicenceService {
     return studentContexts;
   }
 
-  private createLicenseObject(licenseId: string): LCLicense {
+  private createLicenseObject(licenseId: string): License {
     return {
       licenseId: licenseId,
     };

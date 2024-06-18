@@ -1,17 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LicencesController } from './licences.controller';
 import { HttpService } from '@nestjs/axios';
-import { ucsResponseWithLicences, incomingVidisCoreRequest } from './test_data';
+import {
+  ucsResponseWithLicences,
+  incomingVidisCoreRequest,
+} from './ucs/test/example_data';
 import { AxiosResponse } from 'axios';
-import { MVLicenceService } from './mv/mv-licence.service';
-import { MVLicenceFetcherService } from './mv/mv-licence-fetcher-service';
-import { MVStudent } from './ucs-types';
+import { ResponseFromUCS } from './ucs/UCSTypes';
+import { MVLicenceFetcherService } from './ucs/mv-license-fetcher-service/mv-license-fetcher-service.service';
+import { MVLicenceService } from './ucs/mv-license-service/mv-license-service.service';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
 
   const buildSuccessfullResponse: (MVStudent) => AxiosResponse = (
-    student: MVStudent,
+    student: ResponseFromUCS,
   ) => {
     return {
       data: student,

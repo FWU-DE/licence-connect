@@ -1,7 +1,8 @@
-import { IncomingLicenseRequest, LCLicense, License } from './licence-types';
-import { MVStudent } from './ucs-types';
+import { AvailableLicenses } from '../../../domain/Licence';
+import { RequestFromVidisCore } from '../../RequestFromVidisCore';
+import { ResponseFromUCS } from '../UCSTypes';
 
-export const incomingVidisCoreRequest: IncomingLicenseRequest = {
+export const incomingVidisCoreRequest: RequestFromVidisCore = {
   exp: 1716368641,
   iat: 1716368341,
   auth_time: 0,
@@ -20,7 +21,7 @@ export const incomingVidisCoreRequest: IncomingLicenseRequest = {
   nachname: 'Mustermann',
 };
 
-export const lcResponseFromUCSResponse: LCLicense[] = [
+export const lcResponseFromUCSResponse: AvailableLicenses = [
   { licenseId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
   { licenseId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
   { licenseId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
@@ -33,7 +34,7 @@ export const lcResponseFromUCSResponse: LCLicense[] = [
 /**
  * Example response from the ucs system with licences
  */
-export const ucsResponseWithLicences: MVStudent = {
+export const ucsResponseWithLicences: ResponseFromUCS = {
   'http://www.bildungslogin.de/licenses': {
     id: 'sample_user_id',
     first_name: 'Sample',
@@ -80,12 +81,12 @@ export const ucsResponseWithLicences: MVStudent = {
       'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds',
     ],
   },
-} as MVStudent;
+} as ResponseFromUCS;
 
 /**
  * Example response from the ucs system without licences
  */
-export const ucsResponseWithoutLicences: MVStudent = {
+export const ucsResponseWithoutLicences: ResponseFromUCS = {
   'http://www.bildungslogin.de/licenses': {
     id: 'sample_user_id',
     first_name: 'Sample',
@@ -124,7 +125,7 @@ export const ucsResponseWithoutLicences: MVStudent = {
 /**
  * Example response from the ucs system with empty license Arrays
  */
-export const ucsResponseWithEmptyLicences: MVStudent = {
+export const ucsResponseWithEmptyLicences: ResponseFromUCS = {
   'http://www.bildungslogin.de/licenses': {
     id: 'sample_user_id',
     first_name: 'Sample',
@@ -162,4 +163,4 @@ export const ucsResponseWithEmptyLicences: MVStudent = {
     },
     licenses: [],
   },
-} as MVStudent;
+} as ResponseFromUCS;
