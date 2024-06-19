@@ -17,7 +17,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "postinstall": "husky install",
+    "postinstall": "husky",
     "pre-commit": "yarn workspace licence-connect run pre-commit"
   }
 }
