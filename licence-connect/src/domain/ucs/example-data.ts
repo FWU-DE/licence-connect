@@ -21,7 +21,7 @@ export const incomingVidisCoreRequest: RequestFromVidisCore = {
   nachname: 'Mustermann',
 };
 
-export const lcResponseFromUCSResponse: AvailableLicenses = [
+export const lcLicencesFromUCSResponse: AvailableLicenses = [
   { licenseId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
   { licenseId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
   { licenseId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },

@@ -1,4 +1,4 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { RequestFromVidisCore } from '../domain/request-from-vidis-core';
 import { LicensesModel } from './LicencesModel';
 import { UCSLicenceFetcherService } from '../infrastructure/ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
@@ -12,7 +12,7 @@ export class LicencesController {
   ) {}
 
   // TODO: Add Authentication
-  @Post()
+  @Get()
   public getLicences(
     @Req() request: { body: RequestFromVidisCore },
   ): LicensesModel {

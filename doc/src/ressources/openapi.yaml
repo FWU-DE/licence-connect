@@ -14,7 +14,7 @@ tags:
     description: Fetching Licences
 paths:
   /licences:
-    post:
+    get:
       tags:
         - licences
       requestBody:
