@@ -1,5 +1,5 @@
-import { AvailableLicenses } from './licence';
+import { AvailableLicences } from './licence';
 
-export interface LicenseService {
-  getLicenses(userId: string): AvailableLicenses;
+export interface LicenceService {
+  getLicences(userId: string): AvailableLicences;
 }

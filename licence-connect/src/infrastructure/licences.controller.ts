@@ -1,7 +1,7 @@
 import { Controller, Get, Req } from '@nestjs/common';
 import { RequestFromVidisCore } from '../domain/request-from-vidis-core';
-import { LicensesModel } from './LicencesModel';
-import { UCSLicenceFetcherService } from '../infrastructure/ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { LicencesDto } from './LicencesModel';
+import { UCSLicenceFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 import { LicencesFromUcsStudendUseCase } from '../usecases/licences-from-ucs-student-use-case';
 import { UCSStudentFromUCSStudentId } from '../usecases/ucs-student-from-ucs-student-id';
 
@@ -15,7 +15,7 @@ export class LicencesController {
   @Get()
   public getLicences(
     @Req() request: { body: RequestFromVidisCore },
-  ): LicensesModel {
+  ): LicencesDto {
     // TODO: use correct field for id
     const id = request.body.sub;
 
@@ -27,6 +27,6 @@ export class LicencesController {
     const licencesFromUcs = new LicencesFromUcsStudendUseCase().execute(
       ucsStudent,
     );
-    return new LicensesModel(licencesFromUcs);
+    return new LicencesDto(licencesFromUcs);
   }
 }

@@ -1,73 +1,78 @@
-import { AvailableLicenses, License } from 'domain/licence';
+import { AvailableLicences, Licence } from 'domain/licence';
 import { UCSStudent } from 'domain/ucs/ucs-types';
 
+// NOTE: in UCS the Spelling is "license" while LicencesConnect uses the "licence" spelling
+/**
+ * Use Case for fetching LicenceConnect Licences for a specific User in an UCS system.
+ * First the User is fetched, then the UCS licenses are collected and the LC licences are created from them
+ */
 export class LicencesFromUcsStudendUseCase {
   constructor() {}
 
-  public execute(ucsStudent: UCSStudent): AvailableLicenses {
+  public execute(ucsStudent: UCSStudent): AvailableLicences {
     return this.extractLicenceData(ucsStudent);
   }
 
-  private extractLicenceData(student: UCSStudent): AvailableLicenses {
-    const licensesAssignedToStudent = this.extractLicensesFromStudent(student);
-    const licensesAssignedToContext =
-      this.extractLicensesFromStudentsContext(student);
-    const licensesAssignedToClasses =
-      this.extractLicensesFromStudentsClasses(student);
-    const licensesAssignedToWorkgroups =
-      this.extractLicensesFromStudentsWorkgroups(student);
+  private extractLicenceData(student: UCSStudent): AvailableLicences {
+    const licencesAssignedToStudent = this.extractLicencesFromStudent(student);
+    const licencesAssignedToContext =
+      this.extractLicencesFromStudentsContext(student);
+    const licencesAssignedToClasses =
+      this.extractLicencesFromStudentsClasses(student);
+    const licencesAssignedToWorkgroups =
+      this.extractLicencesFromStudentsWorkgroups(student);
 
     const accumulatedLicences = [
-      ...licensesAssignedToStudent,
-      ...licensesAssignedToContext,
-      ...licensesAssignedToClasses,
-      ...licensesAssignedToWorkgroups,
+      ...licencesAssignedToStudent,
+      ...licencesAssignedToContext,
+      ...licencesAssignedToClasses,
+      ...licencesAssignedToWorkgroups,
     ];
 
     return accumulatedLicences;
   }
 
-  private extractLicensesFromStudent(student: UCSStudent): AvailableLicenses {
+  private extractLicencesFromStudent(student: UCSStudent): AvailableLicences {
     return (
-      student.licenses?.map((license) => this.createLicenseObject(license)) ??
+      student.licenses?.map((licence) => this.createLicenceObject(licence)) ??
       []
     );
   }
 
-  private extractLicensesFromStudentsContext(
+  private extractLicencesFromStudentsContext(
     student: UCSStudent,
-  ): AvailableLicenses {
+  ): AvailableLicences {
     const studentContexts = this.extractStudentContexts(student);
     return studentContexts
       .filter((context) => !!context.licenses)
       .flatMap((context) =>
-        context.licenses.map((license) => this.createLicenseObject(license)),
+        context.licenses.map((licence) => this.createLicenceObject(licence)),
       );
   }
 
-  private extractLicensesFromStudentsClasses(
+  private extractLicencesFromStudentsClasses(
     student: UCSStudent,
-  ): AvailableLicenses {
+  ): AvailableLicences {
     const studentContexts = this.extractStudentContexts(student);
     return studentContexts.flatMap((context) =>
       context.classes
         .filter((ucsClass) => !!ucsClass.licenses)
         .flatMap((ucsClass) =>
-          ucsClass.licenses.map((license) => this.createLicenseObject(license)),
+          ucsClass.licenses.map((licence) => this.createLicenceObject(licence)),
         ),
     );
   }
 
-  private extractLicensesFromStudentsWorkgroups(
+  private extractLicencesFromStudentsWorkgroups(
     student: UCSStudent,
-  ): AvailableLicenses {
+  ): AvailableLicences {
     const studentContexts = this.extractStudentContexts(student);
     return studentContexts.flatMap((context) =>
       context.workgroups
         .filter((ucsWorkgroup) => !!ucsWorkgroup.licenses)
         .flatMap((ucsWorkgroup) =>
-          ucsWorkgroup.licenses.map((license) =>
-            this.createLicenseObject(license),
+          ucsWorkgroup.licenses.map((licence) =>
+            this.createLicenceObject(licence),
           ),
         ),
     );
@@ -80,9 +85,9 @@ export class LicencesFromUcsStudendUseCase {
     return studentContexts;
   }
 
-  private createLicenseObject(licenseId: string): License {
+  private createLicenceObject(licenceId: string): Licence {
     return {
-      licenseId: licenseId,
+      licenceId: licenceId,
     };
   }
 }

@@ -1,3 +1,3 @@
-export type LicenseIdentifier = string;
-export type License = { licenseId: LicenseIdentifier };
-export type AvailableLicenses = License[];
+export type LicenceIdentifier = string;
+export type Licence = { licenceId: LicenceIdentifier };
+export type AvailableLicences = Licence[];

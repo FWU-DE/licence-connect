@@ -1,4 +1,4 @@
-import { AvailableLicenses } from '../licence';
+import { AvailableLicences } from '../licence';
 import { RequestFromVidisCore } from '../request-from-vidis-core';
 import { ResponseFromUCS } from './ucs-types';
 
@@ -21,14 +21,14 @@ export const incomingVidisCoreRequest: RequestFromVidisCore = {
   nachname: 'Mustermann',
 };
 
-export const lcLicencesFromUCSResponse: AvailableLicenses = [
-  { licenseId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
-  { licenseId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
-  { licenseId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
-  { licenseId: 'CCB-7bd46a45-345c-4237-a451-4444736eb011' },
-  { licenseId: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45' },
-  { licenseId: 'COR-3rw46a45-345c-4237-a451-4333736ex015' },
-  { licenseId: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts' },
+export const lcLicencesFromUCSResponse: AvailableLicences = [
+  { licenceId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
+  { licenceId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
+  { licenceId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
+  { licenceId: 'CCB-7bd46a45-345c-4237-a451-4444736eb011' },
+  { licenceId: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45' },
+  { licenceId: 'COR-3rw46a45-345c-4237-a451-4333736ex015' },
+  { licenceId: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts' },
 ];
 
 /**

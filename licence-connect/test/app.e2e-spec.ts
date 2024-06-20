@@ -19,13 +19,13 @@ describe('LicenceController (e2e)', () => {
     await app.init();
   });
 
-  it('/licence (POST)', () => {
+  it('/licence (GET)', () => {
     return request(app.getHttpServer())
       .get('/licences')
       .send(incomingVidisCoreRequest)
       .expect(200)
       .expect(
-        `{"hasLicense":true,"licenses":${JSON.stringify(lcLicencesFromUCSResponse)}}`,
+        `{"hasLicence":true,"licences":${JSON.stringify(lcLicencesFromUCSResponse)}}`,
       );
   });
 });

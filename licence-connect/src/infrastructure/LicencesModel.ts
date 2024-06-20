@@ -1,11 +1,14 @@
-import { AvailableLicenses } from 'domain/licence';
+import { AvailableLicences } from 'domain/licence';
 
-export class LicensesModel {
-  constructor(licences: AvailableLicenses) {
-    this.hasLicense = !!licences;
-    this.licenses = licences;
+/**
+ * Dto for the Licences used as a Response from LicenceConnect
+ */
+export class LicencesDto {
+  constructor(licences: AvailableLicences) {
+    this.hasLicence = !!licences;
+    this.licences = licences;
   }
 
-  hasLicense: boolean;
-  licenses: AvailableLicenses;
+  hasLicence: boolean;
+  licences: AvailableLicences;
 }
