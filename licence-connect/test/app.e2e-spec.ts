@@ -31,7 +31,7 @@ describe('LicenceController (e2e)', () => {
     describe('With valid api key', () => {
       it('in query', () => {
         return request(app.getHttpServer())
-          .post('/licences?X-API-KEY=test')
+          .post('/v1/licences?X-API-KEY=test')
           .send(incomingVidisCoreRequest)
           .expect(200)
           .expect(
@@ -41,7 +41,7 @@ describe('LicenceController (e2e)', () => {
 
       it('in header', () => {
         return request(app.getHttpServer())
-          .post('/licences')
+          .post('/v1/licences')
           .set({ 'X-API-KEY': 'test' })
           .send(incomingVidisCoreRequest)
           .expect(200)
@@ -54,14 +54,14 @@ describe('LicenceController (e2e)', () => {
     describe('With invalid api key', () => {
       it('in query', () => {
         return request(app.getHttpServer())
-          .post('/licences?X-API-KEY=wrongApiKey')
+          .post('/v1/licences?X-API-KEY=wrongApiKey')
           .send(incomingVidisCoreRequest)
           .expect(403);
       });
 
       it('in header', () => {
         return request(app.getHttpServer())
-          .post('/licences')
+          .post('/v1/licences')
           .set({ 'X-API-KEY': 'wrongApiKey' })
           .send(incomingVidisCoreRequest)
           .expect(403);
@@ -71,7 +71,7 @@ describe('LicenceController (e2e)', () => {
     describe('Without api key', () => {
       it('in query', () => {
         return request(app.getHttpServer())
-          .post('/licences')
+          .post('/v1/licences')
           .send(incomingVidisCoreRequest)
           .expect(403);
       });

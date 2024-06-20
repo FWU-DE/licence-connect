@@ -1,4 +1,11 @@
-import { Controller, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+  Version,
+} from '@nestjs/common';
 import { RequestFromVidisCore } from '../domain/request-from-vidis-core';
 import { LicencesDto } from './LicencesModel';
 import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
@@ -6,7 +13,7 @@ import { LicencesFromUcsStudendUseCase } from '../usecases/licences-from-ucs-stu
 import { UCSStudentFromUCSStudentId } from '../usecases/ucs-student-from-ucs-student-id';
 import { ApiKeyGuard } from './authentication/api-key.guard';
 
-@Controller('licences')
+@Controller('v1/licences')
 @UseGuards(ApiKeyGuard)
 export class LicencesController {
   constructor(
@@ -15,6 +22,7 @@ export class LicencesController {
 
   @Post()
   @HttpCode(200)
+  @Version('1')
   public getLicences(
     @Req() request: { body: RequestFromVidisCore },
   ): LicencesDto {

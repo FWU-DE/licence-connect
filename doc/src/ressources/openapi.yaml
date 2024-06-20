@@ -13,7 +13,7 @@ tags:
   - name: licences
     description: Fetching Licences
 paths:
-  /licences:
+  /v1/licences:
     post:
       tags:
         - licences
