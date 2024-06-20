@@ -1,9 +1,9 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { RequestFromVidisCore } from 'domain/request-from-vidis-core';
+import { RequestFromVidisCore } from '../domain/request-from-vidis-core';
 import { LicensesModel } from './LicencesModel';
-import { UCSLicenceFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
-import { LicencesFromUcsStudendUseCase } from 'usecases/licences-from-ucs-student-use-case';
-import { UCSStudentFromUCSStudentId } from 'usecases/ucs-student-from-ucs-student-id';
+import { UCSLicenceFetcherService } from '../infrastructure/ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { LicencesFromUcsStudendUseCase } from '../usecases/licences-from-ucs-student-use-case';
+import { UCSStudentFromUCSStudentId } from '../usecases/ucs-student-from-ucs-student-id';
 
 @Controller('licence')
 export class LicencesController {

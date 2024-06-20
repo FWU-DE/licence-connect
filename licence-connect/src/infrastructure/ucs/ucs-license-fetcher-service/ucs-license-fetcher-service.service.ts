@@ -5,8 +5,8 @@ import {
   UCSStudent,
   UCSStudentId,
 } from 'domain/ucs/ucs-types';
-import { ucsResponseWithLicences } from 'domain/ucs/example-data';
-import { IUCSLicenceSource as IUCSStudentSource } from 'domain/ucs/ucs-licences-source';
+import { ucsResponseWithLicences } from '../../../domain/ucs/example-data';
+import { IUCSLicenceSource as IUCSStudentSource } from '../../../domain/ucs/ucs-licences-source';
 
 /**
  * Licence Service providing access to the UCS system of Mecklenburg-Vorpommern
