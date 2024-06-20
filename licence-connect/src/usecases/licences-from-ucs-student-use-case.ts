@@ -1,4 +1,4 @@
-import { AvailableLicences, Licence } from 'domain/licence';
+import { AvailableLicences, Licence } from 'domain/Licence';
 import { UCSStudent } from 'domain/ucs/ucs-types';
 
 // NOTE: in UCS the Spelling is "license" while LicencesConnect uses the "licence" spelling
@@ -6,7 +6,7 @@ import { UCSStudent } from 'domain/ucs/ucs-types';
  * Use Case for fetching LicenceConnect Licences for a specific User in an UCS system.
  * First the User is fetched, then the UCS licenses are collected and the LC licences are created from them
  */
-export class LicencesFromUcsStudendUseCase {
+export class LicencesFromUcsStudentUseCase {
   constructor() {}
 
   public execute(ucsStudent: UCSStudent): AvailableLicences {
