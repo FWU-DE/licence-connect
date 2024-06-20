@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
 import { RequestFromVidisCore } from '../domain/request-from-vidis-core';
 import { LicencesDto } from './LicencesModel';
 import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
@@ -13,10 +13,12 @@ export class LicencesController {
     private readonly ucsLicenceFetcherService: UCSLicenseFetcherService,
   ) {}
 
-  @Get()
+  @Post()
+  @HttpCode(200)
   public getLicences(
     @Req() request: { body: RequestFromVidisCore },
   ): LicencesDto {
+    console.log(request);
     // TODO: use correct field for id
     const id = request.body.sub;
 
@@ -28,6 +30,7 @@ export class LicencesController {
     const licencesFromUcs = new LicencesFromUcsStudendUseCase().execute(
       ucsStudent,
     );
+    console.log('Test');
     return new LicencesDto(licencesFromUcs);
   }
 }
