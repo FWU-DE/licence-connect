@@ -13,17 +13,18 @@ tags:
   - name: licences
     description: Fetching Licences
 paths:
-  /v1/licences:
+  /v1/licences/request:
     post:
+      description: Request the use for licenses for a specific application
       tags:
         - licences
       requestBody:
-        description: Information from VIDIS Core for the User
+        description: Data for notifying LicenceConnect
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LicenceRequest"
+              $ref: "#/components/schemas/LicenceRequestedRequest"
       summary: Fetch all licences available for a specific user
       responses:
         "200":
@@ -34,69 +35,55 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/LicenceConnectResponse"
-        "400":
-          description: Invalid status value
+        "403":
+          description: Forbidden
+      security:
+        - ApiKeyAuth:
+            - read
+            - write
+  /v1/licences/release:
+    post:
+      description: Release a used license for a specific application
+      tags:
+        - licences
+      requestBody:
+        description: Information from VIDIS Core for the User
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LicenceRequestedRequest"
+      summary: Fetch all licences available for a specific user
+      responses:
+        "200":
+          description: successfully fetch licences
+        "403":
+          description: Forbidden
       security:
         - ApiKeyAuth:
             - read
             - write
 components:
   schemas:
-    LicenceRequest:
+    LicenceRequestedRequest:
       type: object
       properties:
-        exp:
-          type: integer
-          example: 1716368641
-        iat:
-          type: integer
-          example: 1716368641
-        auth_time:
-          type: integer
-          example: 1716368641
-        jti:
-          type: string
-          example: "31b3fbee-ad3d-4190-9905-4ae2074ea696"
-        iss:
-          type: string
-          example: "https://aai.vidis.schule/auth/realms/vidis"
-        aud:
-          type: string
-          example: "sodix-editor-o"
-        sub:
+        userId:
           type: string
           example: "02e71a9d-d68d-3050-9a0d-5b963c06aec0"
-        typ:
+        clientId:
           type: string
-          example: "ID"
-        azp:
-          type: string
-          example: "sodix-editor-o"
-        session_state:
-          type: string
-          example: "b1aaa14c-5d1c-4ebf-9c4a-5b42e0cfc613"
-        email:
-          type: string
-          example: "0c9cd428-6ba3-3bb1-b1c4-1df95e3b6db1@vidis.schule"
-        sid:
-          type: string
-          example: "b1aaa14c-5d1c-4ebf-9c3a-5b43e0cfc613"
+          example: "Angebot12345"
         schulkennung:
           type: string
           example: "DE-MV-SN-51201"
         bundesland:
           type: string
           example: "DE-MV"
-        vorname:
-          type: string
-          example: "Maya"
-        nachname:
-          type: string
-          example: "Mustermann"
     Licences:
       type: object
       properties:
-        licenceId:
+        license_code:
           type: string
           example: "VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j"
     LicenceConnectResponse:
@@ -112,8 +99,8 @@ components:
       example:
         hasLicences: true
         licences:
-          - licenceId: "VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j"
-          - licenceId: "COR-3rw46a45-345c-4237-a451-4333736ex015"
+          - license_code: "VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j"
+          - license_code: "COR-3rw46a45-345c-4237-a451-4333736ex015"
 
   securitySchemes:
     ApiKeyAuth:
