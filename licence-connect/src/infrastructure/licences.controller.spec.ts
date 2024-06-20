@@ -1,13 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LicencesController } from './licences.controller';
 import { HttpService } from '@nestjs/axios';
-import {
-  ucsResponseWithLicences,
-  incomingVidisCoreRequest,
-} from '../domain/ucs/example-data';
+import { ucsResponseWithLicences } from '../domain/ucs/example-data';
 import { AxiosResponse } from 'axios';
 import { UCSStudent } from 'domain/ucs/ucs-types';
 import { UCSLicenceFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { ApiKeyGuard } from './api-key/api-key.guard';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
@@ -29,21 +27,15 @@ describe('LicencesController', () => {
       controllers: [LicencesController],
       providers: [
         UCSLicenceFetcherService,
+        ApiKeyGuard,
         {
           provide: HttpService,
           useValue: {
-            get: jest.fn((url: string) => {
-              if (
-                url ===
-                `/ucsschool/apis/bildungslogin/v1/user/${incomingVidisCoreRequest.sub}`
-              ) {
-                return buildSuccessfullResponse(
-                  ucsResponseWithLicences[
-                    'http://www.bildungslogin.de/licenses'
-                  ],
-                );
-              }
-            }),
+            get: jest.fn((_url: string) =>
+              buildSuccessfullResponse(
+                ucsResponseWithLicences['http://www.bildungslogin.de/licenses'],
+              ),
+            ),
           },
         },
       ],
