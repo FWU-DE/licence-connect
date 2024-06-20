@@ -1,6 +1,6 @@
-import { AvailableLicenses } from '../../../domain/Licence';
-import { RequestFromVidisCore } from '../../RequestFromVidisCore';
-import { ResponseFromUCS } from '../UCSTypes';
+import { AvailableLicenses } from '../licence';
+import { RequestFromVidisCore } from '../request-from-vidis-core';
+import { ResponseFromUCS } from './ucs-types';
 
 export const incomingVidisCoreRequest: RequestFromVidisCore = {
   exp: 1716368641,
@@ -16,7 +16,7 @@ export const incomingVidisCoreRequest: RequestFromVidisCore = {
   email: '0c9cd428-6ba3-3bb1-b1c4-1df95e3b6db1@vidis.schule',
   sid: 'b1aaa14c-5d1c-4ebf-9c3a-5b43e0cfc613',
   schulkennung: 'DE-RP-SN-51201',
-  bundesland: 'DE-RP',
+  bundesland: 'DE-MV',
   vorname: 'Maya',
   nachname: 'Mustermann',
 };

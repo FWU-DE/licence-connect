@@ -1,4 +1,4 @@
-import { AvailableLicenses } from '../domain/Licence';
+import { AvailableLicenses } from '../domain/licence';
 
 export class LicensesModel {
   constructor(licences: AvailableLicenses) {

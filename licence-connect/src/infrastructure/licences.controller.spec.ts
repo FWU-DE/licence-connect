@@ -4,20 +4,19 @@ import { HttpService } from '@nestjs/axios';
 import {
   ucsResponseWithLicences,
   incomingVidisCoreRequest,
-} from './ucs/test/example_data';
+} from '../domain/ucs/example-data';
 import { AxiosResponse } from 'axios';
-import { ResponseFromUCS } from './ucs/UCSTypes';
-import { MVLicenceFetcherService } from './ucs/mv-license-fetcher-service/mv-license-fetcher-service.service';
-import { MVLicenceService } from './ucs/mv-license-service/mv-license-service.service';
+import { UCSStudent } from '../domain/ucs/ucs-types';
+import { UCSLicenceFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
 
-  const buildSuccessfullResponse: (MVStudent) => AxiosResponse = (
-    student: ResponseFromUCS,
+  const buildSuccessfullResponse: (ucsStudent: UCSStudent) => AxiosResponse = (
+    student: UCSStudent,
   ) => {
     return {
-      data: student,
+      data: { 'http://www.bildungslogin.de/licenses': student },
       status: 200,
       statusText: 'OK',
       headers: undefined,
@@ -29,8 +28,7 @@ describe('LicencesController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [LicencesController],
       providers: [
-        MVLicenceService,
-        MVLicenceFetcherService,
+        UCSLicenceFetcherService,
         {
           provide: HttpService,
           useValue: {
@@ -39,7 +37,11 @@ describe('LicencesController', () => {
                 url ===
                 `/ucsschool/apis/bildungslogin/v1/user/${incomingVidisCoreRequest.sub}`
               ) {
-                return buildSuccessfullResponse(ucsResponseWithLicences);
+                return buildSuccessfullResponse(
+                  ucsResponseWithLicences[
+                    'http://www.bildungslogin.de/licenses'
+                  ],
+                );
               }
             }),
           },

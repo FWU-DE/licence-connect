@@ -1,4 +1,6 @@
-export type BundeslandIdentificationString = string;
+import { UCSStudentId } from './ucs/ucs-types';
+
+export type BundeslandIdentificationString = 'DE-MV' | 'DE-RP';
 
 /**
  * An incoming licence request for a specific user
@@ -11,7 +13,6 @@ export type RequestFromVidisCore = {
   jti: JWTTokenIdentifier;
   iss: JWTTokenIssuer;
   aud: JWTTokenAudience;
-  sub: JWTTokenSubject;
   typ: TypType;
   azp: AuthorizedParty;
   session_state: SessionState;
@@ -21,7 +22,13 @@ export type RequestFromVidisCore = {
   bundesland: BundeslandIdentificationString;
   vorname: Firstname;
   nachname: Surname;
-};
+} & (
+  | { bundesland: 'DE-MV'; sub: UCSStudentId }
+  | {
+      bundesland: BundeslandIdentificationString;
+      sub: JWTTokenSubject;
+    }
+);
 
 type TimeForTokenExpiration = number;
 type TimeWhenTheTokenWasIssuedAt = number;

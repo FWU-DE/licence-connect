@@ -1,17 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { ResponseFromUCS, UCSStudent } from '../UCSTypes';
-import { AvailableLicenses, License } from '../../../domain/Licence';
+import { AvailableLicenses, License } from 'src/domain/licence';
+import { UCSStudent } from 'src/domain/ucs/ucs-types';
 
-/**
- * Licence Service providing access to the UCS system of Mecklenburg-Vorpommern
- */
-@Injectable()
-export class MVLicenceService {
+export class LicencesFromUcsStudendUseCase {
   constructor() {}
 
-  public extractLicenceData(ucsStudent: ResponseFromUCS): AvailableLicenses {
-    const student = ucsStudent['http://www.bildungslogin.de/licenses'];
+  public execute(ucsStudent: UCSStudent): AvailableLicenses {
+    return this.extractLicenceData(ucsStudent);
+  }
 
+  private extractLicenceData(student: UCSStudent): AvailableLicenses {
     const licensesAssignedToStudent = this.extractLicensesFromStudent(student);
     const licensesAssignedToContext =
       this.extractLicensesFromStudentsContext(student);

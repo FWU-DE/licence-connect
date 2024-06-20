@@ -1,14 +1,20 @@
+export type UCSLicence = string;
+export type AvailableUCSLicences = UCSLicence[];
+
 export type UCSClass = {
   name: string;
   id: string;
   licenses?: AvailableUCSLicences;
 };
+
 export type UCSWorkgroup = {
   name: string;
   id: string;
   licenses?: AvailableUCSLicences;
 };
 export type UCSRoles = string;
+
+export type UCSStudentId = string;
 
 export type UCSStudent = {
   id: string;
@@ -31,6 +37,3 @@ export type UCSStudent = {
 export type ResponseFromUCS = {
   'http://www.bildungslogin.de/licenses': UCSStudent;
 };
-
-type UCSLicence = string;
-type AvailableUCSLicences = UCSLicence[];
