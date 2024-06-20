@@ -9,7 +9,7 @@ import {
 import { RequestFromVidisCore } from '../domain/request-from-vidis-core';
 import { LicencesDto } from './LicencesModel';
 import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
-import { LicencesFromUcsStudendUseCase } from '../usecases/licences-from-ucs-student-use-case';
+import { LicencesFromUcsStudentUseCase } from '../usecases/licences-from-ucs-student-use-case';
 import { UCSStudentFromUCSStudentId } from '../usecases/ucs-student-from-ucs-student-id';
 import { ApiKeyGuard } from './authentication/api-key.guard';
 
@@ -35,7 +35,7 @@ export class LicencesController {
       id,
     );
 
-    const licencesFromUcs = new LicencesFromUcsStudendUseCase().execute(
+    const licencesFromUcs = new LicencesFromUcsStudentUseCase().execute(
       ucsStudent,
     );
     console.log('Test');
