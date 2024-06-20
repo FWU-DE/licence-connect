@@ -8,7 +8,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1
 servers:
-  - url: http://localhost:3000/
+  - url: https://api.licenceconnect.schule/
 tags:
   - name: licences
     description: Fetching Licences
