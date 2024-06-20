@@ -4,9 +4,9 @@ import { HttpService } from '@nestjs/axios';
 import {
   ucsResponseWithLicences,
   incomingVidisCoreRequest,
-} from '../domain/ucs/example-data';
+} from 'domain/ucs/example-data';
 import { AxiosResponse } from 'axios';
-import { UCSStudent } from '../domain/ucs/ucs-types';
+import { UCSStudent } from 'domain/ucs/ucs-types';
 import { UCSLicenceFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 
 describe('LicencesController', () => {

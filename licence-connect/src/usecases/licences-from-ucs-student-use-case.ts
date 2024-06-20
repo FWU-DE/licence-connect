@@ -1,5 +1,5 @@
-import { AvailableLicenses, License } from 'src/domain/licence';
-import { UCSStudent } from 'src/domain/ucs/ucs-types';
+import { AvailableLicenses, License } from 'domain/licence';
+import { UCSStudent } from 'domain/ucs/ucs-types';
 
 export class LicencesFromUcsStudendUseCase {
   constructor() {}

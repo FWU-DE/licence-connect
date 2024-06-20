@@ -1,5 +1,5 @@
-import { IUCSLicenceSource } from '../domain/ucs/ucs-licences-source';
-import { UCSStudent, UCSStudentId } from '../domain/ucs/ucs-types';
+import { IUCSLicenceSource } from 'domain/ucs/ucs-licences-source';
+import { UCSStudent, UCSStudentId } from 'domain/ucs/ucs-types';
 
 export class UCSStudentFromUCSStudentId {
   constructor() {}
