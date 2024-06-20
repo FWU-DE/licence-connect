@@ -27,7 +27,7 @@ describe('LicenceController (e2e)', () => {
     await app.init();
   });
 
-  describe('/licence (GET)', () => {
+  describe('v1/licence (POST)', () => {
     describe('With valid api key', () => {
       it('in query', () => {
         return request(app.getHttpServer())
