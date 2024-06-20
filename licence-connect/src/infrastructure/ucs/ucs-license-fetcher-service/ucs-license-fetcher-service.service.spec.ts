@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UCSLicenceFetcherService as UCSLicenceFetcherService } from './ucs-license-fetcher-service.service';
+import { UCSLicenseFetcherService as UCSLicenseFetcherService } from './ucs-license-fetcher-service.service';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 
 describe('UCSLicenseFetcherService', () => {
-  let service: UCSLicenceFetcherService;
+  let service: UCSLicenseFetcherService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UCSLicenceFetcherService,
+        UCSLicenseFetcherService,
         {
           provide: HttpService,
           useValue: {
@@ -23,7 +23,7 @@ describe('UCSLicenseFetcherService', () => {
       ],
     }).compile();
 
-    service = module.get<UCSLicenceFetcherService>(UCSLicenceFetcherService);
+    service = module.get<UCSLicenseFetcherService>(UCSLicenseFetcherService);
   });
 
   it('should be defined', () => {

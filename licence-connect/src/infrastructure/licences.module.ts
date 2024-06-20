@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { LicencesController } from './licences.controller';
 import { HttpModule } from '@nestjs/axios';
-import { UCSLicenceFetcherService as UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { AuthenticationModule } from '../infrastructure/authentication/authentication.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, AuthenticationModule],
   controllers: [LicencesController],
   providers: [UCSLicenseFetcherService],
 })

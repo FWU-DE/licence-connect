@@ -4,8 +4,9 @@ import { HttpService } from '@nestjs/axios';
 import { ucsResponseWithLicences } from '../domain/ucs/example-data';
 import { AxiosResponse } from 'axios';
 import { UCSStudent } from 'domain/ucs/ucs-types';
-import { UCSLicenceFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
-import { ApiKeyGuard } from './api-key/api-key.guard';
+import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { ApiKeyGuard } from './authentication/api-key.guard';
+import { ApiKeyService } from './authentication/api-key.service';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
@@ -26,8 +27,9 @@ describe('LicencesController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [LicencesController],
       providers: [
-        UCSLicenceFetcherService,
+        UCSLicenseFetcherService,
         ApiKeyGuard,
+        ApiKeyService,
         {
           provide: HttpService,
           useValue: {

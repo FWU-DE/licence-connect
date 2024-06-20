@@ -12,7 +12,7 @@ import { IUCSLicenceSource as IUCSStudentSource } from '../../../domain/ucs/ucs-
  * Licence Service providing access to the UCS system of Mecklenburg-Vorpommern
  */
 @Injectable()
-export class UCSLicenceFetcherService implements IUCSStudentSource {
+export class UCSLicenseFetcherService implements IUCSStudentSource {
   constructor(private readonly _httpService: HttpService) {}
 
   public getUCSStudentFromId(id: UCSStudentId): UCSStudent {
