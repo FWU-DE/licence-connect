@@ -2,11 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
-import {
-  incomingVidisCoreRequest,
-  lcLicencesFromUCSResponse,
-} from '../src/domain/ucs/example-data';
 import { ApiKeyService } from '../src/infrastructure/authentication/api-key.service';
+import { RequestFromVidisCore } from 'domain/request-from-vidis-core';
 
 describe('LicenceController (e2e)', () => {
   let app: INestApplication;
@@ -27,27 +24,30 @@ describe('LicenceController (e2e)', () => {
     await app.init();
   });
 
-  describe('v1/licence (POST)', () => {
+  const requestWithNonExistingUser: RequestFromVidisCore = {
+    userId: '00000',
+    clientId: 'sodix-editor-o',
+    schulkennung: 'DE-RP-SN-51201',
+    bundesland: 'DE-MV',
+  };
+
+  describe('API KEY v1/licence (POST)', () => {
     describe('With valid api key', () => {
       it('in query', () => {
         return request(app.getHttpServer())
           .post('/v1/licences?X-API-KEY=test')
-          .send(incomingVidisCoreRequest)
+          .send(requestWithNonExistingUser)
           .expect(200)
-          .expect(
-            `{"hasLicence":true,"licences":${JSON.stringify(lcLicencesFromUCSResponse)}}`,
-          );
+          .expect(`{"hasLicence":false,"licences":[]}`);
       });
 
       it('in header', () => {
         return request(app.getHttpServer())
           .post('/v1/licences')
           .set({ 'X-API-KEY': 'test' })
-          .send(incomingVidisCoreRequest)
+          .send(requestWithNonExistingUser)
           .expect(200)
-          .expect(
-            `{"hasLicence":true,"licences":${JSON.stringify(lcLicencesFromUCSResponse)}}`,
-          );
+          .expect(`{"hasLicence":false,"licences":[]}`);
       });
     });
 
@@ -55,7 +55,7 @@ describe('LicenceController (e2e)', () => {
       it('in query', () => {
         return request(app.getHttpServer())
           .post('/v1/licences?X-API-KEY=wrongApiKey')
-          .send(incomingVidisCoreRequest)
+          .send(requestWithNonExistingUser)
           .expect(403);
       });
 
@@ -63,7 +63,7 @@ describe('LicenceController (e2e)', () => {
         return request(app.getHttpServer())
           .post('/v1/licences')
           .set({ 'X-API-KEY': 'wrongApiKey' })
-          .send(incomingVidisCoreRequest)
+          .send(requestWithNonExistingUser)
           .expect(403);
       });
     });
@@ -72,9 +72,61 @@ describe('LicenceController (e2e)', () => {
       it('in query', () => {
         return request(app.getHttpServer())
           .post('/v1/licences')
-          .send(incomingVidisCoreRequest)
+          .send(requestWithNonExistingUser)
           .expect(403);
       });
+    });
+  });
+
+  describe('v1/licence/ (POST)', () => {
+    it('Add licences', () => {
+      const licenceRequest = requestWithNonExistingUser;
+      licenceRequest.userId = 'Student1';
+
+      return request(app.getHttpServer())
+        .post('/v1/licences/add')
+        .set({ 'X-API-KEY': 'test' })
+        .send({
+          studentId: 'Student1',
+          licencesToAdd: [{ license_code: '1111' }],
+        })
+        .expect(201);
+    });
+
+    it('Reject malformed licence', () => {
+      const licenceRequest = requestWithNonExistingUser;
+      licenceRequest.userId = 'Student1';
+
+      return request(app.getHttpServer())
+        .post('/v1/licences/add')
+        .set({ 'X-API-KEY': 'test' })
+        .send({ licencesToAdd: ['1111'] })
+        .expect(400);
+    });
+  });
+
+  describe('v1/licence/ (POST)', () => {
+    it('Get licences', () => {
+      const licenceRequest = requestWithNonExistingUser;
+      licenceRequest.userId = 'Student1';
+
+      return request(app.getHttpServer())
+        .post('/v1/licences/add')
+        .set({ 'X-API-KEY': 'test' })
+        .send({
+          studentId: 'Student1',
+          licencesToAdd: [{ license_code: '1111' }, { license_code: '1112' }],
+        })
+        .then(() => {
+          return request(app.getHttpServer())
+            .post('/v1/licences')
+            .set({ 'X-API-KEY': 'test' })
+            .send(licenceRequest)
+            .expect(200)
+            .expect(
+              `{"hasLicence":true,"licences":[{"license_code":"1111"},{"license_code":"1112"}]}`,
+            );
+        });
     });
   });
 });

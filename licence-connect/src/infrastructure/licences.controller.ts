@@ -4,17 +4,21 @@ import {
   HttpCode,
   Post,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
   Version,
 } from '@nestjs/common';
-import { LicencesDto } from './dto/licences.dto';
+import { LicencesDto } from './licences/dto/licences.dto';
 import { ApiKeyGuard } from './authentication/api-key.guard';
-import { VidisRequestRequest } from './dto/vidis-request.dto';
-import { UcsRepositoryService } from './ucs/repository/ucs-repository.service';
+import { VidisRequestRequest } from './licences/dto/vidis-request.dto';
+import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
+import { AddLicenceRequestDto } from './licences/dto/add-licence-request.dto';
 
-@Controller('licences')
+@Controller('v1/licences')
+@UsePipes(new ValidationPipe({ enableDebugMessages: true }))
 @UseGuards(ApiKeyGuard)
 export class LicencesController {
-  constructor(private readonly ucsRepostiory: UcsRepositoryService) {}
+  constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
 
   @Post()
   @HttpCode(200)
@@ -22,8 +26,17 @@ export class LicencesController {
   public getLicences(@Body() body: VidisRequestRequest): LicencesDto {
     const id = body.userId;
 
-    const licencesFromUcs = this.ucsRepostiory.getLicencesForStudentId(id);
+    const licencesForUser = this.licenceRepository.getLicencesForStudentId(id);
 
-    return new LicencesDto(licencesFromUcs);
+    return new LicencesDto(licencesForUser);
+  }
+
+  @Post('add')
+  @Version('1')
+  public addLicences(@Body() body: AddLicenceRequestDto) {
+    const id = body.studentId;
+    const licencesToAdd = body.licencesToAdd;
+
+    this.licenceRepository.addLicencesForStudentId(id, licencesToAdd);
   }
 }

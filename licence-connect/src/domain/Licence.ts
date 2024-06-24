@@ -1,12 +1,22 @@
 export type LicenceIdentifier = string;
 
-type LicenseType = 'single' | 'volumnes';
-type LicenseSpecialType = 'none';
+const licenceTypes = ['single', 'volumnes'] as const;
+export type LicenseType = (typeof licenceTypes)[number];
+
+const licenceSpecialTypes = ['none'] as const;
+export type LicenseSpecialType = (typeof licenceSpecialTypes)[number];
+
+const activationStatus = ['ACTIVATED'] as const;
+export type ActivationStatus = (typeof activationStatus)[number];
+
+const validityStatus = ['VALID'] as const;
+export type ValidityStatus = (typeof validityStatus)[number];
+
 type LicenseStatus = {
   assignment_date?: number;
   provisioned_date?: number;
-  status_activation?: 'ACTIVATED';
-  status_validity?: 'VALID';
+  status_activation?: ActivationStatus;
+  status_validity?: ValidityStatus;
   validity_start?: number;
   validity_end?: number;
 };
