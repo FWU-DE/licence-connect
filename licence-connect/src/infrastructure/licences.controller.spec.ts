@@ -7,6 +7,7 @@ import { UCSStudent } from 'domain/ucs/ucs-types';
 import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 import { ApiKeyGuard } from './authentication/api-key.guard';
 import { ApiKeyService } from './authentication/api-key.service';
+import { UcsRepositoryService } from './ucs/repository/ucs-repository.service';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
@@ -28,6 +29,7 @@ describe('LicencesController', () => {
       controllers: [LicencesController],
       providers: [
         UCSLicenseFetcherService,
+        UcsRepositoryService,
         ApiKeyGuard,
         ApiKeyService,
         {

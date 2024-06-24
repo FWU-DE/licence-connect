@@ -4,11 +4,7 @@ import { ApiKeyService } from './api-key.service';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
-  // apiKeyService: ApiKeyService;
   constructor(private readonly apiKeyService: ApiKeyService) {}
-  /* constructor() {
-    this.apiKeyService = new ApiKeyService();
-  } */
 
   canActivate(
     context: ExecutionContext,
