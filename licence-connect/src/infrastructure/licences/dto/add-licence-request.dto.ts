@@ -1,11 +1,13 @@
 import { StudentId } from 'domain/student';
 import { LicenceDto } from './licence.dto';
 import { Type } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 
 export class AddLicenceRequestDto {
   @IsNotEmpty()
   studentId: StudentId;
+
+  @ValidateNested({ each: true })
   @Type(() => LicenceDto)
   licencesToAdd: LicenceDto[];
 }

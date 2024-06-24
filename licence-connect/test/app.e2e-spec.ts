@@ -93,14 +93,25 @@ describe('LicenceController (e2e)', () => {
         .expect(201);
     });
 
-    it('Reject malformed licence', () => {
+    it('Reject licence request without licence_code', () => {
       const licenceRequest = requestWithNonExistingUser;
       licenceRequest.userId = 'Student1';
 
       return request(app.getHttpServer())
         .post('/v1/licences/add')
         .set({ 'X-API-KEY': 'test' })
-        .send({ licencesToAdd: ['1111'] })
+        .send({ studentId: 'Student1', licencesToAdd: ['1111'] })
+        .expect(400);
+    });
+
+    it('Reject licence request without studentId', () => {
+      const licenceRequest = requestWithNonExistingUser;
+      licenceRequest.userId = 'Student1';
+
+      return request(app.getHttpServer())
+        .post('/v1/licences/add')
+        .set({ 'X-API-KEY': 'test' })
+        .send({ licencesToAdd: [{ license_code: '1111' }] })
         .expect(400);
     });
   });
