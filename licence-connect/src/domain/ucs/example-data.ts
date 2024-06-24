@@ -3,32 +3,20 @@ import { RequestFromVidisCore } from '../request-from-vidis-core';
 import { ResponseFromUCS } from './ucs-types';
 
 export const incomingVidisCoreRequest: RequestFromVidisCore = {
-  exp: 1716368641,
-  iat: 1716368341,
-  auth_time: 0,
-  jti: '31b3fbee-ad3d-4190-9905-4ae2074ea696',
-  iss: 'https://aai.vidis.schule/auth/realms/vidis',
-  aud: 'sodix-editor-o',
-  sub: '02e71a9d-d68d-3050-9a0d-5b963c06aec0',
-  typ: 'ID',
-  azp: 'sodix-editor-o',
-  session_state: 'b1aaa14c-5d1c-4ebf-9c4a-5b42e0cfc613',
-  email: '0c9cd428-6ba3-3bb1-b1c4-1df95e3b6db1@vidis.schule',
-  sid: 'b1aaa14c-5d1c-4ebf-9c3a-5b43e0cfc613',
+  userId: '02e71a9d-d68d-3050-9a0d-5b963c06aec0',
+  clientId: 'sodix-editor-o',
   schulkennung: 'DE-RP-SN-51201',
   bundesland: 'DE-MV',
-  vorname: 'Maya',
-  nachname: 'Mustermann',
 };
 
 export const lcLicencesFromUCSResponse: AvailableLicences = [
-  { licenceId: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
-  { licenceId: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
-  { licenceId: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
-  { licenceId: 'CCB-7bd46a45-345c-4237-a451-4444736eb011' },
-  { licenceId: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45' },
-  { licenceId: 'COR-3rw46a45-345c-4237-a451-4333736ex015' },
-  { licenceId: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts' },
+  { license_code: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j' },
+  { license_code: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds' },
+  { license_code: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq' },
+  { license_code: 'CCB-7bd46a45-345c-4237-a451-4444736eb011' },
+  { license_code: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45' },
+  { license_code: 'COR-3rw46a45-345c-4237-a451-4333736ex015' },
+  { license_code: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts' },
 ];
 
 /**

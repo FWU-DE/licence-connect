@@ -87,7 +87,7 @@ export class LicencesFromUcsStudentUseCase {
 
   private createLicenceObject(licenceId: string): Licence {
     return {
-      licenceId: licenceId,
+      license_code: licenceId,
     };
   }
 }
