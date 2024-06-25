@@ -17,11 +17,22 @@ import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { RemoveLicenceRequestDto } from './licences/dto/remove-licence-request.dto';
 import { VidisApiKeyGuard } from './authentication/vidis-api-key/vidis-api-key.guard';
 import { LicenceManagementApiKeyGuard } from './authentication/licence-management-api-key/licence-management-api-key.guard';
+import { RequestLicenceFactoryService } from './licences/request-licence-factory/request-licence-factory.service';
+import { AddLicenceForStudentUseCaseFactoryService } from './licences/add-licence-for-student-use-case-factory/add-licence-for-student-use-case-factory.service';
+import { RemoveLicenceForStudentUseCaseFactoryService } from './licences/remove-licence-for-student-use-case-factory/remove-licence-for-student-use-case-factory.service';
+import { ReleaseLicenceForStudentUseCaseFactoryService } from './licences/release-licence-for-student-use-case-factory/release-licence-for-student-use-case-factory.service';
+import { Licence } from 'domain/licence';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))
 export class LicencesController {
-  constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
+  constructor(
+    private readonly licenceRepository: InMemoryRepositoryService,
+    private readonly requestLicenceUseCaseFactory: RequestLicenceFactoryService,
+    private readonly addLicenceUseCaseFactory: AddLicenceForStudentUseCaseFactoryService,
+    private readonly removeLicenceUseCaseFactory: RemoveLicenceForStudentUseCaseFactoryService,
+    private readonly releaseLicencesUseCaseFactory: ReleaseLicenceForStudentUseCaseFactoryService,
+  ) {}
 
   @Post('request')
   @HttpCode(200)
@@ -42,9 +53,14 @@ export class LicencesController {
     description: 'Request does not match the expected schema',
   })
   public getLicences(@Body() body: VidisRequestDto): LicencesDto {
-    const id = body.userId;
+    const useCase =
+      this.requestLicenceUseCaseFactory.createLicenceRequestUseCase(
+        body.bundesland,
+        body.schulkennung,
+        body.clientId,
+      );
 
-    const licencesForUser = this.licenceRepository.getLicencesForStudentId(id);
+    const licencesForUser = useCase(body.userId, body.clientId);
 
     return new LicencesDto(licencesForUser);
   }
@@ -68,9 +84,14 @@ export class LicencesController {
     description: 'Request does not match the expected schema',
   })
   public releaseLicences(@Body() body: VidisRequestDto) {
-    const id = body.userId;
+    const useCase =
+      this.releaseLicencesUseCaseFactory.createReleaseLicenceForStudentUseCase(
+        body.bundesland,
+        body.schulkennung,
+        body.clientId,
+      );
 
-    console.log(`Try to release a licence for user ${id}`);
+    useCase(body.userId, body.clientId);
   }
 
   @Post('add')
@@ -91,9 +112,11 @@ export class LicencesController {
   })
   public addLicences(@Body() body: AddLicenceRequestDto) {
     const id = body.studentId;
-    const licencesToAdd = body.licencesToAdd;
+    const licencesToAdd = body.licencesToAdd as Licence[];
 
-    this.licenceRepository.addLicencesForStudentId(id, licencesToAdd);
+    const useCase = this.addLicenceUseCaseFactory.createLicenceRequestUseCase();
+
+    useCase(id, licencesToAdd);
   }
 
   @Delete('remove')
@@ -114,12 +137,9 @@ export class LicencesController {
     description: 'Request does not match the expected schema',
   })
   public removeLicences(@Body() body: RemoveLicenceRequestDto) {
-    const id = body.studentId;
+    const useCase =
+      this.removeLicenceUseCaseFactory.createRemoveLicenceForStudentUseCase();
 
-    if (body.licencesToAdd) {
-      this.licenceRepository.removeLicencesForStudentId(id, body.licencesToAdd);
-    } else {
-      this.licenceRepository.removeAllLicencesForStudentId(id);
-    }
+    useCase(body.studentId, body.licencesToAdd);
   }
 }
