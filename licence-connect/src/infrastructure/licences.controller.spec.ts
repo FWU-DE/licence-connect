@@ -4,10 +4,8 @@ import { HttpService } from '@nestjs/axios';
 import { ucsResponseWithLicences } from '../domain/ucs/example-data';
 import { AxiosResponse } from 'axios';
 import { UCSStudent } from 'domain/ucs/ucs-types';
-import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 import { ApiKeyGuard } from './authentication/api-key.guard';
 import { ApiKeyService } from './authentication/api-key.service';
-import { UcsRepositoryService } from './ucs/repository/ucs-repository.service';
 import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
 
 describe('LicencesController', () => {

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { LicencesDto } from './licences/dto/licences.dto';
 import { ApiKeyGuard } from './authentication/api-key.guard';
-import { VidisRequestRequest } from './licences/dto/vidis-request.dto';
+import { VidisRequestDto } from './licences/dto/vidis-request.dto';
 import { AddLicenceRequestDto } from './licences/dto/add-licence-request.dto';
 import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
 import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
@@ -40,7 +40,7 @@ export class LicencesController {
     status: 400,
     description: 'Request does not match the expected schema',
   })
-  public getLicences(@Body() body: VidisRequestRequest): LicencesDto {
+  public getLicences(@Body() body: VidisRequestDto): LicencesDto {
     const id = body.userId;
 
     const licencesForUser = this.licenceRepository.getLicencesForStudentId(id);
@@ -65,7 +65,7 @@ export class LicencesController {
     status: 400,
     description: 'Request does not match the expected schema',
   })
-  public releaseLicences(@Body() body: VidisRequestRequest) {
+  public releaseLicences(@Body() body: VidisRequestDto) {
     const id = body.userId;
 
     console.log(`Try to release a licence for user ${id}`);
@@ -102,8 +102,8 @@ export class LicencesController {
     tags: ['licenceManagement'],
   })
   @ApiResponse({
-    status: 201,
-    description: 'Released the licencenes for the specific user',
+    status: 200,
+    description: 'Remove the licencenes for the specific user',
   })
   @ApiResponse({
     status: 400,
