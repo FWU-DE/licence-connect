@@ -58,7 +58,7 @@ describe('InMemoryRepositoryService', () => {
     });
   });
 
-  fdescribe('remove licences', () => {
+  describe('remove licences', () => {
     it('remove multiple licences', () => {
       service.addLicencesForStudentId('test', [
         { license_code: '111' },
