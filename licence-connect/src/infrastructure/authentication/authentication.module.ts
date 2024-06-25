@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ApiKeyService } from './api-key.service';
-import { ConfigurationModule } from 'infrastructure/configuration/configuration.module';
+import { ConfigurationModule } from '../configuration/configuration.module';
 
 @Module({
-  exports: [ApiKeyService],
+  exports: [ConfigurationModule],
   imports: [ConfigurationModule],
   controllers: [],
-  providers: [ApiKeyService],
+  providers: [],
 })
 export class AuthenticationModule {}

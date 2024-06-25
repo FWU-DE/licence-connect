@@ -10,16 +10,16 @@ import {
   Version,
 } from '@nestjs/common';
 import { LicencesDto } from './licences/dto/licences.dto';
-import { ApiKeyGuard } from './authentication/api-key.guard';
 import { VidisRequestDto } from './licences/dto/vidis-request.dto';
 import { AddLicenceRequestDto } from './licences/dto/add-licence-request.dto';
 import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
 import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { RemoveLicenceRequestDto } from './licences/dto/remove-licence-request.dto';
+import { VidisApiKeyGuard } from './authentication/vidis-api-key/vidis-api-key.guard';
+import { LicenceManagementApiKeyGuard } from './authentication/licence-management-api-key/licence-management-api-key.guard';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))
-@UseGuards(ApiKeyGuard)
 export class LicencesController {
   constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
 
@@ -27,6 +27,7 @@ export class LicencesController {
   @HttpCode(200)
   @Version('1')
   @ApiSecurity('VIDIS-Core')
+  @UseGuards(VidisApiKeyGuard)
   @ApiOperation({
     description:
       'Request the use for licenses for a specific application. If this request is triggered because of a changed licence, the old licence is not released.',
@@ -52,6 +53,7 @@ export class LicencesController {
   @HttpCode(200)
   @Version('1')
   @ApiSecurity('VIDIS-Core')
+  @UseGuards(VidisApiKeyGuard)
   @ApiOperation({
     description:
       'Release one licenses for a specific application used by the specific user',
@@ -74,6 +76,7 @@ export class LicencesController {
   @Post('add')
   @Version('1')
   @ApiSecurity('LicenceManagement')
+  @UseGuards(LicenceManagementApiKeyGuard)
   @ApiOperation({
     description: 'Add a specific licence for a the user with the given UserId',
     tags: ['licenceManagement'],
@@ -96,6 +99,7 @@ export class LicencesController {
   @Delete('remove')
   @Version('1')
   @ApiSecurity('LicenceManagement')
+  @UseGuards(LicenceManagementApiKeyGuard)
   @ApiOperation({
     description:
       'Remove the specified licence for a the user with the given UserId. If no licences are specified, all licences are released',

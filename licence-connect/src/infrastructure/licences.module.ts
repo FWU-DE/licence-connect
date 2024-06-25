@@ -5,9 +5,10 @@ import { AuthenticationModule } from '../infrastructure/authentication/authentic
 import { UcsRepositoryService } from './ucs/repository/ucs-repository.service';
 import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
+import { ConfigurationModule } from './configuration/configuration.module';
 
 @Module({
-  imports: [HttpModule, AuthenticationModule],
+  imports: [HttpModule, AuthenticationModule, ConfigurationModule],
   controllers: [LicencesController],
   providers: [
     UcsRepositoryService,

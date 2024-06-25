@@ -9,6 +9,9 @@ export class ConfigurationService implements ConfigurationProvider {
   public getConfiguration(): EnvironmentConfiguration {
     return {
       vidisApiKey: this.nestConfigurationService.get<string>('VIDIS_API_KEY'),
+      licenceManagerApiKey: this.nestConfigurationService.get<string>(
+        'LICENCE_MANAGER_API_KEY',
+      ),
     };
   }
 }
