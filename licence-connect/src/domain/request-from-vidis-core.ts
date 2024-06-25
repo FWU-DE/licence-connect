@@ -1,6 +1,8 @@
 import { UCSStudentId } from './ucs/ucs-types';
 
-export type BundeslandIdentificationString = 'DE-MV' | 'DE-RP';
+export const bundeslandIdentificationString = ['DE-MV', 'DE-RP'];
+export type BundeslandIdentificationString =
+  (typeof bundeslandIdentificationString)[number];
 
 /**
  * An incoming licence request for a specific user

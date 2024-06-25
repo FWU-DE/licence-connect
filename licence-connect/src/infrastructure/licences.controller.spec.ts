@@ -8,6 +8,7 @@ import { UCSLicenseFetcherService } from './ucs/ucs-license-fetcher-service/ucs-
 import { ApiKeyGuard } from './authentication/api-key.guard';
 import { ApiKeyService } from './authentication/api-key.service';
 import { UcsRepositoryService } from './ucs/repository/ucs-repository.service';
+import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
 
 describe('LicencesController', () => {
   let licencesController: LicencesController;
@@ -28,8 +29,7 @@ describe('LicencesController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [LicencesController],
       providers: [
-        UCSLicenseFetcherService,
-        UcsRepositoryService,
+        InMemoryRepositoryService,
         ApiKeyGuard,
         ApiKeyService,
         {

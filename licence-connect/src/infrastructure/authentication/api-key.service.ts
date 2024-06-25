@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 export class ApiKeyService {
   constructor() {}
 
-  public isApiKeyValid(_apiKey: string): boolean {
-    return true;
+  public isApiKeyValid(apiKey: string): boolean {
+    return apiKey === 'test';
   }
 }

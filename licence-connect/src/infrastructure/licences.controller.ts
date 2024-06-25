@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   Post,
   UseGuards,
@@ -11,8 +12,10 @@ import {
 import { LicencesDto } from './licences/dto/licences.dto';
 import { ApiKeyGuard } from './authentication/api-key.guard';
 import { VidisRequestRequest } from './licences/dto/vidis-request.dto';
-import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
 import { AddLicenceRequestDto } from './licences/dto/add-licence-request.dto';
+import { InMemoryRepositoryService } from './licences/repository/in-memory-repository.service';
+import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { RemoveLicenceRequestDto } from './licences/dto/remove-licence-request.dto';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))
@@ -20,9 +23,23 @@ import { AddLicenceRequestDto } from './licences/dto/add-licence-request.dto';
 export class LicencesController {
   constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
 
-  @Post()
+  @Post('request')
   @HttpCode(200)
   @Version('1')
+  @ApiSecurity('VIDIS-Core')
+  @ApiOperation({
+    description:
+      'Request the use for licenses for a specific application. If this request is triggered because of a changed licence, the old licence is not released.',
+    tags: ['licences'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Fetch all licences available for a specific user',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Request does not match the expected schema',
+  })
   public getLicences(@Body() body: VidisRequestRequest): LicencesDto {
     const id = body.userId;
 
@@ -31,12 +48,74 @@ export class LicencesController {
     return new LicencesDto(licencesForUser);
   }
 
+  @Post('release')
+  @HttpCode(200)
+  @Version('1')
+  @ApiSecurity('VIDIS-Core')
+  @ApiOperation({
+    description:
+      'Release one licenses for a specific application used by the specific user',
+    tags: ['licences'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully released licence if it was available',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Request does not match the expected schema',
+  })
+  public releaseLicences(@Body() body: VidisRequestRequest) {
+    const id = body.userId;
+
+    console.log(`Try to release a licence for user ${id}`);
+  }
+
   @Post('add')
   @Version('1')
+  @ApiSecurity('LicenceManagement')
+  @ApiOperation({
+    description: 'Add a specific licence for a the user with the given UserId',
+    tags: ['licenceManagement'],
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Save the licencenes as available licences for the specific ',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Request does not match the expected schema',
+  })
   public addLicences(@Body() body: AddLicenceRequestDto) {
     const id = body.studentId;
     const licencesToAdd = body.licencesToAdd;
 
     this.licenceRepository.addLicencesForStudentId(id, licencesToAdd);
+  }
+
+  @Delete('remove')
+  @Version('1')
+  @ApiSecurity('LicenceManagement')
+  @ApiOperation({
+    description:
+      'Remove the specified licence for a the user with the given UserId. If no licences are specified, all licences are released',
+    tags: ['licenceManagement'],
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Released the licencenes for the specific user',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Request does not match the expected schema',
+  })
+  public removeLicences(@Body() body: RemoveLicenceRequestDto) {
+    const id = body.studentId;
+
+    if (body.licencesToAdd) {
+      this.licenceRepository.removeLicencesForStudentId(id, body.licencesToAdd);
+    } else {
+      this.licenceRepository.removeAllLicencesForStudentId(id);
+    }
   }
 }
