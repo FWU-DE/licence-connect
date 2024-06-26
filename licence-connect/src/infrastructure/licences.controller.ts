@@ -21,7 +21,7 @@ import { RequestLicenceFactoryService } from './licences/request-licence-factory
 import { AddLicenceForStudentUseCaseFactoryService } from './licences/add-licence-for-student-use-case-factory/add-licence-for-student-use-case-factory.service';
 import { RemoveLicenceForStudentUseCaseFactoryService } from './licences/remove-licence-for-student-use-case-factory/remove-licence-for-student-use-case-factory.service';
 import { ReleaseLicenceForStudentUseCaseFactoryService } from './licences/release-licence-for-student-use-case-factory/release-licence-for-student-use-case-factory.service';
-import { Licence } from 'domain/licence';
+import { Licence } from '@domain/licence';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))

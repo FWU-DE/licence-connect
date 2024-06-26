@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { BundeslandIdentificationString } from 'domain/request-from-vidis-core';
+import { BundeslandIdentificationString } from '@domain/request-from-vidis-core';
 import {
   RequestLicencesForStudentUseCase,
   createRequestLicencesForStudentUseCase,
-} from '../../../usecases/request-licences-use-case';
+} from '@usecases/request-licences-use-case';
 import { InMemoryRepositoryService } from '../repository/in-memory-repository.service';
 
 @Injectable()

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   AddLicencesForStudentUseCase,
   createAddLicenceForStudentUseCase,
-} from 'usecases/add-licences-for-student-use-case';
+} from '@usecases/add-licences-for-student-use-case';
 import { InMemoryRepositoryService } from '../repository/in-memory-repository.service';
 
 @Injectable()

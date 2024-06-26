@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { BundeslandIdentificationString } from 'domain/request-from-vidis-core';
+import { BundeslandIdentificationString } from '@domain/request-from-vidis-core';
 import { InMemoryRepositoryService } from '../repository/in-memory-repository.service';
 import {
   ReleaseLicencesForStudentUseCase,
   createReleaseLicenceForStudentUseCase,
-} from '../../../usecases/release-licence-for-student-use-case';
+} from '@usecases/release-licence-for-student-use-case';
 
 @Injectable()
 export class ReleaseLicenceForStudentUseCaseFactoryService {

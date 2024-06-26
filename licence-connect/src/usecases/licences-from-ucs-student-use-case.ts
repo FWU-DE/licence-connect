@@ -1,5 +1,5 @@
-import { AvailableLicences, Licence } from 'domain/Licence';
-import { UCSStudent } from 'domain/ucs/ucs-types';
+import { AvailableLicences, Licence } from '@domain/Licence';
+import { UCSStudent } from '@domain/ucs/ucs-types';
 
 // NOTE: in UCS the Spelling is "license" while LicencesConnect uses the "licence" spelling
 /**

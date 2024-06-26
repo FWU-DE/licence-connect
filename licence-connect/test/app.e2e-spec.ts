@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
-import { RequestFromVidisCore } from 'domain/request-from-vidis-core';
-import { ConfigurationService } from '../src/infrastructure/configuration/configuration.service';
+import { RequestFromVidisCore } from '@domain/request-from-vidis-core';
+import { ConfigurationService } from '@infrastructure/configuration/configuration.service';
 
 describe('LicenceController (e2e)', () => {
   let app: INestApplication;

@@ -1,4 +1,4 @@
-import { StudentId } from 'domain/student';
+import { StudentId } from '@domain/student';
 
 export type ReleaseLicencesForStudentUseCase = (
   studentId: StudentId,

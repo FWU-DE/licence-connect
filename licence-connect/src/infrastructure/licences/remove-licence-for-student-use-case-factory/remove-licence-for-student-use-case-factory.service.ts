@@ -3,7 +3,7 @@ import { InMemoryRepositoryService } from '../repository/in-memory-repository.se
 import {
   RemoveLicencesForStudentUseCase,
   createRemoveLicenceForStudentUseCase,
-} from '../../../usecases/remove-licences-for-student-use-case';
+} from '@usecases/remove-licences-for-student-use-case';
 
 @Injectable()
 export class RemoveLicenceForStudentUseCaseFactoryService {

@@ -5,7 +5,7 @@ import {
   LicenseSpecialType,
   LicenseType,
   ValidityStatus,
-} from 'domain/licence';
+} from '@domain/licence';
 
 export class LicenseStatus {
   assignment_date: number;

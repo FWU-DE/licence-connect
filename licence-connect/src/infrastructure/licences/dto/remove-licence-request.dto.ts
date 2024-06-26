@@ -1,4 +1,4 @@
-import { StudentId } from 'domain/student';
+import { StudentId } from '@domain/student';
 import { LicenceDto } from './licence.dto';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, ValidateNested } from 'class-validator';

@@ -1,6 +1,6 @@
-import { AvailableLicences } from 'domain/licence';
-import { LicenceRepository } from 'domain/licence-repository';
-import { StudentId } from 'domain/student';
+import { AvailableLicences } from '@domain/licence';
+import { LicenceRepository } from '@domain/licence-repository';
+import { StudentId } from '@domain/student';
 
 export type RequestLicencesForStudentUseCase = (
   studentId: StudentId,

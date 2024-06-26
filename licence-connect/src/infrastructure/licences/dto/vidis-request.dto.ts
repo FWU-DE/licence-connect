@@ -4,8 +4,8 @@ import {
   ClientId,
   Schulkennung,
   bundeslandIdentificationString,
-} from '../../../domain/request-from-vidis-core';
-import { UCSStudentId } from '../../../domain/ucs/ucs-types';
+} from '@domain/request-from-vidis-core';
+import { UCSStudentId } from '@domain/ucs/ucs-types';
 
 export class VidisRequestDto {
   public userId: UCSStudentId;

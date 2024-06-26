@@ -11,9 +11,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "domain/*": ["./src/domain/*"],
-      "usecases/*": ["./src/usecases/*"],
-      "infrastructure/*": ["./src/infrastructure/*"]
+      "@domain/*": ["./src/domain/*"],
+      "@usecases/*": ["./src/usecases/*"],
+      "@infrastructure/*": ["./src/infrastructure/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

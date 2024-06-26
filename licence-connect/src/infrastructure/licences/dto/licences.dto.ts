@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AvailableLicences } from 'domain/licence';
+import { AvailableLicences } from '@domain/licence';
 import { licenceSchema } from '../../schema/licence-schema';
 
 /**

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { AvailableLicences, Licence } from 'domain/licence';
-import { LicenceRepository } from 'domain/licence-repository';
-import { StudentId } from 'domain/student';
+import { AvailableLicences, Licence } from '@domain/licence';
+import { LicenceRepository } from '@domain/licence-repository';
+import { StudentId } from '@domain/student';
 
 @Injectable()
 export class InMemoryRepositoryService implements LicenceRepository {

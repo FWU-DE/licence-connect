@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ConfigurationProvider } from 'domain/configuration/configuration-provider';
-import { EnvironmentConfiguration } from 'domain/environment-configuration';
+import { ConfigurationProvider } from '@domain/configuration/configuration-provider';
+import { EnvironmentConfiguration } from '@domain/environment-configuration';
 
 @Injectable()
 export class ConfigurationService implements ConfigurationProvider {
