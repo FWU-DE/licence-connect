@@ -3,7 +3,7 @@ import { BundeslandIdentificationString } from 'domain/request-from-vidis-core';
 import { InMemoryRepositoryService } from '../repository/in-memory-repository.service';
 import {
   ReleaseLicencesForStudentUseCase,
-  createSimpleReleaseLicenceForStudentUseCase,
+  createReleaseLicenceForStudentUseCase,
 } from '../../../usecases/release-licence-for-student-use-case';
 
 @Injectable()
@@ -14,6 +14,6 @@ export class ReleaseLicenceForStudentUseCaseFactoryService {
     _schoolIdentifier: string,
     _applicationId: string,
   ): ReleaseLicencesForStudentUseCase {
-    return createSimpleReleaseLicenceForStudentUseCase();
+    return createReleaseLicenceForStudentUseCase();
   }
 }
