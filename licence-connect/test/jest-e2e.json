@@ -7,8 +7,10 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "^@domain/(.*)$": "<rootDir>/src/domain/$1",
-    "^@usecases/(.*)$": "<rootDir>/src/usecases/$1",
-    "^@infrastructure/(.*)$": "<rootDir>/src/infrastructure/$1"
+    "^@licences/(.*)$": "<rootDir>/src/licences/$1",
+    "^@vidis/(.*)$": "<rootDir>/src/vidis/$1",
+    "^@ucs/(.*)$": "<rootDir>/src/ucs/$1",
+    "^@licence-management/(.*)$": "<rootDir>/src/licence-management/$1",
+    "^@cross-cutting-concerns/(.*)$": "<rootDir>/src/cross-cutting-concerns/$1"
   }
 }

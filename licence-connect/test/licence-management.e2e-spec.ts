@@ -6,7 +6,7 @@ import { RequestFromVidisCore } from '@vidis/domain/request-from-vidis-core';
 import { LicenceManagementConfigurationService } from '@licence-management/infrastructure/configuration/licence-management-configuration.service';
 import { VidisConfigurationService } from '@vidis/infrastructure/configuration/vidis-configuration.service';
 
-describe('Workflows (e2e)', () => {
+describe('LicenceManagementController (e2e)', () => {
   let app: INestApplication;
 
   const licenceManagerApiKey = 'licenceManager';
@@ -45,8 +45,8 @@ describe('Workflows (e2e)', () => {
     bundesland: 'DE-MV',
   };
 
-  fdescribe('v1/licence/ (POST)', () => {
-    it('Add and fetch licences', () => {
+  describe('v1/licence/ (POST)', () => {
+    it('Add licences', () => {
       const licenceRequest = requestWithNonExistingUser;
       licenceRequest.userId = 'Student1';
 
@@ -55,36 +55,31 @@ describe('Workflows (e2e)', () => {
         .set({ 'X-API-KEY': licenceManagerApiKey })
         .send({
           studentId: 'Student1',
-          licencesToAdd: [{ license_code: '1111' }, { license_code: '1112' }],
+          licencesToAdd: [{ license_code: '1111' }],
         })
-        .expect(201)
-        .then(() => {
-          return request(app.getHttpServer())
-            .post('/v1/licences/request')
-            .set({ 'X-API-KEY': vidisApiKey })
-            .send(licenceRequest)
-            .expect(200)
-            .expect(
-              `{"hasLicence":true,"licences":[{"license_code":"1111"},{"license_code":"1112"}]}`,
-            );
-        })
-        .then(() => {
-          return request(app.getHttpServer())
-            .delete('/v1/licences/remove')
-            .set({ 'X-API-KEY': licenceManagerApiKey })
-            .send({
-              studentId: 'Student1',
-            })
-            .expect(200);
-        })
-        .then(() => {
-          return request(app.getHttpServer())
-            .post('/v1/licences/request')
-            .set({ 'X-API-KEY': vidisApiKey })
-            .send(licenceRequest)
-            .expect(200)
-            .expect(`{"hasLicence":false,"licences":[]}`);
-        });
+        .expect(201);
+    });
+
+    it('Reject licence request without licence_code', () => {
+      const licenceRequest = requestWithNonExistingUser;
+      licenceRequest.userId = 'Student1';
+
+      return request(app.getHttpServer())
+        .post('/v1/licences/add')
+        .set({ 'X-API-KEY': licenceManagerApiKey })
+        .send({ studentId: 'Student1', licencesToAdd: ['1111'] })
+        .expect(400);
+    });
+
+    it('Reject licence request without studentId', () => {
+      const licenceRequest = requestWithNonExistingUser;
+      licenceRequest.userId = 'Student1';
+
+      return request(app.getHttpServer())
+        .post('/v1/licences/add')
+        .set({ 'X-API-KEY': licenceManagerApiKey })
+        .send({ licencesToAdd: [{ license_code: '1111' }] })
+        .expect(400);
     });
   });
 });

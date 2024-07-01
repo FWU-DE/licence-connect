@@ -74,9 +74,11 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@domain/(.*)$": "<rootDir>/domain/$1",
-      "^@usecases/(.*)$": "<rootDir>/usecases/$1",
-      "^@infrastructure/(.*)$": "<rootDir>/infrastructure/$1"
+      "^@licences/(.*)$": "<rootDir>/licences/$1",
+      "^@vidis/(.*)$": "<rootDir>/vidis/$1",
+      "^@ucs/(.*)$": "<rootDir>/ucs/$1",
+      "^@licence-management/(.*)$": "<rootDir>/licence-management/$1",
+      "^@cross-cutting-concerns/(.*)$": "<rootDir>/cross-cutting-concerns/$1"
     }
   }
 }

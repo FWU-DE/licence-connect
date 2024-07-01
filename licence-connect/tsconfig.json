@@ -11,9 +11,11 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@domain/*": ["./src/domain/*"],
-      "@usecases/*": ["./src/usecases/*"],
-      "@infrastructure/*": ["./src/infrastructure/*"]
+      "@licences/*": ["./src/licences/*"],
+      "@vidis/*": ["./src/vidis/*"],
+      "@ucs/*": ["./src/ucs/*"],
+      "@licence-management/*": ["./src/licence-management/*"],
+      "@cross-cutting-concerns/*": ["./src/cross-cutting-concerns/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { LicencesModule } from './infrastructure/licences.module';
+import { VidisModule } from './vidis/infrastructure/vidis.module';
+import { LicenceManagementModule } from './licence-management/infrastructure/licence-management.module';
+import { LicencesModule } from './licences/infrastructure/licences.module';
+import { VidisConfigurationService } from './vidis/infrastructure/configuration/vidis-configuration.service';
+import { LicenceManagementConfigurationService } from './licence-management/infrastructure/configuration/licence-management-configuration.service';
 
 @Module({
-  imports: [LicencesModule],
+  imports: [VidisModule, LicenceManagementModule, LicencesModule],
   controllers: [],
-  providers: [],
+  providers: [VidisConfigurationService, LicenceManagementConfigurationService],
 })
 export class AppModule {}
