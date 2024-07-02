@@ -8,7 +8,7 @@ export type AddLicencesForStudentUseCase = (
 ) => void;
 
 export const createAddLicenceForStudentUseCase: (
-  LicenceRepository,
+  licenceRepository: LicenceRepository,
 ) => AddLicencesForStudentUseCase =
   (licenceRepository: LicenceRepository) =>
   (studentId: StudentId, licencesToAdd: Licence[]) => {

@@ -22,10 +22,12 @@ export abstract class ApiKeyGuard implements CanActivate {
     return key;
   }
 
-  private isValidKey(providedApiKey: string): boolean {
+  private isValidKey(providedApiKey?: string): boolean {
     const expectedApiKey = this.getApiKey();
-    return expectedApiKey === providedApiKey;
+    const isApiKeyDefined = providedApiKey !== undefined;
+    const isApiKeyValid = expectedApiKey === providedApiKey;
+    return isApiKeyDefined && isApiKeyValid;
   }
 
-  protected abstract getApiKey(): string;
+  protected abstract getApiKey(): string | undefined;
 }

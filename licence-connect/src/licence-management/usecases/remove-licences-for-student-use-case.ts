@@ -8,7 +8,7 @@ export type RemoveLicencesForStudentUseCase = (
 ) => void;
 
 export const createRemoveLicenceForStudentUseCase: (
-  LicenceRepository,
+  licenceRepositor: LicenceRepository,
 ) => RemoveLicencesForStudentUseCase =
   (licenceRepository: LicenceRepository) =>
   (studentId: StudentId, licencesToRemove?: Licence[]) => {

@@ -6,6 +6,7 @@ import {
   LicenseType,
   LicenseSpecialType,
 } from '@licences/domain/licence';
+import { ApiExtraModels } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class LicenseStatus {
@@ -28,17 +29,21 @@ export const createLicenceDtoFromLicence = (licence: Licence) => {
 
 export const createLicenceFromLicenceDto = (
   educationalOfferId: EducationalOfferId,
-  licence: LicenceDto,
+  licenceDto: LicenceDto,
 ) => {
-  return {
-    ...licence,
+  const licence = {
     educationalOfferId: educationalOfferId,
-  } as Licence;
+    license_code: licenceDto.license_code,
+    license_special_type: licenceDto.license_special_type,
+    license_status: licenceDto.license_status,
+    license_type: licenceDto.license_type,
+  };
+  return licence;
 };
 
 export class LicenceDto {
   @IsNotEmpty()
-  license_code: string;
+  license_code!: string;
   license_type?: LicenseType;
   license_special_type?: LicenseSpecialType;
   license_status?: LicenseStatus;

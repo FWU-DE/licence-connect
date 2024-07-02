@@ -10,20 +10,18 @@ import {
 } from '@nestjs/common';
 import { ApiSecurity, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LicenceManagementApiKeyGuard } from '@licence-management/infrastructure/authentication/licence-management-api-key.guard';
-import { AddLicenceForStudentUseCaseFactoryService } from '@licence-management/infrastructure/usecase-factories/add-licence-for-student-use-case-factory.service';
-import { RemoveLicenceForStudentUseCaseFactoryService } from '@licence-management/infrastructure/usecase-factories/remove-licence-for-student-use-case-factory.service';
 import { AddLicenceRequestDto } from '@licence-management/infrastructure/dto/add-licence-request.dto';
 import { RemoveLicenceRequestDto } from '@licence-management/infrastructure/dto/remove-licence-request.dto';
 import { Licence } from '@licences/domain/licence';
-import { createLicenceFromLicenceDto } from './dto/licence.dto';
+import { LicenceDto, createLicenceFromLicenceDto } from './dto/licence.dto';
+import { InMemoryRepositoryService } from '@licences/infrastructure/repository/in-memory-repository.service';
+import { createRemoveLicenceForStudentUseCase } from '@licence-management/usecases/remove-licences-for-student-use-case';
+import { createAddLicenceForStudentUseCase } from '@licence-management/usecases/add-licences-for-student-use-case';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))
 export class LicenceManagementController {
-  constructor(
-    private readonly addLicenceUseCaseFactory: AddLicenceForStudentUseCaseFactoryService,
-    private readonly removeLicenceUseCaseFactory: RemoveLicenceForStudentUseCaseFactoryService,
-  ) {}
+  constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
   @Post('add')
   @Version('1')
   @ApiSecurity('LicenceManagement')
@@ -49,11 +47,11 @@ export class LicenceManagementController {
     Object.keys(licencesToAdd).forEach((offer) => {
       licences = [
         ...licences,
-        createLicenceFromLicenceDto(offer, licences[offer]),
+        createLicenceFromLicenceDto(offer, licencesToAdd[offer]),
       ];
     });
 
-    const useCase = this.addLicenceUseCaseFactory.createLicenceRequestUseCase();
+    const useCase = createAddLicenceForStudentUseCase(this.licenceRepository);
 
     useCase(id, licences);
   }
@@ -76,14 +74,33 @@ export class LicenceManagementController {
     description: 'Request does not match the expected schema',
   })
   public removeLicences(@Body() body: RemoveLicenceRequestDto) {
-    const useCase =
-      this.removeLicenceUseCaseFactory.createRemoveLicenceForStudentUseCase();
+    const studentId = body.studentId;
+    const licencesToRemove = body.licencesToRemove;
 
-    useCase(
-      body.studentId,
-      body.licencesToRemove.map((licence) =>
-        createLicenceFromLicenceDto('', licence),
-      ),
+    const useCase = createRemoveLicenceForStudentUseCase(
+      this.licenceRepository,
     );
+
+    const areLicencesProvided = licencesToRemove !== undefined;
+    if (areLicencesProvided) {
+      useCase(studentId, this.mapLicenceDtosToLicences(licencesToRemove));
+    } else {
+      useCase(studentId, undefined);
+    }
+  }
+
+  private mapLicenceDtosToLicences(
+    educationalOfferandLicences: Record<string, LicenceDto>,
+  ) {
+    let licences: Licence[] = [];
+
+    Object.keys(educationalOfferandLicences).forEach((offer) => {
+      licences = [
+        ...licences,
+        createLicenceFromLicenceDto(offer, educationalOfferandLicences[offer]),
+      ];
+    });
+
+    return licences;
   }
 }

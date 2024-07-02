@@ -1,3 +1,3 @@
 export type VidisConfiguration = {
-  vidisApiKey: string;
+  vidisApiKey?: string;
 };

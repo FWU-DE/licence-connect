@@ -10,7 +10,7 @@ export class LicenceManagementApiKeyGuard extends ApiKeyGuard {
     super();
   }
 
-  override getApiKey(): string {
+  override getApiKey(): string | undefined {
     return this.configurationService.getConfiguration().licenceManagementApiKey;
   }
 }

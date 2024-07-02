@@ -10,7 +10,7 @@ export class VidisApiKeyGuard extends ApiKeyGuard {
     super();
   }
 
-  getApiKey(): string {
+  getApiKey(): string | undefined {
     return this.configurationService.getConfiguration().vidisApiKey;
   }
 }

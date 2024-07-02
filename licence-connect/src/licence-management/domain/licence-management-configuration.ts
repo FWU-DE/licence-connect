@@ -1,3 +1,3 @@
 export type LicenceManagementConfiguration = {
-  licenceManagementApiKey: string;
+  licenceManagementApiKey?: string;
 };

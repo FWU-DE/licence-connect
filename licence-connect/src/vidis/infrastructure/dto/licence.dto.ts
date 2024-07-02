@@ -27,7 +27,7 @@ export const createLicenceDto = (licence: Licence) => {
 
 export class LicenceDto {
   @IsNotEmpty()
-  license_code: string;
+  license_code!: string;
   license_type?: LicenseType;
   license_special_type?: LicenseSpecialType;
   license_status?: LicenseStatus;

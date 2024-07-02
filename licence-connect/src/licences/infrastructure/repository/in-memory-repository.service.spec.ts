@@ -31,35 +31,35 @@ describe('InMemoryRepositoryService', () => {
 
     it('add multiple licences', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOffer: 'BA1' },
-        { license_code: '112', educationalOffer: 'BA1' },
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
 
       expect(service.getLicencesForStudentId('test')).toMatchObject([
-        { license_code: '111', educationalOffer: 'BA1' },
-        { license_code: '112', educationalOffer: 'BA1' },
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
     });
 
     it('add multiple licences sequentially', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
       ]);
 
       service.addLicencesForStudentId('test', [
-        { license_code: '112', educationalOffer: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
       ]);
 
       service.addLicencesForStudentId('test', [
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
 
       expect(service.getLicencesForStudentId('test')).toMatchObject([
-        { license_code: '111', educationalOffer: 'BA1' },
-        { license_code: '112', educationalOffer: 'BA1' },
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
     });
   });
@@ -67,26 +67,26 @@ describe('InMemoryRepositoryService', () => {
   describe('remove licences', () => {
     it('remove multiple licences', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOffer: 'BA1' },
-        { license_code: '112', educationalOffer: 'BA1' },
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
 
       service.removeLicencesForStudentId('test', [
-        { license_code: '111', educationalOffer: 'BA1' },
-        { license_code: '112', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
       ]);
 
       expect(service.getLicencesForStudentId('test')).toMatchObject([
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
     });
 
     it('remove all licences', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOffer: 'BA1' },
-        { license_code: '112', educationalOffer: 'BA1' },
-        { license_code: '113', educationalOffer: 'BA1' },
+        { license_code: '111', educationalOfferId: 'BA1' },
+        { license_code: '112', educationalOfferId: 'BA1' },
+        { license_code: '113', educationalOfferId: 'BA1' },
       ]);
 
       service.removeAllLicencesForStudentId('test');

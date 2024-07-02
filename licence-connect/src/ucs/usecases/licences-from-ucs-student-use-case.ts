@@ -1,5 +1,5 @@
 import { AvailableLicences, Licence } from '@licences/domain/licence';
-import { UCSStudent } from '@ucs/domain/ucs-types';
+import { UCSStudent, UCSStudentContext } from '@ucs/domain/ucs-types';
 
 // NOTE: in UCS the Spelling is "license" while LicencesConnect uses the "licence" spelling
 /**
@@ -46,7 +46,7 @@ export class LicencesFromUcsStudentUseCase {
     return studentContexts
       .filter((context) => !!context.licenses)
       .flatMap((context) =>
-        context.licenses.map((licence) => this.createLicenceObject(licence)),
+        context.licenses!.map((licence) => this.createLicenceObject(licence)),
       );
   }
 
@@ -58,7 +58,9 @@ export class LicencesFromUcsStudentUseCase {
       context.classes
         .filter((ucsClass) => !!ucsClass.licenses)
         .flatMap((ucsClass) =>
-          ucsClass.licenses.map((licence) => this.createLicenceObject(licence)),
+          ucsClass.licenses!.map((licence) =>
+            this.createLicenceObject(licence),
+          ),
         ),
     );
   }
@@ -71,14 +73,14 @@ export class LicencesFromUcsStudentUseCase {
       context.workgroups
         .filter((ucsWorkgroup) => !!ucsWorkgroup.licenses)
         .flatMap((ucsWorkgroup) =>
-          ucsWorkgroup.licenses.map((licence) =>
+          ucsWorkgroup.licenses!.map((licence) =>
             this.createLicenceObject(licence),
           ),
         ),
     );
   }
 
-  private extractStudentContexts(student: UCSStudent) {
+  private extractStudentContexts(student: UCSStudent): UCSStudentContext[] {
     const studentContexts = Object.keys(student.context).map(
       (key) => student.context[key],
     );

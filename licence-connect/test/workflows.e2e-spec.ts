@@ -68,7 +68,7 @@ describe('Workflows (e2e)', () => {
             .send(licenceRequest)
             .expect(200)
             .expect(
-              `{"hasLicence":true,"licences":[{"license_code":"1111","educationalOffer":"BA1"},{"license_code":"1112","educationalOffer":"BA1"}]}`,
+              `{"hasLicence":true,"licences":[{"educationalOfferId":"0","license_code":"1111"},{"educationalOfferId":"1","license_code":"1112"}]}`,
             );
         })
         .then(() => {
