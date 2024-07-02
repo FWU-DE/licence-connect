@@ -1,4 +1,3 @@
-import { LicencesDto } from '@licences/infrastructure/licences.dto';
 import {
   Body,
   Controller,
@@ -14,6 +13,7 @@ import { VidisRequestDto } from '@vidis/infrastructure/dto/vidis-request.dto';
 import { ReleaseLicenceForStudentUseCaseFactoryService } from '@vidis/infrastructure/usecase-factories/release-licence-for-student-use-case-factory.service';
 import { RequestLicenceFactoryService } from '@vidis/infrastructure/usecase-factories/request-licence-factory.service';
 import { VidisApiKeyGuard } from './authentication/vidis-api-key.guard';
+import { LicencesDto } from './dto/licences.dto';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))

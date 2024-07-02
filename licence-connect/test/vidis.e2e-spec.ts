@@ -20,7 +20,7 @@ describe('LicenceController (e2e)', () => {
       .useValue({
         getConfiguration: () => {
           return {
-            licenceManagerApiKey: licenceManagerApiKey,
+            licenceManagementApiKey: licenceManagerApiKey,
           };
         },
       })

@@ -15,6 +15,7 @@ import { RemoveLicenceForStudentUseCaseFactoryService } from '@licence-managemen
 import { AddLicenceRequestDto } from '@licence-management/infrastructure/dto/add-licence-request.dto';
 import { RemoveLicenceRequestDto } from '@licence-management/infrastructure/dto/remove-licence-request.dto';
 import { Licence } from '@licences/domain/licence';
+import { createLicenceFromLicenceDto } from './dto/licence.dto';
 
 @Controller('v1/licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true }))
@@ -41,11 +42,20 @@ export class LicenceManagementController {
   })
   public addLicences(@Body() body: AddLicenceRequestDto) {
     const id = body.studentId;
-    const licencesToAdd = body.licencesToAdd as Licence[];
+    const licencesToAdd = body.licencesToAdd;
+
+    let licences: Licence[] = [];
+
+    Object.keys(licencesToAdd).forEach((offer) => {
+      licences = [
+        ...licences,
+        createLicenceFromLicenceDto(offer, licences[offer]),
+      ];
+    });
 
     const useCase = this.addLicenceUseCaseFactory.createLicenceRequestUseCase();
 
-    useCase(id, licencesToAdd);
+    useCase(id, licences);
   }
 
   @Delete('remove')
@@ -69,6 +79,11 @@ export class LicenceManagementController {
     const useCase =
       this.removeLicenceUseCaseFactory.createRemoveLicenceForStudentUseCase();
 
-    useCase(body.studentId, body.licencesToAdd);
+    useCase(
+      body.studentId,
+      body.licencesToRemove.map((licence) =>
+        createLicenceFromLicenceDto('', licence),
+      ),
+    );
   }
 }

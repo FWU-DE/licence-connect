@@ -1,3 +1,5 @@
+import { EducationalOfferId } from './educational-offer';
+
 export type LicenceIdentifier = string;
 
 const licenceTypes = ['single', 'volumnes'] as const;
@@ -22,6 +24,7 @@ type LicenseStatus = {
 };
 export type Licence = {
   license_code: LicenceIdentifier;
+  educationalOfferId: EducationalOfferId;
   license_type?: LicenseType;
   license_special_type?: LicenseSpecialType;
   license_status?: LicenseStatus;

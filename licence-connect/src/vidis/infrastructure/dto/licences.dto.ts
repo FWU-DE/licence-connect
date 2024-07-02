@@ -1,4 +1,4 @@
-import { AvailableLicences } from '../domain/licence';
+import { AvailableLicences } from '@licences/domain/licence';
 import { Type } from 'class-transformer';
 
 /**

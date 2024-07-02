@@ -55,7 +55,7 @@ describe('LicenceManagementController (e2e)', () => {
         .set({ 'X-API-KEY': licenceManagerApiKey })
         .send({
           studentId: 'Student1',
-          licencesToAdd: [{ license_code: '1111' }],
+          licencesToAdd: [{ license_code: '1111', educationalOffer: 'BA1' }],
         })
         .expect(201);
     });
@@ -67,7 +67,10 @@ describe('LicenceManagementController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/v1/licences/add')
         .set({ 'X-API-KEY': licenceManagerApiKey })
-        .send({ studentId: 'Student1', licencesToAdd: ['1111'] })
+        .send({
+          studentId: 'Student1',
+          licencesToAdd: ['1111'],
+        })
         .expect(400);
     });
 
@@ -78,7 +81,9 @@ describe('LicenceManagementController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/v1/licences/add')
         .set({ 'X-API-KEY': licenceManagerApiKey })
-        .send({ licencesToAdd: [{ license_code: '1111' }] })
+        .send({
+          licencesToAdd: [{ license_code: '1111' }],
+        })
         .expect(400);
     });
   });
