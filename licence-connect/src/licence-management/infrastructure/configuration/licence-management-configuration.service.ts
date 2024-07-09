@@ -7,8 +7,9 @@ export class LicenceManagementConfigurationService {
   constructor(private readonly nestConfigurationService: ConfigService) {}
   public getConfiguration(): LicenceManagementConfiguration {
     return {
-      licenceManagementApiKey:
-        this.nestConfigurationService.get<string>('VIDIS_API_KEY'),
+      licenceManagementApiKey: this.nestConfigurationService.get<string>(
+        'LICENCE_MANAGER_API_KEY',
+      ),
     };
   }
 }

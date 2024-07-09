@@ -1,21 +1,63 @@
-import { EducationalOfferId } from '@licences/domain/educational-offer';
 import {
   ActivationStatus,
   ValidityStatus,
   Licence,
   LicenseType,
   LicenseSpecialType,
+  licenceTypes,
+  licenceSpecialTypes,
+  activationStatus,
+  validityStatus,
 } from '@licences/domain/licence';
-import { ApiExtraModels } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class LicenseStatus {
+  @IsOptional()
+  @IsNumber()
   assignment_date?: number;
+
+  @IsOptional()
+  @IsNumber()
   provisioned_date?: number;
+
+  @IsOptional()
+  @IsIn(activationStatus)
   status_activation?: ActivationStatus;
+
+  @IsOptional()
+  @IsIn(validityStatus)
   status_validity?: ValidityStatus;
+
+  @IsOptional()
+  @IsNumber()
   validity_start?: number;
+
+  @IsOptional()
+  @IsNumber()
   validaty_end?: number;
+}
+
+export class LicenceDto {
+  @IsNotEmpty()
+  @IsString()
+  license_code!: string;
+
+  @IsOptional()
+  @IsIn(licenceTypes)
+  license_type?: LicenseType;
+
+  @IsOptional()
+  @IsIn(licenceSpecialTypes)
+  license_special_type?: LicenseSpecialType;
+
+  @IsOptional()
+  license_status?: LicenseStatus;
 }
 
 export const createLicenceDtoFromLicence = (licence: Licence) => {
@@ -27,12 +69,8 @@ export const createLicenceDtoFromLicence = (licence: Licence) => {
   return licenceDto;
 };
 
-export const createLicenceFromLicenceDto = (
-  educationalOfferId: EducationalOfferId,
-  licenceDto: LicenceDto,
-) => {
+export const createLicenceFromLicenceDto = (licenceDto: LicenceDto) => {
   const licence = {
-    educationalOfferId: educationalOfferId,
     license_code: licenceDto.license_code,
     license_special_type: licenceDto.license_special_type,
     license_status: licenceDto.license_status,
@@ -40,11 +78,3 @@ export const createLicenceFromLicenceDto = (
   };
   return licence;
 };
-
-export class LicenceDto {
-  @IsNotEmpty()
-  license_code!: string;
-  license_type?: LicenseType;
-  license_special_type?: LicenseSpecialType;
-  license_status?: LicenseStatus;
-}

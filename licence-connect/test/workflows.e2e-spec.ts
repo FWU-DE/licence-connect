@@ -45,7 +45,7 @@ describe('Workflows (e2e)', () => {
     bundesland: 'DE-MV',
   };
 
-  fdescribe('v1/licence/ (POST)', () => {
+  describe('v1/licence/ (POST)', () => {
     it('Add and fetch licences', () => {
       const licenceRequest = requestWithNonExistingUser;
       licenceRequest.userId = 'Student1';
@@ -56,8 +56,9 @@ describe('Workflows (e2e)', () => {
         .send({
           studentId: 'Student1',
           licencesToAdd: [
-            { license_code: '1111', educationalOffer: 'BA1' },
-            { license_code: '1112', educationalOffer: 'BA1' },
+            { license_code: '1111' },
+            { license_code: '1112' },
+            { license_code: 'aaaa' },
           ],
         })
         .expect(201)
@@ -68,7 +69,9 @@ describe('Workflows (e2e)', () => {
             .send(licenceRequest)
             .expect(200)
             .expect(
-              `{"hasLicence":true,"licences":[{"educationalOfferId":"0","license_code":"1111"},{"educationalOfferId":"1","license_code":"1112"}]}`,
+              `{"hasLicence":true,"licences":[{"license_code":"1111"},` +
+                `{"license_code":"1112"},` +
+                `{"license_code":"aaaa"}]}`,
             );
         })
         .then(() => {

@@ -1,21 +1,22 @@
 import { StudentId } from '@licences/domain/student';
 import { LicenceDto } from './licence.dto';
-import { Type } from 'class-transformer';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
-import { EducationalOfferId } from '@licences/domain/educational-offer';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { ApiExtraModels } from '@nestjs/swagger';
 
+@ApiExtraModels(LicenceDto)
 export class RemoveLicenceRequestDto {
   @IsNotEmpty()
+  @IsString()
   studentId!: StudentId;
 
   @ValidateNested({ each: true })
-  @Type(() => LicenceDto)
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: {
-      type: 'object',
-    },
-  })
-  licencesToRemove?: Record<EducationalOfferId, LicenceDto>;
+  @IsOptional()
+  @IsArray()
+  licencesToRemove?: LicenceDto[];
 }

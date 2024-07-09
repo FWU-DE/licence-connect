@@ -1,17 +1,15 @@
-import { EducationalOfferId } from './educational-offer';
-
 export type LicenceIdentifier = string;
 
-const licenceTypes = ['single', 'volumnes'] as const;
+export const licenceTypes = ['single', 'volumnes'] as const;
 export type LicenseType = (typeof licenceTypes)[number];
 
-const licenceSpecialTypes = ['none'] as const;
+export const licenceSpecialTypes = ['none'] as const;
 export type LicenseSpecialType = (typeof licenceSpecialTypes)[number];
 
-const activationStatus = ['ACTIVATED'] as const;
+export const activationStatus = ['ACTIVATED'] as const;
 export type ActivationStatus = (typeof activationStatus)[number];
 
-const validityStatus = ['VALID'] as const;
+export const validityStatus = ['VALID'] as const;
 export type ValidityStatus = (typeof validityStatus)[number];
 
 type LicenseStatus = {
@@ -24,7 +22,6 @@ type LicenseStatus = {
 };
 export type Licence = {
   license_code: LicenceIdentifier;
-  educationalOfferId: EducationalOfferId;
   license_type?: LicenseType;
   license_special_type?: LicenseSpecialType;
   license_status?: LicenseStatus;

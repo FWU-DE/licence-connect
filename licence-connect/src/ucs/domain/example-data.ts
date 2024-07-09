@@ -12,31 +12,24 @@ export const incomingVidisCoreRequest: RequestFromVidisCore = {
 export const lcLicencesFromUCSResponse: AvailableLicences = [
   {
     license_code: 'VHT-9234814-fk68-acbj6-3o9jyfilkq2pqdmxy0j',
-    educationalOfferId: 'BA1',
   },
   {
     license_code: 'WES-234efsy-qer3-sdf35-ysdfpcjo3ijda09s2ds',
-    educationalOfferId: 'BA1',
   },
   {
     license_code: 'HEL-72rh4f6c-f3gs-a4thg-f393tjse1kjso34w45fq',
-    educationalOfferId: 'BA1',
   },
   {
     license_code: 'CCB-7bd46a45-345c-4237-a451-4444736eb011',
-    educationalOfferId: 'BA1',
   },
   {
     license_code: 'CCB-2f57ko96-d32r-53wrw-3eqg-999f2242jgr45',
-    educationalOfferId: 'BA1',
   },
   {
     license_code: 'COR-3rw46a45-345c-4237-a451-4333736ex015',
-    educationalOfferId: 'BA1',
   },
   {
     license_code: 'EKV-g54sn7bs-d32r-5s3643eqg-999a2dok3rts',
-    educationalOfferId: 'BA1',
   },
 ];
 

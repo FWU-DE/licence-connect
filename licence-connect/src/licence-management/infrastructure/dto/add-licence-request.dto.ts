@@ -1,22 +1,18 @@
-import { Type } from 'class-transformer';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { StudentId } from '@licences/domain/student';
 import { LicenceDto } from './licence.dto';
-import { EducationalOfferId } from '@licences/domain/educational-offer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiExtraModels } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
+@ApiExtraModels(LicenceDto)
 export class AddLicenceRequestDto {
   @IsNotEmpty()
+  @IsString()
   studentId!: StudentId;
 
   @ValidateNested({ each: true })
-  @Type(() => LicenceDto)
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: {
-      type: 'object',
-    },
-  })
+  @IsArray()
   @IsNotEmpty()
-  licencesToAdd!: Record<EducationalOfferId, LicenceDto>;
+  @Type(() => LicenceDto)
+  licencesToAdd!: LicenceDto[];
 }

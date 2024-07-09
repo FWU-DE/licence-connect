@@ -31,35 +31,29 @@ describe('InMemoryRepositoryService', () => {
 
     it('add multiple licences', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOfferId: 'BA1' },
-        { license_code: '112', educationalOfferId: 'BA1' },
-        { license_code: '113', educationalOfferId: 'BA1' },
+        { license_code: '111' },
+        { license_code: '112' },
+        { license_code: '113' },
       ]);
 
       expect(service.getLicencesForStudentId('test')).toMatchObject([
-        { license_code: '111', educationalOfferId: 'BA1' },
-        { license_code: '112', educationalOfferId: 'BA1' },
-        { license_code: '113', educationalOfferId: 'BA1' },
+        { license_code: '111' },
+        { license_code: '112' },
+        { license_code: '113' },
       ]);
     });
 
     it('add multiple licences sequentially', () => {
-      service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOfferId: 'BA1' },
-      ]);
+      service.addLicencesForStudentId('test', [{ license_code: '111' }]);
 
-      service.addLicencesForStudentId('test', [
-        { license_code: '112', educationalOfferId: 'BA1' },
-      ]);
+      service.addLicencesForStudentId('test', [{ license_code: '112' }]);
 
-      service.addLicencesForStudentId('test', [
-        { license_code: '113', educationalOfferId: 'BA1' },
-      ]);
+      service.addLicencesForStudentId('test', [{ license_code: '113' }]);
 
       expect(service.getLicencesForStudentId('test')).toMatchObject([
-        { license_code: '111', educationalOfferId: 'BA1' },
-        { license_code: '112', educationalOfferId: 'BA1' },
-        { license_code: '113', educationalOfferId: 'BA1' },
+        { license_code: '111' },
+        { license_code: '112' },
+        { license_code: '113' },
       ]);
     });
   });
@@ -67,26 +61,26 @@ describe('InMemoryRepositoryService', () => {
   describe('remove licences', () => {
     it('remove multiple licences', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOfferId: 'BA1' },
-        { license_code: '112', educationalOfferId: 'BA1' },
-        { license_code: '113', educationalOfferId: 'BA1' },
+        { license_code: '111' },
+        { license_code: '112' },
+        { license_code: '113' },
       ]);
 
       service.removeLicencesForStudentId('test', [
-        { license_code: '111', educationalOfferId: 'BA1' },
-        { license_code: '112', educationalOfferId: 'BA1' },
+        { license_code: '111' },
+        { license_code: '112' },
       ]);
 
       expect(service.getLicencesForStudentId('test')).toMatchObject([
-        { license_code: '113', educationalOfferId: 'BA1' },
+        { license_code: '113' },
       ]);
     });
 
     it('remove all licences', () => {
       service.addLicencesForStudentId('test', [
-        { license_code: '111', educationalOfferId: 'BA1' },
-        { license_code: '112', educationalOfferId: 'BA1' },
-        { license_code: '113', educationalOfferId: 'BA1' },
+        { license_code: '111' },
+        { license_code: '112' },
+        { license_code: '113' },
       ]);
 
       service.removeAllLicencesForStudentId('test');

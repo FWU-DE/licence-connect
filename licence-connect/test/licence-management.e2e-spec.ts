@@ -55,7 +55,7 @@ describe('LicenceManagementController (e2e)', () => {
         .set({ 'X-API-KEY': licenceManagerApiKey })
         .send({
           studentId: 'Student1',
-          licencesToAdd: [{ license_code: '1111', educationalOffer: 'BA1' }],
+          licencesToAdd: [{ license_code: '1111' }],
         })
         .expect(201);
     });

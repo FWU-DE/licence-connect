@@ -90,8 +90,6 @@ export class LicencesFromUcsStudentUseCase {
   private createLicenceObject(licenceId: string): Licence {
     return {
       license_code: licenceId,
-      //TODO
-      educationalOfferId: 'test',
     };
   }
 }

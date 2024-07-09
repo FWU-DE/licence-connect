@@ -7,6 +7,11 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 image::{imagesdir}/business_context.drawio.png[]
 
+==== Out of Scope
+
+LicenceConnect does not select the licence used for a specific user and a specific application.
+This is done by the UCS system and LicenceConnect is only a broker.
+
 === Technical Context
 
 ==== LicenceConnect LicenceAPI

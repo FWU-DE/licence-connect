@@ -19,7 +19,7 @@ import { createRemoveLicenceForStudentUseCase } from '@licence-management/usecas
 import { createAddLicenceForStudentUseCase } from '@licence-management/usecases/add-licences-for-student-use-case';
 
 @Controller('v1/licences')
-@UsePipes(new ValidationPipe({ enableDebugMessages: true }))
+@UsePipes(new ValidationPipe({ enableDebugMessages: true, whitelist: true }))
 export class LicenceManagementController {
   constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
   @Post('add')
@@ -42,14 +42,7 @@ export class LicenceManagementController {
     const id = body.studentId;
     const licencesToAdd = body.licencesToAdd;
 
-    let licences: Licence[] = [];
-
-    Object.keys(licencesToAdd).forEach((offer) => {
-      licences = [
-        ...licences,
-        createLicenceFromLicenceDto(offer, licencesToAdd[offer]),
-      ];
-    });
+    const licences: Licence[] = this.mapLicenceDtosToLicences(licencesToAdd);
 
     const useCase = createAddLicenceForStudentUseCase(this.licenceRepository);
 
@@ -83,23 +76,17 @@ export class LicenceManagementController {
 
     const areLicencesProvided = licencesToRemove !== undefined;
     if (areLicencesProvided) {
-      useCase(studentId, this.mapLicenceDtosToLicences(licencesToRemove));
+      const providedLicences = this.mapLicenceDtosToLicences(licencesToRemove);
+      useCase(studentId, providedLicences);
     } else {
       useCase(studentId, undefined);
     }
   }
 
-  private mapLicenceDtosToLicences(
-    educationalOfferandLicences: Record<string, LicenceDto>,
-  ) {
-    let licences: Licence[] = [];
-
-    Object.keys(educationalOfferandLicences).forEach((offer) => {
-      licences = [
-        ...licences,
-        createLicenceFromLicenceDto(offer, educationalOfferandLicences[offer]),
-      ];
-    });
+  private mapLicenceDtosToLicences(licencesDto: LicenceDto[]) {
+    const licences: Licence[] = licencesDto.map((licenceDto) =>
+      createLicenceFromLicenceDto(licenceDto),
+    );
 
     return licences;
   }

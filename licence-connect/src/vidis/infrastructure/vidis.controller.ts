@@ -17,7 +17,7 @@ import { createRequestLicencesForStudentUseCase } from '@vidis/usecases/request-
 import { InMemoryRepositoryService } from '@licences/infrastructure/repository/in-memory-repository.service';
 
 @Controller('v1/licences')
-@UsePipes(new ValidationPipe({ enableDebugMessages: true }))
+@UsePipes(new ValidationPipe({ enableDebugMessages: true, whitelist: true }))
 export class VidisController {
   constructor(private readonly licenceRepository: InMemoryRepositoryService) {}
 
