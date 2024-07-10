@@ -1,0 +1,35 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    container_name: nginx
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    restart: always
+    networks:
+      - main
+    depends_on:
+      - node
+
+  node:
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    container_name: node
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    env_file:
+      - .env
+    restart: always
+    networks:
+      main:
+        aliases:
+          - licence-connect
+    command: npm run start:dev
+
+networks:
+  main:
+    driver: bridge

@@ -8,11 +8,11 @@ WORKDIR /usr/src
 COPY ./licence-connect/package.json ./
 COPY ./yarn.lock ./
 
-# Install app dependencies
-RUN yarn install
-
 # Bundle app source
 COPY ./licence-connect .
+
+# Install app dependencies
+RUN yarn install
 
 # Creates a "dist" folder with the production build
 RUN yarn build
