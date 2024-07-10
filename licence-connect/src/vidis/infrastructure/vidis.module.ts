@@ -7,7 +7,12 @@ import { VidisConfigurationService } from './configuration/vidis-configuration.s
 import { LicencesModule } from '@licences/infrastructure/licences.module';
 
 @Module({
-  imports: [HttpModule, AuthenticationModule, ConfigModule, LicencesModule],
+  imports: [
+    HttpModule,
+    AuthenticationModule,
+    ConfigModule.forRoot(),
+    LicencesModule,
+  ],
   controllers: [VidisController],
   providers: [VidisConfigurationService],
   exports: [VidisConfigurationService, ConfigModule],

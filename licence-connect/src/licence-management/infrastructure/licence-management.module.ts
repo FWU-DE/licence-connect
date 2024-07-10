@@ -7,7 +7,12 @@ import { ConfigModule } from '@nestjs/config';
 import { LicencesModule } from '@licences/infrastructure/licences.module';
 
 @Module({
-  imports: [HttpModule, AuthenticationModule, ConfigModule, LicencesModule],
+  imports: [
+    HttpModule,
+    AuthenticationModule,
+    ConfigModule.forRoot(),
+    LicencesModule,
+  ],
   controllers: [LicenceManagementController],
   providers: [LicenceManagementConfigurationService],
   exports: [LicenceManagementConfigurationService, ConfigModule],
