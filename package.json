@@ -20,8 +20,7 @@
   "scripts": {
     "postinstall": "husky",
     "pre-commit": "yarn workspace licence-connect run pre-commit",
-    "docker-build-node": "wsl docker build . -f docker/node/Dockerfile",
-    "docker-build-nginx": "wsl docker build . -f docker/nginx/Dockerfile",
+    "docker-build": "wsl docker build . -f docker/node/Dockerfile -t licence-connect",
     "start-licence-connect": "wsl docker compose -f docker/docker-compose.yaml up -d"
   }
 }

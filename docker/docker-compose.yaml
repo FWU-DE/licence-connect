@@ -1,8 +1,6 @@
 services:
   nginx:
-    build:
-      context: ./..
-      dockerfile: ./docker/nginx/Dockerfile
+    image: nginx:latest
     container_name: nginx
     volumes:
       - ./nginx/config/default.conf:/etc/nginx/conf.d/default.conf
@@ -11,13 +9,9 @@ services:
     restart: always
     networks:
       - main
-    depends_on:
-      - node
 
-  node:
-    build:
-      context: ./..
-      dockerfile: ./docker/node/Dockerfile
+  licence-connect:
+    image: licence-connect
     container_name: node
     volumes:
       - ./node/config/.env:/usr/src/.env
