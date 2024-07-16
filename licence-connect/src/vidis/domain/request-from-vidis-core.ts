@@ -1,4 +1,4 @@
-import { BundeslandIdentificationString } from '@licences/domain/ferderal-state-id';
+import { SimpleFederalStateAbbreviationString } from '@licences/domain/federal-state-id';
 import { UCSStudentId } from '../../ucs/domain/ucs-types';
 
 /**
@@ -9,7 +9,7 @@ export interface RequestFromVidisCore {
   userId: UCSStudentId;
   clientId: ClientId;
   schulkennung: Schulkennung;
-  bundesland: BundeslandIdentificationString;
+  bundesland: SimpleFederalStateAbbreviationString;
 }
 
 export type ClientId = string;

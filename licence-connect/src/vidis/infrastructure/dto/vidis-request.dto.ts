@@ -1,7 +1,10 @@
 import {
-  bundeslandIdentificationString,
-  BundeslandIdentificationString,
-} from '@licences/domain/ferderal-state-id';
+  simpleFederalStateIdentificationStrings,
+  SimpleFederalStateAbbreviationString,
+  PrefixedFederalStateAbbreviationString,
+  allFederalStateAbbreviations,
+  FederalStateAbbreviation,
+} from '@licences/domain/federal-state-id';
 import { ClientId, Schulkennung } from '@vidis/domain/request-from-vidis-core';
 import { IsIn, IsNotEmpty } from 'class-validator';
 import { UCSStudentId } from '@ucs/domain/ucs-types';
@@ -14,7 +17,7 @@ export class VidisRequestDto {
   @IsNotEmpty()
   public schulkennung!: Schulkennung;
 
-  @IsIn(bundeslandIdentificationString)
+  @IsIn(allFederalStateAbbreviations)
   @IsNotEmpty()
-  public bundesland!: BundeslandIdentificationString;
+  public bundesland!: FederalStateAbbreviation;
 }
