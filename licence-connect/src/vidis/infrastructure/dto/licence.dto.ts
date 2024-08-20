@@ -8,7 +8,7 @@ import {
   licenceSpecialTypes,
   activationStatus,
   validityStatus,
-} from '@licences/domain/licence';
+} from '@vidis/domain/licence';
 import { IsIn, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class LicenseStatus {

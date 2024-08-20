@@ -4,17 +4,23 @@ import { AuthenticationModule } from '@cross-cutting-concerns/authentication/inf
 import { LicenceManagementController } from './licence-management.controller';
 import { LicenceManagementConfigurationService } from './configuration/licence-management-configuration.service';
 import { ConfigModule } from '@nestjs/config';
-import { LicencesModule } from '@licences/infrastructure/licences.module';
+import { InMemoryRepositoryService } from './repository/in-memory-repository.service';
 
 @Module({
-  imports: [
-    HttpModule,
-    AuthenticationModule,
-    ConfigModule.forRoot(),
-    LicencesModule,
-  ],
+  imports: [HttpModule, AuthenticationModule, ConfigModule.forRoot()],
   controllers: [LicenceManagementController],
-  providers: [LicenceManagementConfigurationService],
-  exports: [LicenceManagementConfigurationService, ConfigModule],
+  providers: [
+    LicenceManagementConfigurationService,
+    InMemoryRepositoryService,
+    {
+      provide: 'LicenceSource',
+      useClass: InMemoryRepositoryService,
+    },
+  ],
+  exports: [
+    LicenceManagementConfigurationService,
+    ConfigModule,
+    InMemoryRepositoryService,
+  ],
 })
 export class LicenceManagementModule {}

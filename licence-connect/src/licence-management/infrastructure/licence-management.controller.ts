@@ -12,9 +12,9 @@ import { ApiSecurity, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LicenceManagementApiKeyGuard } from '@licence-management/infrastructure/authentication/licence-management-api-key.guard';
 import { AddLicenceRequestDto } from '@licence-management/infrastructure/dto/add-licence-request.dto';
 import { RemoveLicenceRequestDto } from '@licence-management/infrastructure/dto/remove-licence-request.dto';
-import { Licence } from '@licences/domain/licence';
+import { Licence } from '@vidis/domain/licence';
 import { LicenceDto, createLicenceFromLicenceDto } from './dto/licence.dto';
-import { InMemoryRepositoryService } from '@licences/infrastructure/repository/in-memory-repository.service';
+import { InMemoryRepositoryService } from '@licence-management/infrastructure/repository/in-memory-repository.service';
 import { createRemoveLicenceForStudentUseCase } from '@licence-management/usecases/remove-licences-for-student-use-case';
 import { createAddLicenceForStudentUseCase } from '@licence-management/usecases/add-licences-for-student-use-case';
 
@@ -32,7 +32,7 @@ export class LicenceManagementController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Save the licencenes as available licences for the specific ',
+    description: 'Save the licences as available licences for the specific ',
   })
   @ApiResponse({
     status: 400,
@@ -60,7 +60,7 @@ export class LicenceManagementController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Remove the licencenes for the specific user',
+    description: 'Remove the licences for the specific user',
   })
   @ApiResponse({
     status: 400,

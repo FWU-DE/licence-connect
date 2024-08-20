@@ -1,8 +1,7 @@
 import { Licence } from './licence';
 import { StudentId } from './student';
-import { LicenceSource } from './licence-source';
 
-export interface LicenceRepository extends LicenceSource {
+export interface LicenceRepository {
   addLicencesForStudentId(studentId: StudentId, licencesToAdd: Licence[]): void;
   removeLicencesForStudentId(
     studentId: StudentId,

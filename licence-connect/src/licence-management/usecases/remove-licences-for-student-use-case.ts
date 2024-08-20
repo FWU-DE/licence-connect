@@ -1,6 +1,6 @@
-import { Licence } from '@licences/domain/licence';
-import { StudentId } from '@licences/domain/student';
-import { LicenceRepository } from '@licences/domain/licence-repository';
+import { Licence } from '@vidis/domain/licence';
+import { StudentId } from '@vidis/domain/student';
+import { LicenceRepository } from '@vidis/domain/licence-repository';
 
 export type RemoveLicencesForStudentUseCase = (
   studentId: StudentId,

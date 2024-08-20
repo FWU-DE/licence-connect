@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UCSLicenseFetcherService } from '../ucs-license-fetcher-service/ucs-license-fetcher-service.service';
-import { LicenceSource } from '@licences/domain/licence-source';
-import { AvailableLicences } from '@licences/domain/licence';
+import { LicenceStrategy } from '@vidis/domain/licence-strategy';
+import { AvailableLicences } from '@vidis/domain/licence';
 import { LicencesFromUcsStudentUseCase } from '@ucs/usecases/licences-from-ucs-student-use-case';
 import { UCSStudentFromUCSStudentId } from '@ucs/usecases/ucs-student-from-ucs-student-id';
 
 @Injectable()
-export class UcsRepositoryService implements LicenceSource {
+export class UcsRepositoryService implements LicenceStrategy {
   constructor(
     private readonly ucsLicenceFetcherService: UCSLicenseFetcherService,
   ) {}

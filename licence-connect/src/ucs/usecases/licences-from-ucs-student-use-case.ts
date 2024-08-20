@@ -1,4 +1,4 @@
-import { AvailableLicences, Licence } from '@licences/domain/licence';
+import { AvailableLicences, Licence } from '@vidis/domain/licence';
 import { UCSStudent, UCSStudentContext } from '@ucs/domain/ucs-types';
 
 // NOTE: in UCS the Spelling is "license" while LicencesConnect uses the "licence" spelling

@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { LicenceRepository } from '@licences/domain/licence-repository';
-import { StudentId } from '@licences/domain/student';
-import { AvailableLicences, Licence } from '@licences/domain/licence';
+import { LicenceRepository } from '@vidis/domain/licence-repository';
+import { StudentId } from '@vidis/domain/student';
+import { AvailableLicences, Licence } from '@vidis/domain/licence';
+import { LicenceStrategy } from '@vidis/domain/licence-strategy';
 
 @Injectable()
-export class InMemoryRepositoryService implements LicenceRepository {
+export class InMemoryRepositoryService
+  implements LicenceRepository, LicenceStrategy
+{
   private licences: Map<StudentId, AvailableLicences>;
 
   constructor() {

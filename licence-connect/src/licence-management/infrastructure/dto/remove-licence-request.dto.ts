@@ -1,4 +1,4 @@
-import { StudentId } from '@licences/domain/student';
+import { StudentId } from '@vidis/domain/student';
 import { LicenceDto } from './licence.dto';
 import {
   IsArray,

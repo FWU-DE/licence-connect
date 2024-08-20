@@ -1,20 +1,38 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { AuthenticationModule } from '@cross-cutting-concerns/authentication/infrastructure/authentication.module';
-import { VidisController } from './vidis.controller';
 import { ConfigModule } from '@nestjs/config';
 import { VidisConfigurationService } from './configuration/vidis-configuration.service';
-import { LicencesModule } from '@licences/infrastructure/licences.module';
+import { DefaultLicenceStrategyFactory } from './default-licence-strategy-factory.service';
+import { VidisController } from './vidis.controller';
+import { LicenceManagementModule } from '@licence-management/infrastructure/licence-management.module';
 
 @Module({
   imports: [
     HttpModule,
     AuthenticationModule,
     ConfigModule.forRoot(),
-    LicencesModule,
+    LicenceManagementModule,
   ],
   controllers: [VidisController],
-  providers: [VidisConfigurationService],
+  providers: [
+    VidisConfigurationService,
+    DefaultLicenceStrategyFactory,
+    {
+      provide: 'LicenceStrategyFactory',
+      useClass: DefaultLicenceStrategyFactory,
+    },
+  ],
   exports: [VidisConfigurationService, ConfigModule],
 })
-export class VidisModule {}
+export class VidisModule {
+  /* static forRoot() {
+    return {
+      module: VidisModule,
+      imports: [HttpModule, AuthenticationModule, ConfigModule.forRoot()],
+      controllers: [VidisController],
+      providers: [VidisConfigurationService, DefaultLicenceStrategyFactory],
+      exports: [VidisConfigurationService, ConfigModule],
+    };
+  } */
+}

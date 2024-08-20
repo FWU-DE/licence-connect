@@ -1,5 +1,5 @@
 import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { StudentId } from '@licences/domain/student';
+import { StudentId } from '@vidis/domain/student';
 import { LicenceDto } from './licence.dto';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { Type } from 'class-transformer';

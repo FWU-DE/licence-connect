@@ -1,4 +1,4 @@
-import { AvailableLicences } from '@licences/domain/licence';
+import { AvailableLicences } from '@vidis/domain/licence';
 import { Type } from 'class-transformer';
 import { IsBoolean } from 'class-validator';
 

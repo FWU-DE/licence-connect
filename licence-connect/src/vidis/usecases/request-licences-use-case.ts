@@ -1,6 +1,6 @@
-import { LicenceRepository } from '@licences/domain/licence-repository';
-import { StudentId } from '@licences/domain/student';
-import { AvailableLicences } from '@licences/domain/licence';
+import { StudentId } from '@vidis/domain/student';
+import { AvailableLicences } from '@vidis/domain/licence';
+import { LicenceStrategy } from '@vidis/domain/licence-strategy';
 
 export type RequestLicencesForStudentUseCase = (
   studentId: StudentId,
@@ -8,7 +8,7 @@ export type RequestLicencesForStudentUseCase = (
 ) => AvailableLicences;
 
 export const createRequestLicencesForStudentUseCase =
-  (licenceRepository: LicenceRepository) =>
+  (licenceRepository: LicenceStrategy) =>
   (studentId: StudentId, _applicationId: string) => {
     const licencesForUser =
       licenceRepository.getLicencesForStudentId(studentId);

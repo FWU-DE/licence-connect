@@ -4,7 +4,7 @@ import {
   PrefixedFederalStateAbbreviationString,
   allFederalStateAbbreviations,
   FederalStateAbbreviation,
-} from '@licences/domain/federal-state-id';
+} from '@vidis/domain/federal-state-id';
 import { ClientId, Schulkennung } from '@vidis/domain/request-from-vidis-core';
 import { IsIn, IsNotEmpty } from 'class-validator';
 import { UCSStudentId } from '@ucs/domain/ucs-types';

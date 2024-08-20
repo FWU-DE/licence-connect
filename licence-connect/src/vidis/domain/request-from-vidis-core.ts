@@ -1,4 +1,4 @@
-import { SimpleFederalStateAbbreviationString } from '@licences/domain/federal-state-id';
+import { SimpleFederalStateAbbreviationString } from '@vidis/domain/federal-state-id';
 import { UCSStudentId } from '../../ucs/domain/ucs-types';
 
 /**

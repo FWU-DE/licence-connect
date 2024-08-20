@@ -1,6 +1,6 @@
-import { LicenceRepository } from '@licences/domain/licence-repository';
-import { StudentId } from '@licences/domain/student';
-import { Licence } from '@licences/domain/licence';
+import { LicenceRepository } from '@vidis/domain/licence-repository';
+import { StudentId } from '@vidis/domain/student';
+import { Licence } from '@vidis/domain/licence';
 
 export type AddLicencesForStudentUseCase = (
   studentId: StudentId,

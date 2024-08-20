@@ -34,6 +34,8 @@ $ yarn install
 
 ## Running the app
 
+When using the the app directly:
+
 ```bash
 # development
 $ yarn run start

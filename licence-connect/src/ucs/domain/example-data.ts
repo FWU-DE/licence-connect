@@ -1,4 +1,4 @@
-import { AvailableLicences } from '../../licences/domain/licence';
+import { AvailableLicences } from '../../vidis/domain/licence';
 import { RequestFromVidisCore } from '../../vidis/domain/request-from-vidis-core';
 import { ResponseFromUCS } from './ucs-types';
 
