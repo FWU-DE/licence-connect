@@ -17,7 +17,7 @@ import { createReleaseLicenceForStudentUseCase } from '@vidis/usecases/release-l
 import { createRequestLicencesForStudentUseCase } from '@vidis/usecases/request-licences-use-case';
 import { LicenceStrategyFactory } from '@vidis/domain/licence-strategy-factory';
 
-@Controller('v1/licences')
+@Controller('licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true, whitelist: true }))
 export class VidisController {
   constructor(

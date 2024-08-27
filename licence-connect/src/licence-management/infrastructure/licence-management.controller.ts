@@ -18,7 +18,7 @@ import { InMemoryRepositoryService } from '@licence-management/infrastructure/re
 import { createRemoveLicenceForStudentUseCase } from '@licence-management/usecases/remove-licences-for-student-use-case';
 import { createAddLicenceForStudentUseCase } from '@licence-management/usecases/add-licences-for-student-use-case';
 
-@Controller('v1/licences')
+@Controller('licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true, whitelist: true }))
 export class LicenceManagementController {
   constructor(private readonly licenceRepository: InMemoryRepositoryService) {}

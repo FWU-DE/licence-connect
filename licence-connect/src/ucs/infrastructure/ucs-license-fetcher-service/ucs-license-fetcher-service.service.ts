@@ -7,13 +7,17 @@ import {
   ResponseFromUCS,
 } from '@ucs/domain/ucs-types';
 import { UCSLicenceSource } from '@ucs/domain/ucs-licences-source';
+import { UcsConfigurationService } from '../configuration/ucs-configuration.service';
 
 /**
  * Licence Service providing access to the UCS system of Mecklenburg-Vorpommern
  */
 @Injectable()
 export class UCSLicenseFetcherService implements UCSLicenceSource {
-  constructor(private readonly _httpService: HttpService) {}
+  constructor(
+    private readonly _ucsConfigurationService: UcsConfigurationService,
+    private readonly _httpService: HttpService,
+  ) {}
 
   public getUCSStudentFromId(id: UCSStudentId): UCSStudent {
     const studentData = this.fetchLicenseDataFromUCS(id);

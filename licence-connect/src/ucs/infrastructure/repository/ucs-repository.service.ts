@@ -1,26 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { UCSLicenseFetcherService } from '../ucs-license-fetcher-service/ucs-license-fetcher-service.service';
-import { LicenceStrategy } from '@vidis/domain/licence-strategy';
-import { AvailableLicences } from '@vidis/domain/licence';
-import { LicencesFromUcsStudentUseCase } from '@ucs/usecases/licences-from-ucs-student-use-case';
 import { UCSStudentFromUCSStudentId } from '@ucs/usecases/ucs-student-from-ucs-student-id';
+import { UCSStudent } from '@ucs/domain/ucs-types';
 
 @Injectable()
-export class UcsRepositoryService implements LicenceStrategy {
+export class UcsRepositoryService {
   constructor(
     private readonly ucsLicenceFetcherService: UCSLicenseFetcherService,
   ) {}
 
-  public getLicencesForStudentId(userId: string): AvailableLicences {
+  public getLicenceObjectForStudentId(userId: string): UCSStudent {
     const ucsStudent = new UCSStudentFromUCSStudentId().execute(
       this.ucsLicenceFetcherService,
       userId,
     );
 
-    const licencesFromUcs = new LicencesFromUcsStudentUseCase().execute(
-      ucsStudent,
-    );
-
-    return licencesFromUcs;
+    return ucsStudent;
   }
 }

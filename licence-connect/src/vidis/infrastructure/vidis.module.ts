@@ -25,14 +25,4 @@ import { LicenceManagementModule } from '@licence-management/infrastructure/lice
   ],
   exports: [VidisConfigurationService, ConfigModule],
 })
-export class VidisModule {
-  /* static forRoot() {
-    return {
-      module: VidisModule,
-      imports: [HttpModule, AuthenticationModule, ConfigModule.forRoot()],
-      controllers: [VidisController],
-      providers: [VidisConfigurationService, DefaultLicenceStrategyFactory],
-      exports: [VidisConfigurationService, ConfigModule],
-    };
-  } */
-}
+export class VidisModule {}
