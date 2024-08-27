@@ -44,7 +44,7 @@ export class UcsConfigurationService {
       environment_parameter_key,
     );
     const isParameterSpecified = parameter !== undefined;
-    if (isParameterSpecified) {
+    if (!isParameterSpecified) {
       throw new Error(
         `${error_message}. Have you specified the ${environment_parameter_key} parameter.`,
       );

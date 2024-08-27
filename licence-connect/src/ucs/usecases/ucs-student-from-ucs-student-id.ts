@@ -4,10 +4,10 @@ import { UCSStudentId, UCSStudent } from '../domain/ucs-types';
 export class UCSStudentFromUCSStudentId {
   constructor() {}
 
-  public execute(
+  public async execute(
     ucsLicencesSource: UCSLicenceSource,
     ucsStudentId: UCSStudentId,
-  ): UCSStudent {
+  ): Promise<UCSStudent> {
     const ucsStudent = ucsLicencesSource.getUCSStudentFromId(ucsStudentId);
     return ucsStudent;
   }

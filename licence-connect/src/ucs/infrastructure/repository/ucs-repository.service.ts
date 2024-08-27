@@ -9,12 +9,14 @@ export class UcsRepositoryService {
     private readonly ucsLicenceFetcherService: UCSLicenseFetcherService,
   ) {}
 
-  public getLicenceObjectForStudentId(userId: string): UCSStudent {
+  public async getLicenceObjectForStudentId(
+    userId: string,
+  ): Promise<UCSStudent> {
     const ucsStudent = new UCSStudentFromUCSStudentId().execute(
       this.ucsLicenceFetcherService,
       userId,
     );
 
-    return ucsStudent;
+    return await ucsStudent;
   }
 }

@@ -3,6 +3,7 @@ import { ApiSecurity } from '@nestjs/swagger';
 4;
 import { VidisRequestDto } from '@vidis/infrastructure/dto/vidis-request.dto';
 import { UcsRepositoryService } from './repository/ucs-repository.service';
+import { UCSStudent } from '@ucs/domain/ucs-types';
 
 @Controller('ucs')
 export class UcsController {
@@ -13,7 +14,7 @@ export class UcsController {
   @Version('1')
   @ApiSecurity('VIDIS-Core')
   // @UseGuards(VidisApiKeyGuard)
-  public getLicences(@Body() body: VidisRequestDto): void {
-    this.ucsRepository.getLicenceObjectForStudentId(body.userId);
+  public async getLicences(@Body() body: VidisRequestDto): Promise<UCSStudent> {
+    return await this.ucsRepository.getLicenceObjectForStudentId(body.userId);
   }
 }
