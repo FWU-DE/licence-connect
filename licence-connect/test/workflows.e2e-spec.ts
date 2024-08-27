@@ -3,36 +3,20 @@ import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { RequestFromVidisCore } from '@vidis/domain/request-from-vidis-core';
-import { LicenceManagementConfigurationService } from '@licence-management/infrastructure/configuration/licence-management-configuration.service';
-import { VidisConfigurationService } from '@vidis/infrastructure/configuration/vidis-configuration.service';
+import { TEST_ENV_VARIABLES } from './test-env';
 
 describe('Workflows (e2e)', () => {
   let app: INestApplication;
 
-  const licenceManagerApiKey = 'licenceManager';
-  const vidisApiKey = 'vidis';
+  const licenceManagerApiKey = TEST_ENV_VARIABLES.LICENCE_MANAGER_API_KEY;
+  const vidisApiKey = TEST_ENV_VARIABLES.VIDIS_API_KEY;
+
+  process.env = { ...process.env, ...TEST_ENV_VARIABLES };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .overrideProvider(LicenceManagementConfigurationService)
-      .useValue({
-        getConfiguration: () => {
-          return {
-            licenceManagementApiKey: licenceManagerApiKey,
-          };
-        },
-      })
-      .overrideProvider(VidisConfigurationService)
-      .useValue({
-        getConfiguration: () => {
-          return {
-            vidisApiKey: vidisApiKey,
-          };
-        },
-      })
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -51,7 +35,7 @@ describe('Workflows (e2e)', () => {
       licenceRequest.userId = 'Student1';
 
       return request(app.getHttpServer())
-        .post('/v1/licences/add')
+        .post('/licences/add')
         .set({ 'X-API-KEY': licenceManagerApiKey })
         .send({
           studentId: 'Student1',
@@ -64,7 +48,7 @@ describe('Workflows (e2e)', () => {
         .expect(201)
         .then(() => {
           return request(app.getHttpServer())
-            .post('/v1/licences/request')
+            .post('/licences/request')
             .set({ 'X-API-KEY': vidisApiKey })
             .send(licenceRequest)
             .expect(200)
@@ -76,7 +60,7 @@ describe('Workflows (e2e)', () => {
         })
         .then(() => {
           return request(app.getHttpServer())
-            .delete('/v1/licences/remove')
+            .delete('/licences/remove')
             .set({ 'X-API-KEY': licenceManagerApiKey })
             .send({
               studentId: 'Student1',
@@ -85,7 +69,7 @@ describe('Workflows (e2e)', () => {
         })
         .then(() => {
           return request(app.getHttpServer())
-            .post('/v1/licences/request')
+            .post('/licences/request')
             .set({ 'X-API-KEY': vidisApiKey })
             .send(licenceRequest)
             .expect(200)
