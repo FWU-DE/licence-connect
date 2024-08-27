@@ -35,7 +35,3 @@ export type UCSStudent = {
     [key: string]: UCSStudentContext;
   };
 };
-
-export type ResponseFromUCS = {
-  'http://www.bildungslogin.de/licenses': UCSStudent;
-};
