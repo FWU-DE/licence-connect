@@ -14,6 +14,7 @@ async function bootstrap() {
     .setVersion('0.0.1')
     .addTag('licences')
     .addTag('licenceManagement')
+    .addTag('ucs')
     .addApiKey(
       { type: 'apiKey', name: 'X-API-KEY', in: 'header' },
       'VIDIS-Core',
@@ -22,6 +23,7 @@ async function bootstrap() {
       { type: 'apiKey', name: 'X-API-KEY', in: 'header' },
       'LicenceManagement',
     )
+    .addApiKey({ type: 'apiKey', name: 'X-API-KEY', in: 'header' }, 'ucs')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

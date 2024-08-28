@@ -14,11 +14,7 @@ export abstract class ApiKeyGuard implements CanActivate {
   }
 
   private extractApiKey(req: any): string | undefined {
-    const key =
-      req.headers['X-API-KEY'] ??
-      req.headers['x-api-key'] ??
-      req.query['X-API-KEY'] ??
-      req.query['x-api-key'];
+    const key = req.headers['X-API-KEY'] ?? req.headers['x-api-key'];
     return key;
   }
 
