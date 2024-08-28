@@ -24,6 +24,7 @@ install_dependencies:
     - yarn
 
 build_licence_connect:
+  image: 27.2.0-rc.1-cli
   stage: build
   extends:
     - .node_cached
