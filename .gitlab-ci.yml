@@ -30,7 +30,7 @@ build_licence_connect:
   needs:
     - install_dependencies
   script:
-    - yarn workspace licence-connect build
+    - docker build . -f docker/node/Dockerfile -t licence-connect
   cache:
     policy: pull
 
@@ -52,6 +52,6 @@ test_e2e_licence_connect:
   needs:
     - build_licence_connect
   script:
-    - yarn workspace licence-connect test
+    - yarn workspace licence-connect test:e2e
   cache:
     policy: pull
