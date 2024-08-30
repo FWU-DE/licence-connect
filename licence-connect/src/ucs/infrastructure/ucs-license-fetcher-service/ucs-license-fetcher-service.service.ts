@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { UCSStudentId, UCSStudent } from '@ucs/domain/ucs-types';
 import { UCSLicenceSource } from '@ucs/domain/ucs-licences-source';
@@ -9,6 +9,7 @@ import {
   LCLogger,
   LOGGER_TOKEN,
 } from '@cross-cutting-concerns/logging/domain/logger';
+import { AxiosError } from 'axios';
 
 const authEndpoint = 'apis/auth/token';
 const licenceEndpoint = 'apis/bildungslogin/v1/user';
@@ -63,6 +64,30 @@ export class UCSLicenseFetcherService implements UCSLicenceSource {
     };
   }
 
+  private handleError(
+    studentId: string,
+    requestUrl: string,
+    error: HttpException | AxiosError | any,
+  ): never {
+    if (error instanceof HttpException) {
+      throw new HttpException(
+        `Failed to fetch licences for student with id ${studentId} on url ${requestUrl}`,
+        error.getStatus(),
+        { cause: error },
+      );
+    } else if (error.response) {
+      throw new HttpException(
+        `Failed to fetch licences for student with id ${studentId} on url ${requestUrl}`,
+        error.response.status,
+        { cause: error },
+      );
+    } else {
+      throw new Error(
+        `Failed to fetch licences for student with id ${studentId} on url ${requestUrl}. Failed with error ${error}`,
+      );
+    }
+  }
+
   private async fetchLicences(
     config: UCSLicenceProviderConfig,
     studentId: string,
@@ -81,9 +106,7 @@ export class UCSLicenseFetcherService implements UCSLicenceSource {
       );
       return response.data as unknown as UCSStudent;
     } catch (err) {
-      throw new Error(
-        `Failed to fetch licences for student with id ${studentId} on url ${ucsLicenceEndpoint}. Failed with error ${err}`,
-      );
+      return this.handleError(studentId, ucsLicenceEndpoint, err);
     }
   }
 }

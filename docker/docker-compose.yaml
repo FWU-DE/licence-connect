@@ -11,7 +11,8 @@ services:
       - licence-connect
 
   licence-connect:
-    image: gitcr.fwu.de/licenceconnect/api/licence-connect:latest
+    image: licence-connect:latest
+    # image: gitcr.fwu.de/licenceconnect/api/licence-connect:latest
     container_name: licence-connect
     env_file: ".env"
     environment:
