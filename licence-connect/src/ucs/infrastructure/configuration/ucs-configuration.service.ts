@@ -1,4 +1,3 @@
-import { LicenceManagementConfiguration } from '@licence-management/domain/licence-management-configuration';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UCSLicenceProviderConfig } from './ucs-licence-provider-config';
@@ -6,13 +5,6 @@ import { UCSLicenceProviderConfig } from './ucs-licence-provider-config';
 @Injectable()
 export class UcsConfigurationService {
   constructor(private readonly nestConfigurationService: ConfigService) {}
-  public getConfiguration(): LicenceManagementConfiguration {
-    return {
-      licenceManagementApiKey: this.nestConfigurationService.get<string>(
-        'LICENCE_MANAGER_API_KEY',
-      ),
-    };
-  }
 
   public getApiKey(): string | undefined {
     return this.nestConfigurationService.get<string>('UCS_API_KEY');

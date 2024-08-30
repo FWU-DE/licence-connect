@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { UCSStudentId, UCSStudent } from '@ucs/domain/ucs-types';
 import { UCSLicenceSource } from '@ucs/domain/ucs-licences-source';
 import { UcsConfigurationService } from '../configuration/ucs-configuration.service';
 import { firstValueFrom } from 'rxjs';
 import { UCSLicenceProviderConfig } from '../configuration/ucs-licence-provider-config';
+import {
+  LCLogger,
+  LOGGER_TOKEN,
+} from '@cross-cutting-concerns/logging/domain/logger';
 
 const authEndpoint = 'apis/auth/token';
 const licenceEndpoint = 'apis/bildungslogin/v1/user';
@@ -15,6 +19,7 @@ const licenceEndpoint = 'apis/bildungslogin/v1/user';
 @Injectable()
 export class UCSLicenseFetcherService implements UCSLicenceSource {
   constructor(
+    @Inject(LOGGER_TOKEN) private readonly logger: LCLogger,
     private readonly ucsConfigurationService: UcsConfigurationService,
     private readonly httpService: HttpService,
   ) {}
@@ -70,10 +75,15 @@ export class UCSLicenseFetcherService implements UCSLicenceSource {
       'content-type': 'application/x-www-form-urlencoded',
     };
 
-    const response = await firstValueFrom(
-      this.httpService.get(ucsLicenceEndpoint, { headers: headers }),
-    );
-
-    return response.data as unknown as UCSStudent;
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(ucsLicenceEndpoint, { headers: headers }),
+      );
+      return response.data as unknown as UCSStudent;
+    } catch (err) {
+      throw new Error(
+        `Failed to fetch licences for student with id ${studentId} on url ${ucsLicenceEndpoint}. Failed with error ${err}`,
+      );
+    }
   }
 }

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  Inject,
   Post,
   UseGuards,
   Version,
@@ -10,14 +11,17 @@ import { ApiOperation, ApiSecurity } from '@nestjs/swagger';
 import { VidisRequestDto } from '@vidis/infrastructure/dto/vidis-request.dto';
 import { UcsRepositoryService } from './repository/ucs-repository.service';
 import { UCSStudentDto } from './dto/ucs-type.dto';
-import { UcsConfigurationService } from './configuration/ucs-configuration.service';
 import { UcsApiKeyGuard } from './authentication/ucs-api-key.guard';
+import {
+  LCLogger,
+  LOGGER_TOKEN,
+} from '@cross-cutting-concerns/logging/domain/logger';
 
 @Controller('ucs')
 export class UcsController {
   constructor(
     private readonly ucsRepository: UcsRepositoryService,
-    private readonly ucsConfigService: UcsConfigurationService,
+    @Inject(LOGGER_TOKEN) private readonly logger: LCLogger,
   ) {}
 
   @Post('request')
@@ -33,7 +37,7 @@ export class UcsController {
   public async getLicences(
     @Body() body: VidisRequestDto,
   ): Promise<UCSStudentDto> {
-    console.log('Receive an ucs request');
+    this.logger.debug('Received request for BiLo Licences');
     return await this.ucsRepository.getLicenceObjectForStudentId(body.userId);
   }
 }

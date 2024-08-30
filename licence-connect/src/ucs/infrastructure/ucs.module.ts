@@ -5,9 +5,10 @@ import { UCSLicenseFetcherService } from './ucs-license-fetcher-service/ucs-lice
 import { HttpModule } from '@nestjs/axios';
 import { UcsConfigurationService } from './configuration/ucs-configuration.service';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from '@cross-cutting-concerns/logging/infrastructure/logger.module';
 
 @Module({
-  imports: [HttpModule, ConfigModule.forRoot()],
+  imports: [HttpModule, ConfigModule.forRoot(), LoggerModule],
   controllers: [UcsController],
   providers: [
     UcsRepositoryService,

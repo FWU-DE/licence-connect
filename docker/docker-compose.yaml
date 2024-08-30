@@ -8,14 +8,12 @@ services:
       - 80:80
     restart: always
     depends_on:
-      - node
+      - licence-connect
 
-  node:
-    image: gitcr.fwu.de/licenceconnect/api/licence-connect:latest
+  licence-connect:
+    image: licence-connect:latest
     container_name: licence-connect
-    environment:
-      LICENCE_MANAGER_API_KEY: ${LICENCE_MANAGER_API_KEY}
-      VIDIS_API_KEY: ${VIDIS_API_KEY}
+    env_file: ".env"
     ports:
       - 3000:3000
     restart: always
