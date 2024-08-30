@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module';
 import { RequestFromVidisCore } from '@vidis/domain/request-from-vidis-core';
 import { TEST_ENV_VARIABLES } from './test-env';
 
-describe('LicenceController (e2e)', () => {
+describe('Vidis (e2e)', () => {
   let app: INestApplication;
 
   const vidisApiKey = TEST_ENV_VARIABLES.VIDIS_API_KEY;
@@ -30,14 +30,6 @@ describe('LicenceController (e2e)', () => {
 
   describe('API KEY v1/licence (POST)', () => {
     describe('With valid api key', () => {
-      it('in query', () => {
-        return request(app.getHttpServer())
-          .post(`/licences/request?X-API-KEY=${vidisApiKey}`)
-          .send(requestWithNonExistingUser)
-          .expect(200)
-          .expect(`{"hasLicence":false,"licences":[]}`);
-      });
-
       it('in header', () => {
         return request(app.getHttpServer())
           .post('/licences/request')
@@ -49,6 +41,14 @@ describe('LicenceController (e2e)', () => {
     });
 
     describe('With invalid api key', () => {
+      it('in header', () => {
+        return request(app.getHttpServer())
+          .post('/licences/request')
+          .set({ 'X-API-KEY': `${vidisApiKey}wrongApiKey` })
+          .send(requestWithNonExistingUser)
+          .expect(403);
+      });
+
       it('in query', () => {
         return request(app.getHttpServer())
           .post(`/licences/request?X-API-KEY=${vidisApiKey}wrongApiKey`)
@@ -56,10 +56,9 @@ describe('LicenceController (e2e)', () => {
           .expect(403);
       });
 
-      it('in header', () => {
+      it('in query (valid but in query)', () => {
         return request(app.getHttpServer())
-          .post('/licences/request')
-          .set({ 'X-API-KEY': `${vidisApiKey}wrongApiKey` })
+          .post(`/licences/request?X-API-KEY=${vidisApiKey}`)
           .send(requestWithNonExistingUser)
           .expect(403);
       });

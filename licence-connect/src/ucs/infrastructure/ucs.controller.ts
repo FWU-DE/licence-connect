@@ -33,6 +33,7 @@ export class UcsController {
   public async getLicences(
     @Body() body: VidisRequestDto,
   ): Promise<UCSStudentDto> {
+    console.log('Receive an ucs request');
     return await this.ucsRepository.getLicenceObjectForStudentId(body.userId);
   }
 }

@@ -10,7 +10,7 @@ async function bootstrap() {
   });
   const config = new DocumentBuilder()
     .setTitle('Licence-connect API')
-    .setDescription('This is the MVP Api for licence connect.')
+    .setDescription('This is the MVP API for licence connect.')
     .setVersion('0.0.1')
     .addTag('licences')
     .addTag('licenceManagement')
@@ -26,7 +26,7 @@ async function bootstrap() {
     .addApiKey({ type: 'apiKey', name: 'X-API-KEY', in: 'header' }, 'ucs')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
   await app.listen(3000);
 }
 bootstrap();

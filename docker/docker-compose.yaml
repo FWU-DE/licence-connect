@@ -7,25 +7,28 @@ services:
     ports:
       - 80:80
     restart: always
-    networks:
-      - main
     depends_on:
       - node
 
   node:
-    image: licence-connect:latest
+    image: gitcr.fwu.de/licenceconnect/api/licence-connect:latest
     container_name: licence-connect
-    volumes:
-      - ./node/config/.env:/usr/src/.env
+    environment:
+      LICENCE_MANAGER_API_KEY: ${LICENCE_MANAGER_API_KEY}
+      VIDIS_API_KEY: ${VIDIS_API_KEY}
     ports:
       - 3000:3000
     restart: always
-    networks:
-      main:
-        aliases:
-          - licence-connect
-    command: npm run start:wq
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
-networks:
-  main:
-    driver: bridge
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 60
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_LABEL_ENABLE: true
+      REPO_USER: ${REPO_USER}
+      REPO_PASS: ${REPO_PASS}

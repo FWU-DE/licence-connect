@@ -23,24 +23,27 @@ install_dependencies:
   script:
     - yarn
 
-build_licence_connect:
-  image: 27.2.0-rc.1-cli
+build_docker_licence_connect:
+  image: docker:27.2.0-rc.1-cli
   stage: build
   extends:
     - .node_cached
   needs:
-    - install_dependencies
+    - test_licence_connect
+    - test_e2e_licence_connect
   script:
-    - docker build . -f docker/node/Dockerfile -t licence-connect
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker build . -f licence-connect/Dockerfile -t gitcr.fwu.de/licenceconnect/api/licence-connect
+    - docker push gitcr.fwu.de/licenceconnect/api/licence-connect
   cache:
     policy: pull
 
 test_licence_connect:
   stage: build
+  needs:
+    - install_dependencies
   extends:
     - .node_cached
-  needs:
-    - build_licence_connect
   script:
     - yarn workspace licence-connect test
   cache:
@@ -48,10 +51,10 @@ test_licence_connect:
 
 test_e2e_licence_connect:
   stage: build
+  needs:
+    - install_dependencies
   extends:
     - .node_cached
-  needs:
-    - build_licence_connect
   script:
     - yarn workspace licence-connect test:e2e
   cache:

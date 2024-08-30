@@ -41,7 +41,8 @@ describe('UCS (e2e)', () => {
   describe('API KEY v1/ucs/request', () => {
     it('Test', () => {
       return request(app.getHttpServer())
-        .post(`/ucs/request?X-API-KEY=${ucsLicenceKey}`)
+        .post(`/ucs/request`)
+        .set({ 'X-API-KEY': ucsLicenceKey })
         .send(requestFromVidis)
         .expect(200)
         .expect(createUcsStudentData('student.42'));

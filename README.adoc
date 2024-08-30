@@ -10,6 +10,14 @@ If you use VS Code for development, you can install the recommended extensions f
 
 ### Deployed Setup
 
+1. Clone the repository
+2. Run `cd docker`
+3. Run `cp .env.example .env`
+4. Enter your configuration in the `.env` file
+5. Authenticate with the container registry
+6. Run `docker compose up -d`
+7. Open `<your-url>/swagger` to get an overview of available endpoints
+
 ## Further Documentation
 
 See link:https://github.com/FWU-DE/licence-connect/blob/main/doc/architecture_documentation.adoc[here] for the architecture documentation.
