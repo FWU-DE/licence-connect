@@ -17,6 +17,7 @@ services:
     env_file: ".env"
     environment:
       LOG_PATH: /var/log/
+      LOG_FILE: licenceconnect.log
     ports:
       - 3000:3000
     restart: always

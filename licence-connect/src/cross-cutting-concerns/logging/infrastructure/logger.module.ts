@@ -35,7 +35,7 @@ const defaultFormat = (featureName: string = 'LicenceConnect') =>
       transports: [
         new winston.transports.Console({}),
         new winston.transports.File({
-          filename: `${process.env.LOG_PATH ?? 'log'}/licence-connect.log`,
+          filename: `${process.env.LOG_PATH ?? 'log'}/${process.env.LOG_FILE ?? 'licence-connect.log'}`,
         }),
       ],
     }),
