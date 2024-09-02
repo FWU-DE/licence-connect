@@ -1,4 +1,12 @@
-export const LOGGER_TOKEN = 'LCLogger';
+export const loggingLevel = [
+  'trace',
+  'debug',
+  'info',
+  'warn',
+  'error',
+  'fatal',
+];
+export type LoggingLevel = (typeof loggingLevel)[number];
 
 export interface LCLogger {
   debug(debugOutput: string): void;

@@ -12,12 +12,10 @@ import { VidisRequestDto } from '@vidis/infrastructure/dto/vidis-request.dto';
 import { UcsRepositoryService } from './repository/ucs-repository.service';
 import { UCSStudentDto } from './dto/ucs-type.dto';
 import { UcsApiKeyGuard } from './authentication/ucs-api-key.guard';
-import {
-  LCLogger,
-  LOGGER_TOKEN,
-} from '@cross-cutting-concerns/logging/domain/logger';
+import { LCLogger } from '@cross-cutting-concerns/logging/domain/logger';
 import { UcsConfigurationService } from './configuration/ucs-configuration.service';
 import { UCSStudentFromUCSStudentId } from '@ucs/usecases/ucs-student-from-ucs-student-id';
+import { LOGGER_TOKEN } from '@cross-cutting-concerns/logging/infrastructure/logger.module';
 
 @Controller('ucs')
 export class UcsController {

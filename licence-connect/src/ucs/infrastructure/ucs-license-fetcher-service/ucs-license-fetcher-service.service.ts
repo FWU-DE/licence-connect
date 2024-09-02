@@ -3,11 +3,9 @@ import { HttpService } from '@nestjs/axios';
 import { UcsStudent } from '@ucs/domain/ucs-types';
 import { firstValueFrom } from 'rxjs';
 import { UcsStudentProvider } from '../../domain/ucs-student-provider';
-import {
-  LCLogger,
-  LOGGER_TOKEN,
-} from '@cross-cutting-concerns/logging/domain/logger';
+import { LCLogger } from '@cross-cutting-concerns/logging/domain/logger';
 import { AxiosError } from 'axios';
+import { LOGGER_TOKEN } from '@cross-cutting-concerns/logging/infrastructure/logger.module';
 
 const authEndpoint = 'apis/auth/token';
 const licenceEndpoint = 'apis/bildungslogin/v1/user';

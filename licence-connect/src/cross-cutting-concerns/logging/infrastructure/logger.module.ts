@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
 import { WinstonLoggingService } from './winston-logging.service';
-import { LOGGER_TOKEN } from '../domain/logger';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
+import { LoggingLevel, loggingLevel } from '../domain/logger';
 
-const logLevel = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
-type LogLevel = (typeof logLevel)[number];
+export const LOGGER_TOKEN = 'LCLogger';
 
 const validateLogLevel = (level?: string) =>
-  level !== undefined && level in logLevel ? (level as LogLevel) : undefined;
+  level !== undefined && level in loggingLevel
+    ? (level as LoggingLevel)
+    : undefined;
 
 const defaultFormat = (featureName: string = 'LicenceConnect') =>
   winston.format.combine(
