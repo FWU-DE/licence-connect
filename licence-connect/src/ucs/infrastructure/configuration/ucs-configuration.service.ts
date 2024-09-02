@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UCSLicenceProviderConfig } from './ucs-licence-provider-config';
+import { UcsStudentProvider } from '../../domain/ucs-student-provider';
 
 @Injectable()
 export class UcsConfigurationService {
@@ -10,7 +10,7 @@ export class UcsConfigurationService {
     return this.nestConfigurationService.get<string>('UCS_API_KEY');
   }
 
-  public getUcsConfiguration(): UCSLicenceProviderConfig {
+  public getUcsConfiguration(): UcsStudentProvider {
     const url = this.getRequiredConfigParameter('UCS_URL');
     const technicalUserName = this.getRequiredConfigParameter(
       'UCS_TECHNICAL_USER_NAME',

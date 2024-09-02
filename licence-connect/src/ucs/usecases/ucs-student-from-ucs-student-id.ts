@@ -1,13 +1,13 @@
-import { UCSLicenceSource } from '../domain/ucs-licences-source';
-import { UCSStudentId, UCSStudent } from '../domain/ucs-types';
+import { UcsStudentRepository } from '../domain/ucs-student-repository';
+import { UcsStudentId, UcsStudent } from '../domain/ucs-types';
 
 export class UCSStudentFromUCSStudentId {
   constructor() {}
 
   public async execute(
-    ucsLicencesSource: UCSLicenceSource,
-    ucsStudentId: UCSStudentId,
-  ): Promise<UCSStudent> {
+    ucsLicencesSource: UcsStudentRepository,
+    ucsStudentId: UcsStudentId,
+  ): Promise<UcsStudent> {
     const ucsStudent = ucsLicencesSource.getUCSStudentFromId(ucsStudentId);
     return ucsStudent;
   }

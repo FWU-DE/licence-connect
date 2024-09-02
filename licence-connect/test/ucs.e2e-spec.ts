@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { RequestFromVidisCore } from '@vidis/domain/request-from-vidis-core';
 import { TEST_ENV_VARIABLES } from './test-env';
-import { UCSLicenseFetcherService } from '@ucs/infrastructure/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
+import { UcsLicenseFetcherService } from '@ucs/infrastructure/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 import { createUcsStudentData } from './ucs-student-data';
 import { of } from 'rxjs';
 
@@ -19,9 +19,9 @@ describe('UCS (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider(UCSLicenseFetcherService)
+      .overrideProvider(UcsLicenseFetcherService)
       .useValue({
-        getUCSStudentFromId: jest.fn((studentId: string) =>
+        fetchUcsStudentFromId: jest.fn((studentId: string) =>
           of(createUcsStudentData(studentId)),
         ),
       })

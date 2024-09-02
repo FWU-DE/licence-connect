@@ -1,37 +1,37 @@
-export type UCSLicence = string;
-export type AvailableUCSLicences = UCSLicence[];
+export type UcsLicence = string;
+export type AvailableUcsLicences = UcsLicence[];
 
-export type UCSClass = {
+export type UcsClass = {
   name: string;
   id: string;
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
 };
 
-export type UCSWorkgroup = {
+export type UcsWorkgroup = {
   name: string;
   id: string;
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
 };
-export type UCSRoles = string;
+export type UcsRoles = string;
 
-export type UCSStudentId = string;
+export type UcsStudentId = string;
 
-export type UCSStudentContext = {
-  licenses?: AvailableUCSLicences;
-  classes?: UCSClass[];
-  workgroups?: UCSWorkgroup[];
+export type UcsStudentContext = {
+  licenses?: AvailableUcsLicences;
+  classes?: UcsClass[];
+  workgroups?: UcsWorkgroup[];
   school_authority?: string;
   school_identifier?: string;
   school_name?: string;
-  roles: UCSRoles[];
+  roles: UcsRoles[];
 };
 
-export type UCSStudent = {
+export type UcsStudent = {
   id: string;
   first_name?: string;
   last_name?: string;
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
   context: {
-    [key: string]: UCSStudentContext;
+    [key: string]: UcsStudentContext;
   };
 };

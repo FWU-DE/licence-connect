@@ -1,10 +1,8 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { UCSStudentId, UCSStudent } from '@ucs/domain/ucs-types';
-import { UCSLicenceSource } from '@ucs/domain/ucs-licences-source';
-import { UcsConfigurationService } from '../configuration/ucs-configuration.service';
+import { UcsStudent } from '@ucs/domain/ucs-types';
 import { firstValueFrom } from 'rxjs';
-import { UCSLicenceProviderConfig } from '../configuration/ucs-licence-provider-config';
+import { UcsStudentProvider } from '../../domain/ucs-student-provider';
 import {
   LCLogger,
   LOGGER_TOKEN,
@@ -18,27 +16,20 @@ const licenceEndpoint = 'apis/bildungslogin/v1/user';
  * Licence Service providing access to the UCS system of Mecklenburg-Vorpommern
  */
 @Injectable()
-export class UCSLicenseFetcherService implements UCSLicenceSource {
+export class UcsLicenseFetcherService {
   constructor(
     @Inject(LOGGER_TOKEN) private readonly logger: LCLogger,
-    private readonly ucsConfigurationService: UcsConfigurationService,
     private readonly httpService: HttpService,
   ) {}
 
-  public async getUCSStudentFromId(id: UCSStudentId): Promise<UCSStudent> {
-    const studentData = this.fetchLicenseDataFromUCS(id);
-    return studentData;
-  }
-
-  private async fetchLicenseDataFromUCS(
+  public async fetchUcsStudentFromId(
     studentId: string,
-  ): Promise<UCSStudent> {
-    const ucsConfig = this.ucsConfigurationService.getUcsConfiguration();
+    ucsStudentProvider: UcsStudentProvider,
+  ): Promise<UcsStudent> {
+    const bearerToken = await this.fetchAuthToken(ucsStudentProvider);
 
-    const bearerToken = await this.fetchAuthToken(ucsConfig);
-
-    const ucsStudent = await this.fetchLicences(
-      ucsConfig,
+    const ucsStudent = await this.fetchStudents(
+      ucsStudentProvider,
       studentId,
       bearerToken.bearer,
     );
@@ -47,7 +38,7 @@ export class UCSLicenseFetcherService implements UCSLicenceSource {
   }
 
   private async fetchAuthToken(
-    config: UCSLicenceProviderConfig,
+    config: UcsStudentProvider,
   ): Promise<{ bearer: string }> {
     const ucsAuthEndpoint = `${config.url}/${authEndpoint}`;
 
@@ -88,11 +79,11 @@ export class UCSLicenseFetcherService implements UCSLicenceSource {
     }
   }
 
-  private async fetchLicences(
-    config: UCSLicenceProviderConfig,
+  private async fetchStudents(
+    config: UcsStudentProvider,
     studentId: string,
     bearerToken: string,
-  ): Promise<UCSStudent> {
+  ): Promise<UcsStudent> {
     const ucsLicenceEndpoint = `${config.url}/${licenceEndpoint}/${studentId}`;
 
     const headers = {
@@ -104,7 +95,7 @@ export class UCSLicenseFetcherService implements UCSLicenceSource {
       const response = await firstValueFrom(
         this.httpService.get(ucsLicenceEndpoint, { headers: headers }),
       );
-      return response.data as unknown as UCSStudent;
+      return response.data as unknown as UcsStudent;
     } catch (err) {
       return this.handleError(studentId, ucsLicenceEndpoint, err);
     }

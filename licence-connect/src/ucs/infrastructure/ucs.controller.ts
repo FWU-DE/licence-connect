@@ -16,11 +16,14 @@ import {
   LCLogger,
   LOGGER_TOKEN,
 } from '@cross-cutting-concerns/logging/domain/logger';
+import { UcsConfigurationService } from './configuration/ucs-configuration.service';
+import { UCSStudentFromUCSStudentId } from '@ucs/usecases/ucs-student-from-ucs-student-id';
 
 @Controller('ucs')
 export class UcsController {
   constructor(
-    private readonly ucsRepository: UcsRepositoryService,
+    private readonly ucsRepositoryService: UcsRepositoryService,
+    private readonly ucsConfigurationService: UcsConfigurationService,
     @Inject(LOGGER_TOKEN) private readonly logger: LCLogger,
   ) {}
 
@@ -38,6 +41,13 @@ export class UcsController {
     @Body() body: VidisRequestDto,
   ): Promise<UCSStudentDto> {
     this.logger.debug('Received request for BiLo Licences');
-    return await this.ucsRepository.getLicenceObjectForStudentId(body.userId);
+
+    const provider = this.ucsConfigurationService.getUcsConfiguration();
+    const ucsRepository =
+      this.ucsRepositoryService.getUcsStudentRepository(provider);
+
+    const useCase = new UCSStudentFromUCSStudentId();
+
+    return await useCase.execute(ucsRepository, body.userId);
   }
 }
