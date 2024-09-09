@@ -1,21 +1,21 @@
 import {
-  simpleFederalStateIdentificationStrings,
-  SimpleFederalStateAbbreviationString,
-  PrefixedFederalStateAbbreviationString,
   allFederalStateAbbreviations,
   FederalStateAbbreviation,
 } from '@vidis/domain/federal-state-id';
-import { ClientId, Schulkennung } from '@vidis/domain/request-from-vidis-core';
+import {
+  ClientId,
+  SchoolIdentifier,
+} from '@vidis/domain/request-from-vidis-core';
+import { StudentId } from '@vidis/domain/student';
 import { IsIn, IsNotEmpty } from 'class-validator';
-import { UcsStudentId } from '@ucs/domain/ucs-types';
 
 export class VidisRequestDto {
   @IsNotEmpty()
-  public userId!: UcsStudentId;
+  public userId!: StudentId;
   @IsNotEmpty()
   public clientId!: ClientId;
   @IsNotEmpty()
-  public schulkennung!: Schulkennung;
+  public schulkennung!: SchoolIdentifier;
 
   @IsIn(allFederalStateAbbreviations)
   @IsNotEmpty()

@@ -2,11 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import { RequestFromVidisCore } from '@vidis/domain/request-from-vidis-core';
 import { TEST_ENV_VARIABLES } from './test-env';
 import { UcsLicenseFetcherService } from '@ucs/infrastructure/ucs-license-fetcher-service/ucs-license-fetcher-service.service';
 import { createUcsStudentData } from './ucs-student-data';
-import { of } from 'rxjs';
+import { UcsRequestFromVidisCore } from '@ucs/domain/ucs-request-from-vidis-core';
 
 const ucsLicenceKey = TEST_ENV_VARIABLES.VIDIS_API_KEY;
 
@@ -22,7 +21,7 @@ describe('UCS (e2e)', () => {
       .overrideProvider(UcsLicenseFetcherService)
       .useValue({
         fetchUcsStudentFromId: jest.fn((studentId: string) =>
-          of(createUcsStudentData(studentId)),
+          Promise.resolve(createUcsStudentData(studentId)),
         ),
       })
       .compile();
@@ -31,11 +30,10 @@ describe('UCS (e2e)', () => {
     await app.init();
   });
 
-  const requestFromVidis: RequestFromVidisCore = {
+  const requestFromVidis: UcsRequestFromVidisCore = {
     userId: 'student.42',
     clientId: 'sodix-editor-o',
-    schulkennung: 'DE-RP-SN-51201',
-    bundesland: 'DE-MV',
+    federalState: 'DE-MV',
   };
 
   describe('API KEY v1/ucs/request', () => {
