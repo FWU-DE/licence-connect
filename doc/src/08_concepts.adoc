@@ -50,3 +50,11 @@ The password for a technical user. This user is used to get a Authentication-Tok
 ==== Current Limitations
 
 * Currently it is not possible to configure more than one UCS Licence Provider.
+
+==== Steps for changing the Configuration
+
+. change the .env file
+. restart application in with docker compose:
+```
+sudo docker compose restart
+```
