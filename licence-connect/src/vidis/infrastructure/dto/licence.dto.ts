@@ -34,7 +34,7 @@ export class LicenseStatus {
 
   @IsOptional()
   @IsNumber()
-  validaty_end?: number;
+  validity_end?: number;
 }
 
 export class LicenceDto {

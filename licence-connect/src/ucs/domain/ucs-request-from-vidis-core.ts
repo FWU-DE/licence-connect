@@ -1,16 +1,16 @@
 import { SimpleFederalStateAbbreviationString } from '@vidis/domain/federal-state-id';
-import { StudentId } from './student';
+import { UcsStudentId } from './ucs-types';
+import { UcsStudentContextId } from '@ucs/infrastructure/dto/ucs-type.dto';
 
 /**
  * An incoming licence request for a specific user
  * This follows the JWT Token fields, see https://www.iana.org/assignments/jwt/jwt.xhtml
  */
-export interface RequestFromVidisCore {
-  userId: StudentId;
+export interface UcsRequestFromVidisCore {
+  userId: UcsStudentId;
   clientId: ClientId;
-  schulkennung: SchoolIdentifier;
-  bundesland: SimpleFederalStateAbbreviationString;
+  ucsContextIdentifier?: UcsStudentContextId;
+  federalState: SimpleFederalStateAbbreviationString;
 }
 
 export type ClientId = string;
-export type SchoolIdentifier = string;

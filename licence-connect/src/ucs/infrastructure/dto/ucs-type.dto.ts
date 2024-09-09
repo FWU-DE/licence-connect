@@ -11,6 +11,8 @@ import {
 export type UCSLicence = string;
 export type AvailableUCSLicences = UCSLicence[];
 
+export type UcsStudentContextId = string;
+
 export class UCSClassDto {
   @IsNotEmpty()
   @IsString()
@@ -44,6 +46,8 @@ export type UCSRoles = string;
 export type UCSStudentId = string;
 
 export class UCSStudentContext {
+  @IsOptional()
+  @IsArray()
   licenses?: AvailableUCSLicences;
 
   @IsOptional()
@@ -98,6 +102,6 @@ export class UCSStudentDto {
     additionalProperties: { $ref: getSchemaPath(UCSStudentContext) },
   })
   context!: {
-    [key: string]: UCSStudentContext;
+    [key: UcsStudentContextId]: UCSStudentContext;
   };
 }

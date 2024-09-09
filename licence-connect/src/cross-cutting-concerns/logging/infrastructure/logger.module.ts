@@ -5,14 +5,10 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
-import { LoggingLevel, loggingLevel } from '../domain/logger';
+import { LoggerConfigurationService } from './logger-configuration.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 export const LOGGER_TOKEN = 'LCLogger';
-
-const validateLogLevel = (level?: string) =>
-  level !== undefined && level in loggingLevel
-    ? (level as LoggingLevel)
-    : undefined;
 
 const defaultFormat = (featureName: string = 'LicenceConnect') =>
   winston.format.combine(
@@ -27,25 +23,30 @@ const defaultFormat = (featureName: string = 'LicenceConnect') =>
   );
 
 @Module({
-  exports: [LOGGER_TOKEN],
+  exports: [LOGGER_TOKEN, LoggerConfigurationService],
   imports: [
-    WinstonModule.forRoot({
-      format: defaultFormat(),
-      level: validateLogLevel(process.env.LOG_LEVEL) ?? 'info',
-      transports: [
-        new winston.transports.Console({}),
-        new winston.transports.File({
-          filename: `${process.env.LOG_PATH ?? 'log'}/${process.env.LOG_FILE ?? 'licence-connect.log'}`,
-        }),
-      ],
+    ConfigModule.forRoot(),
+    WinstonModule.forRootAsync({
+      useFactory: (configService: LoggerConfigurationService) => ({
+        format: defaultFormat(),
+        level: configService.getLoggingConfiguration().loggingPath,
+        transports: [
+          new winston.transports.Console({}),
+          new winston.transports.File({
+            filename: `${configService.getLoggingConfiguration().loggingPath}/${configService.getLoggingConfiguration().loggingPath}`,
+          }),
+        ],
+      }),
+      inject: [LoggerConfigurationService],
+      imports: [LoggerModule],
     }),
   ],
-  controllers: [],
   providers: [
     {
       provide: LOGGER_TOKEN,
       useClass: WinstonLoggingService,
     },
+    LoggerConfigurationService,
   ],
 })
 export class LoggerModule {}

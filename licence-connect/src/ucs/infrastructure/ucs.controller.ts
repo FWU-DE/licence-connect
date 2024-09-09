@@ -46,6 +46,12 @@ export class UcsController {
 
     const useCase = new UCSStudentFromUCSStudentId();
 
-    return await useCase.execute(ucsRepository, body.userId);
+    const studentId = body.userId;
+    const schoolContextIdentifier = body.schulkennung;
+    return await useCase.execute(
+      ucsRepository,
+      studentId,
+      schoolContextIdentifier,
+    );
   }
 }

@@ -10,12 +10,12 @@ import {
   Version,
 } from '@nestjs/common';
 import { ApiSecurity, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { VidisRequestDto } from '@vidis/infrastructure/dto/vidis-request.dto';
 import { VidisApiKeyGuard } from './authentication/vidis-api-key.guard';
 import { LicencesDto } from './dto/licences.dto';
+import { LicenceStrategyFactory } from '@vidis/domain/licence-strategy-factory';
 import { createReleaseLicenceForStudentUseCase } from '@vidis/usecases/release-licence-for-student-use-case';
 import { createRequestLicencesForStudentUseCase } from '@vidis/usecases/request-licences-use-case';
-import { LicenceStrategyFactory } from '@vidis/domain/licence-strategy-factory';
+import { VidisRequestDto } from './dto/vidis-request.dto';
 
 @Controller('licences')
 @UsePipes(new ValidationPipe({ enableDebugMessages: true, whitelist: true }))
