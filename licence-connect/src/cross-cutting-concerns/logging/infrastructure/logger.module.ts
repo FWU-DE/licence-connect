@@ -6,7 +6,7 @@ import {
 } from 'nest-winston';
 import * as winston from 'winston';
 import { LoggerConfigurationService } from './logger-configuration.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 export const LOGGER_TOKEN = 'LCLogger';
 
