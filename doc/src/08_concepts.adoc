@@ -5,7 +5,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Configuration
 
-The configuration of the LicenceConnect system is currently done by using Environment Variables
+The configuration of the LicenceConnect system is currently done by using Environment Variables.
 These Environment Variables can be set via the .env file next to the Docker Compose file.
 
 Exemplary .env vile
