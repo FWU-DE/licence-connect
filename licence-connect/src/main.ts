@@ -13,7 +13,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Licence-connect API')
     .setDescription('This is the MVP API for licence connect.')
-    .setVersion('0.0.1')
+    .setVersion('0.0.2')
     .addTag('licences')
     .addTag('licenceManagement')
     .addTag('ucs')

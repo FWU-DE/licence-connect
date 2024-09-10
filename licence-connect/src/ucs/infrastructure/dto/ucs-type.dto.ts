@@ -8,12 +8,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export type UCSLicence = string;
-export type AvailableUCSLicences = UCSLicence[];
+export type UcsLicence = string;
+export type AvailableUcsLicences = UcsLicence[];
 
 export type UcsStudentContextId = string;
 
-export class UCSClassDto {
+export class UcsClassDto {
   @IsNotEmpty()
   @IsString()
   name!: string;
@@ -24,10 +24,10 @@ export class UCSClassDto {
 
   @IsOptional()
   @IsArray()
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
 }
 
-export class UCSWorkgroupDto {
+export class UcsWorkgroupDto {
   @IsNotEmpty()
   @IsString()
   name!: string;
@@ -38,27 +38,27 @@ export class UCSWorkgroupDto {
 
   @IsOptional()
   @IsArray()
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
 }
 
-export type UCSRoles = string;
+export type UcsRoles = string;
 
-export type UCSStudentId = string;
+export type UcsStudentId = string;
 
-export class UCSStudentContext {
+export class UcsStudentContext {
   @IsOptional()
   @IsArray()
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
 
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => UCSClassDto)
-  classes?: UCSClassDto[];
+  @Type(() => UcsClassDto)
+  classes?: UcsClassDto[];
 
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => UCSWorkgroupDto)
-  workgroups?: UCSWorkgroupDto[];
+  @Type(() => UcsWorkgroupDto)
+  workgroups?: UcsWorkgroupDto[];
 
   @IsOptional()
   @IsString()
@@ -73,11 +73,11 @@ export class UCSStudentContext {
   school_name?: string;
 
   @IsNotEmpty()
-  roles!: UCSRoles[];
+  roles!: UcsRoles[];
 }
 
-@ApiExtraModels(UCSStudentContext)
-export class UCSStudentDto {
+@ApiExtraModels(UcsStudentContext)
+export class UcsStudentDto {
   @IsNotEmpty()
   @IsString()
   id!: string;
@@ -92,16 +92,16 @@ export class UCSStudentDto {
 
   @IsOptional()
   @IsArray()
-  licenses?: AvailableUCSLicences;
+  licenses?: AvailableUcsLicences;
 
   @IsNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => UCSStudentContext)
+  @Type(() => UcsStudentContext)
   @ApiProperty({
     type: 'object',
-    additionalProperties: { $ref: getSchemaPath(UCSStudentContext) },
+    additionalProperties: { $ref: getSchemaPath(UcsStudentContext) },
   })
   context!: {
-    [key: UcsStudentContextId]: UCSStudentContext;
+    [key: UcsStudentContextId]: UcsStudentContext;
   };
 }
