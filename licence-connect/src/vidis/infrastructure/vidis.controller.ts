@@ -18,7 +18,7 @@ import { createRequestLicencesForStudentUseCase } from '@vidis/usecases/request-
 import { VidisRequestDto } from './dto/vidis-request.dto';
 
 @Controller('licences')
-@UsePipes(new ValidationPipe({ enableDebugMessages: true, whitelist: true }))
+@UsePipes(new ValidationPipe({ whitelist: true }))
 export class VidisController {
   constructor(
     @Inject('LicenceStrategyFactory')

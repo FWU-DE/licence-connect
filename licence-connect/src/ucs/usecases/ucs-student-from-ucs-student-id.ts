@@ -43,6 +43,7 @@ export class UCSStudentFromUCSStudentId {
           },
         ),
     );
+
     ucsStudent.context = {};
 
     relevantContext.forEach(
@@ -60,9 +61,6 @@ export class UCSStudentFromUCSStudentId {
       schoolContext: UcsStudentContext;
     },
   ): boolean {
-    return (
-      studentContext.schoolContext.school_name ===
-      relevantSchoolContextIdentifier
-    );
+    return studentContext.contextId === relevantSchoolContextIdentifier;
   }
 }

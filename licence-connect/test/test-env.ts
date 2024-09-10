@@ -6,5 +6,5 @@ export const TEST_ENV_VARIABLES = {
   UCS_TECHNICAL_USER_NAME: 'test',
   UCS_TECHNICAL_USER_PASSWORD: 'password',
   LOG_PATH: './test_logs',
-  LOG_FILE: 'test_logs.txt',
+  LOG_FILE: 'test_logs.log',
 };
