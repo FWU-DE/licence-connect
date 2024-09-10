@@ -9,8 +9,8 @@ import { UcsStudentContextId } from '@ucs/infrastructure/dto/ucs-type.dto';
 export interface UcsRequestFromVidisCore {
   userId: UcsStudentId;
   clientId: ClientId;
-  ucsContextIdentifier?: UcsStudentContextId;
-  federalState: SimpleFederalStateAbbreviationString;
+  schulkennung?: UcsStudentContextId;
+  bundesland: SimpleFederalStateAbbreviationString;
 }
 
 export type ClientId = string;

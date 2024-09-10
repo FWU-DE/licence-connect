@@ -19,9 +19,9 @@ export class UcsRequestDto implements UcsRequestFromVidisCore {
 
   @IsOptional()
   @IsString()
-  public ucsContextIdentifier?: UcsStudentContextId;
+  public schulkennung?: UcsStudentContextId;
 
   @IsIn(allFederalStateAbbreviations)
   @IsNotEmpty()
-  public federalState!: FederalStateAbbreviation;
+  public bundesland!: FederalStateAbbreviation;
 }

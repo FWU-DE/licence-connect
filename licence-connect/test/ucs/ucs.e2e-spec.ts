@@ -74,7 +74,7 @@ describe('UCS (e2e)', () => {
           .send({
             userId: 'student.42',
             clientId: 'sodix-editor-o',
-            federalState: 'DE-MV',
+            bundesland: 'DE-MV',
           })
           .expect(200)
           .expect(createStudentWithId('student.42'));
@@ -89,8 +89,8 @@ describe('UCS (e2e)', () => {
           .send({
             userId: 'student.42',
             clientId: 'sodix-editor-o',
-            ucsContextIdentifier: contextIdentifier,
-            federalState: 'DE-MV',
+            schulkennung: contextIdentifier,
+            bundesland: 'DE-MV',
           })
           .expect(200)
           .expect(createStudentWithId('student.42'));
@@ -103,8 +103,8 @@ describe('UCS (e2e)', () => {
           .send({
             userId: 'student.42',
             clientId: 'sodix-editor-o',
-            ucsContextIdentifier: contextIdentifier + 'noMatch',
-            federalState: 'DE-MV',
+            schulkennung: contextIdentifier + 'noMatch',
+            bundesland: 'DE-MV',
           })
           .expect(200)
           .expect(
@@ -175,8 +175,8 @@ describe('UCS (e2e)', () => {
           .send({
             userId: 'student.42',
             clientId: 'sodix-editor-o',
-            ucsContextIdentifier: contextIdentifier,
-            federalState: 'DE-MV',
+            schulkennung: contextIdentifier,
+            bundesland: 'DE-MV',
           })
           .expect(200)
           .expect(
