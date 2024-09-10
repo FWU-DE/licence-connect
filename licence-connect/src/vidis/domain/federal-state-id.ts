@@ -1,4 +1,4 @@
-export const simpleFederalStateIdentificationStrings = [
+export const simpleBundeslandIdentificationStrings = [
   'MV',
   'RP',
   'BW',
@@ -16,18 +16,18 @@ export const simpleFederalStateIdentificationStrings = [
   'SH',
   'TH',
 ];
-export type SimpleFederalStateAbbreviationString =
-  (typeof simpleFederalStateIdentificationStrings)[number];
+export type SimpleBundeslandAbbreviationString =
+  (typeof simpleBundeslandIdentificationStrings)[number];
 
-export const prefixedFederalStateAbbreviationStrings =
-  simpleFederalStateIdentificationStrings.map((id: string) => 'DE-' + id);
-export type PrefixedFederalStateAbbreviationString =
-  (typeof prefixedFederalStateAbbreviationStrings)[number];
+export const prefixedBundeslandAbbreviationStrings =
+  simpleBundeslandIdentificationStrings.map((id: string) => 'DE-' + id);
+export type PrefixedBundeslandAbbreviationString =
+  (typeof prefixedBundeslandAbbreviationStrings)[number];
 
-export const allFederalStateAbbreviations = [
-  ...simpleFederalStateIdentificationStrings,
-  ...prefixedFederalStateAbbreviationStrings,
+export const allBundeslandAbbreviations = [
+  ...simpleBundeslandIdentificationStrings,
+  ...prefixedBundeslandAbbreviationStrings,
 ];
 
-export type FederalStateAbbreviation =
-  (typeof allFederalStateAbbreviations)[number];
+export type BundeslandAbbreviation =
+  (typeof allBundeslandAbbreviations)[number];

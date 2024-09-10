@@ -1,6 +1,6 @@
 import {
-  allFederalStateAbbreviations,
-  FederalStateAbbreviation,
+  allBundeslandAbbreviations,
+  BundeslandAbbreviation,
 } from '@vidis/domain/federal-state-id';
 import { ClientId } from '@vidis/domain/request-from-vidis-core';
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
@@ -21,7 +21,7 @@ export class UcsRequestDto implements UcsRequestFromVidisCore {
   @IsString()
   public schulkennung?: UcsStudentContextId;
 
-  @IsIn(allFederalStateAbbreviations)
+  @IsIn(allBundeslandAbbreviations)
   @IsNotEmpty()
-  public bundesland!: FederalStateAbbreviation;
+  public bundesland!: BundeslandAbbreviation;
 }

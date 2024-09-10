@@ -1,4 +1,4 @@
-import { SimpleFederalStateAbbreviationString } from '@vidis/domain/federal-state-id';
+import { SimpleBundeslandAbbreviationString } from '@vidis/domain/federal-state-id';
 import { StudentId } from './student';
 
 /**
@@ -9,7 +9,7 @@ export interface RequestFromVidisCore {
   userId: StudentId;
   clientId: ClientId;
   schulkennung: SchoolIdentifier;
-  bundesland: SimpleFederalStateAbbreviationString;
+  bundesland: SimpleBundeslandAbbreviationString;
 }
 
 export type ClientId = string;

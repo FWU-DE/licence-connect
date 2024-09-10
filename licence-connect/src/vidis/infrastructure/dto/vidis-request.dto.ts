@@ -1,6 +1,6 @@
 import {
-  allFederalStateAbbreviations,
-  FederalStateAbbreviation,
+  allBundeslandAbbreviations,
+  BundeslandAbbreviation,
 } from '@vidis/domain/federal-state-id';
 import {
   ClientId,
@@ -17,7 +17,7 @@ export class VidisRequestDto {
   @IsNotEmpty()
   public schulkennung!: SchoolIdentifier;
 
-  @IsIn(allFederalStateAbbreviations)
+  @IsIn(allBundeslandAbbreviations)
   @IsNotEmpty()
-  public bundesland!: FederalStateAbbreviation;
+  public bundesland!: BundeslandAbbreviation;
 }
