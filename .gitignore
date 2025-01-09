@@ -6,6 +6,7 @@ licence-connect/node_modules
 licence-connect/build
 
 # Logs
+licence-connect/log
 logs
 *.log
 npm-debug.log*
