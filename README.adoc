@@ -4,6 +4,16 @@
 
 ### Local Setup
 
+#### Running in the console
+
+1. Clone the repository
+2. Select the correct node version if necessary (the Dockerfile currently uses node:20)
+3. Run `yarn install` in the root directory (if yarn is not yet installed on your machine, install it first)
+4. `cd licence-connect`
+5. `npm run start`
+
+Once the application is started and the dependencies are initialised (should only take a few seconds), you should be able to access the swagger UI locally in your browser via `localhost:3000/swagger`
+
 #### VS Code
 
 If you use VS Code for development, you can install the recommended extensions from the popup showing up, as soon as you open the project folder. 
