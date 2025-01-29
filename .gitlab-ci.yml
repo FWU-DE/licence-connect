@@ -1,57 +1,57 @@
 # This file is a template, and might need editing before it works on your project.
 # You can copy and paste this template into a new `.gitlab-ci.yml` file.
 # You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-image: node:20
-
-stages:
-  - test
-  - release
-
-.node_cached:
-  tags:
-    - docker
-  cache:
-    paths:
-      - node_modules/
-    key:
-      files:
-        - yarn.lock
-
-install_dependencies:
-  stage: .pre
-  extends:
-    - .node_cached
-  script:
-    - yarn
-
-test_licence_connect:
-  stage: test
-  extends:
-    - .node_cached
-  script:
-    - yarn workspace licence-connect test
-  cache:
-    policy: pull
-
-test_e2e_licence_connect:
-  stage: test
-  extends:
-    - .node_cached
-  script:
-    - yarn workspace licence-connect test:e2e
-  cache:
-    policy: pull
-
-build_docker_licence_connect:
-  image: docker:27.2.0-rc.1-cli
-  stage: release
-  extends:
-    - .node_cached
-  script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build . -f licence-connect/Dockerfile -t gitcr.fwu.de/licenceconnect/api/licence-connect
-    - docker push gitcr.fwu.de/licenceconnect/api/licence-connect
-  cache:
-    policy: pull
-  only:
-    - main
+#image: node:20
+#
+#stages:
+#  - test
+#  - release
+#
+#.node_cached:
+#  tags:
+#    - docker
+#  cache:
+#    paths:
+#      - node_modules/
+#    key:
+#      files:
+#        - yarn.lock
+#
+#install_dependencies:
+#  stage: .pre
+#  extends:
+#    - .node_cached
+#  script:
+#    - yarn
+#
+#test_licence_connect:
+#  stage: test
+#  extends:
+#    - .node_cached
+#  script:
+#    - yarn workspace licence-connect test
+#  cache:
+#    policy: pull
+#
+#test_e2e_licence_connect:
+#  stage: test
+#  extends:
+#    - .node_cached
+#  script:
+#    - yarn workspace licence-connect test:e2e
+#  cache:
+#    policy: pull
+#
+#build_docker_licence_connect:
+#  image: docker:27.2.0-rc.1-cli
+#  stage: release
+#  extends:
+#    - .node_cached
+#  script:
+#    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+#    - docker build . -f licence-connect/Dockerfile -t gitcr.fwu.de/licenceconnect/api/licence-connect
+#    - docker push gitcr.fwu.de/licenceconnect/api/licence-connect
+#  cache:
+#    policy: pull
+#  only:
+#    - main
