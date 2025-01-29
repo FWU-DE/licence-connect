@@ -53,3 +53,5 @@ build_docker_licence_connect:
     - docker push gitcr.fwu.de/licenceconnect/api/licence-connect
   cache:
     policy: pull
+  only:
+    - main
