@@ -1,0 +1,42 @@
+﻿@startuml C4_Elements
+!include <C4/C4_Component>
+!include <office/Servers/application_server>
+SHOW_PERSON_OUTLINE()
+
+System_Ext(vidis, "Vidis", "")
+System_Boundary(c1, "LC core"){
+    Component(lc_licenses, "Lizenzen Controller", "")
+    Component(lc_bilo, "Bilo Lizenzen Controller", "")
+    Component(lc_auth, "Authorisierer", "")
+    Component(lc_parser, "Lizenz Parser", "")
+    Component(lc_collector, "Lizenz Sammler", "")
+    Boundary(lc_config_system, "Konfiguration [?]\n"){   
+        Component(lc_config, "Konfiguration", "Konfiguration der einzelnen lizenzhaltenden Systeme")
+        Component(lc_rights, "Berechtigungen", "") 
+        Component(lc_config_app, "Konfiguration UI", $sprite="application_server")
+        ContainerDb(lc_config_db, "Konfiguration Datenbank", "")
+    }
+    
+    Rel_U(lc_licenses, lc_auth, "nutzt als Guard", "")
+    Rel_D(lc_bilo, lc_auth, "nutzt als Guard", "")
+    Rel_D(lc_licenses, lc_parser, "nutzt", "")
+    Rel_D(lc_licenses, lc_collector, "nutzt", "")
+    Rel_D(lc_collector, lc_config, "nutzt [?]", "")
+    Rel_D(lc_parser, lc_config, "nutzt [?]", "")
+}
+System_Ext(lh1, "Lizenzhalter [1..]", "")
+System_Ext(bilo, "Bilo", "")
+
+Lay_R(lc_config, lc_rights)
+Lay_R(lc_parser, lc_collector)
+Lay_D(lc_config, lc_config_db)
+Lay_R(lc_config_db, lc_config_app)
+
+
+Rel_R(vidis, lc_licenses, "Lizenzen anfragen (Generisch)", "GET Enpunkt")
+Rel_R(vidis, lc_bilo, "Lizenzen anfragen (Bilo)", "GET Endpunkt")
+Rel_L(lc_auth, vidis, "A&A prüfen [?]", "")
+Rel_R(lc_collector, lh1, "Lizenzen anfragen","")
+Rel_R(lc_bilo, bilo, "Lizenzen anfragen","")
+
+@enduml
