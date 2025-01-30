@@ -49,8 +49,7 @@ class BiloV1Tests {
                         .content(jsonPayload)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-API-KEY", correctApiKey)
-        )
-                .andExpect(status().isOk())
+        ).andExpect(status().isOk())
                 .andExpect(result -> assertFalse(result.getResponse().getContentAsString().isEmpty()));
     }
 }
