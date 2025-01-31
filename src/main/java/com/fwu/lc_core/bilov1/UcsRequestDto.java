@@ -10,18 +10,18 @@ public class UcsRequestDto {
 
     @JsonProperty(required = true)
     @NotBlank
-    private String userId;
+    public final String userId;
 
     @JsonProperty(required = true)
     @NotBlank
-    private String clientId;
+    public final String clientId;
 
     @JsonProperty()
-    private String schulkennung;
+    public final String schulkennung;
 
     @JsonProperty(required = true)
     @NotNull
-    private Bundesland bundesland;
+    public final Bundesland bundesland;
 
     public UcsRequestDto(String userId, String clientId, String schulkennung, Bundesland bundesland) {
         this.userId = userId;
