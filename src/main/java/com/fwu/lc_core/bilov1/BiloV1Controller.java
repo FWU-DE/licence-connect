@@ -25,8 +25,22 @@ import java.util.Map;
 @RestController
 public class BiloV1Controller {
 
-    @Value("${ucs.api.v1.authentication.admin-username}")
+
+    @Value("${ucs.base-url}")
+    private final String baseUrl = "";
+
+    @Value("${ucs.auth.admin.username}")
     private String technicalUserName;
+
+    @Value("${ucs.auth.admin.password}")
+    private final String technicalUserPassword = "";
+
+    @Value("${ucs.auth.endpoint}")
+    private final String authEndpoint = "";
+
+    @Value("${ucs.licence.endpoint}")
+    private final String licenceEndpoint = "";
+
 
     private static class Context {
         public static class UcsClassDto {
@@ -58,13 +72,6 @@ public class BiloV1Controller {
         public Map<String, Context> context;
     }
 
-    private final String baseUrl = "";
-
-    private final String technicalUserPassword = "";
-
-    private final String authEndpoint = "";
-
-    private final String licenceEndpoint = "";
 
     @Validated
     @PostMapping("/v1/ucs/request")
