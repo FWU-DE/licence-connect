@@ -78,9 +78,6 @@ class BiloV1Tests {
         ).andExpect(status().isBadRequest());
     }
 
-
-
-
     private static Stream<Arguments> provideIncorrectInfo() {
         return Stream.of(
                 Arguments.of(null, "clientId", "schulkennung", "BY"),
