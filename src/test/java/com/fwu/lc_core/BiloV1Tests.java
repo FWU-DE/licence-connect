@@ -43,19 +43,6 @@ class BiloV1Tests {
         ).andExpect(status().isUnauthorized());
     }
 
-    @ParameterizedTest
-    @MethodSource("provideIncorrectInfo")
-    void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) throws Exception {
-        UcsRequestDto request = buildRequestForParametrizedTests(userId, clientId, schulkennung, bundesland);
-
-        mockMvc.perform(
-                post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request))
-        ).andExpect(status().isBadRequest());
-    }
-
     @Test
     void requestWithCorrectInfo() throws Exception {
         String studentId = "student.2";
@@ -77,6 +64,21 @@ class BiloV1Tests {
         JsonNode tree2 = objectMapper.readTree(responseBody);
         assert tree2.equals(tree1) : "JSON objects are not the same";
     }
+
+    @ParameterizedTest
+    @MethodSource("provideIncorrectInfo")
+    void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) throws Exception {
+        UcsRequestDto request = buildRequestForParametrizedTests(userId, clientId, schulkennung, bundesland);
+
+        mockMvc.perform(
+                post("/v1/ucs/request")
+                        .header("X-API-KEY", correctApiKey)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+        ).andExpect(status().isBadRequest());
+    }
+
+
 
 
     private static Stream<Arguments> provideIncorrectInfo() {

@@ -1,9 +1,11 @@
 package com.fwu.lc_core.bilov1;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
+
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,15 +14,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Validated
+
 @RestController
 public class BiloV1Controller {
+
+    @Value("${ucs.api.v1.authentication.admin-username}")
+    private String technicalUserName;
 
     private static class Context {
         public static class UcsClassDto {
@@ -52,27 +58,15 @@ public class BiloV1Controller {
         public Map<String, Context> context;
     }
 
-    private final String baseUrl;
+    private final String baseUrl = "";
 
-    private final String technicalUserName;
+    private final String technicalUserPassword = "";
 
-    private final String technicalUserPassword;
+    private final String authEndpoint = "";
 
-    private final String authEndpoint;
+    private final String licenceEndpoint = "";
 
-    private final String licenceEndpoint;
-
-    private Environment env;
-    public BiloV1Controller(Environment env) {
-        Filled during constructor but during runtime all fields are null:
-        this.env = env;
-        this.baseUrl = env.getProperty("ucs.base-url");
-        this.technicalUserName = env.getProperty("ucs.auth.technical-username");
-        this.technicalUserPassword = env.getProperty("ucs.auth.technical-password");
-        this.authEndpoint = env.getProperty("ucs.auth.endpoint");
-        this.licenceEndpoint = env.getProperty("ucs.licence.endpoint");
-    }
-
+    @Validated
     @PostMapping("/v1/ucs/request")
     private String request(@Valid @RequestBody UcsRequestDto request) {
         String bearerToken = fetchAuthToken();
