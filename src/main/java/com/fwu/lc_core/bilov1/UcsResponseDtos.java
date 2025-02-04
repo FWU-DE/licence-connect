@@ -1,10 +1,13 @@
 package com.fwu.lc_core.bilov1;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class Context {
     public static class UcsClassDto {
         public String name;
@@ -27,6 +30,7 @@ class Context {
     public List<String> roles;
 }
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class UcsLicenceeDto {
     public String id;
     public String first_name;

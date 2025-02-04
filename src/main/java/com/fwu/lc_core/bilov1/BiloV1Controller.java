@@ -2,8 +2,6 @@ package com.fwu.lc_core.bilov1;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 
@@ -37,16 +35,9 @@ public class BiloV1Controller {
 
     @Validated
     @PostMapping("/v1/ucs/request")
-    private String request(@Valid @RequestBody UcsRequestDto request) {
+    private ResponseEntity<UcsLicenceeDto> request(@Valid @RequestBody UcsRequestDto request) {
         String bearerToken = fetchAuthToken();
-        UcsLicenceeDto ucsLicenceeDto = fetchStudents(request.userId, bearerToken);
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            return objectMapper.writeValueAsString(ucsLicenceeDto);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return ResponseEntity.ok(fetchLicencees(request.userId, bearerToken));
     }
 
     private String fetchAuthToken() {
@@ -67,8 +58,8 @@ public class BiloV1Controller {
         }
     }
 
-    private UcsLicenceeDto fetchStudents(String studentId, String bearerToken) {
-        String ucsLicenceEndpoint = baseUrl + "/" + licenceEndpoint + "/" + studentId;
+    private UcsLicenceeDto fetchLicencees(String licenceeId, String bearerToken) {
+        String ucsLicenceEndpoint = baseUrl + "/" + licenceEndpoint + "/" + licenceeId;
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(bearerToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -82,7 +73,7 @@ public class BiloV1Controller {
             );
             return response.getBody();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch students", e);
+            throw new RuntimeException("Failed to fetch licencees", e);
         }
     }
 }
