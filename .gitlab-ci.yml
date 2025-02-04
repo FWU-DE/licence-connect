@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-#  - docker
+  - docker
 #  - release
 
 variables:
@@ -37,18 +37,18 @@ run_tests:
   script:
     - mvn $MAVEN_CLI_OPTS test
 
-#docker_build_latest:
-#  stage: docker
-#  script:
-#    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
-#      -DskipTests=true
-#      -Ddocker.image.name=$LATEST_IMAGE_TAG
+docker_build_latest:
+  stage: docker
+  script:
+    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+      -DskipTests=true
+      -Ddocker.image.name=$LATEST_IMAGE_TAG
 #      -Ddocker.registry.username=gitlab-ci-token
 #      -Ddocker.registry.password=$CI_JOB_TOKEN
 #      -Ddocker.registry.url=$CI_REGISTRY
 #      -Ddocker.publish=true
-#  only:
-#    - dev-springboot-CI-pipeline
+  only:
+    - ci/springboot-CI-pipeline
 #    - develop
 
 #docker_release_tag:
