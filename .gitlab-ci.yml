@@ -48,8 +48,8 @@ docker_build_latest:
 #      -Ddocker.registry.url=$CI_REGISTRY
 #      -Ddocker.publish=true
   only:
-    - ci/springboot-CI-pipeline
-#    - develop
+    - ci/FLC-27-springboot-CI-pipeline
+    - dev-springboot
 
 #docker_release_tag:
 #  stage: release
