@@ -33,14 +33,14 @@ class BiloV1Tests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(post("/v1/ucs/request")).andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/v1/ucs/request")).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
                 post("/v1/ucs/request").header("X-API-KEY", "wrong-api-key")
-        ).andExpect(status().isUnauthorized());
+        ).andExpect(status().isForbidden());
     }
 
     @Test
