@@ -1,0 +1,65 @@
+stages:
+  - build
+  - test
+  - docker
+#  - release
+
+variables:
+  IMAGE_NAME: lc-core
+  MAVEN_IMAGE: maven:3-amazoncorretto-21
+
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
+
+  LATEST_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/API/$IMAGE_NAME:latest"
+  RELEASE_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/API/$IMAGE_NAME:$CI_COMMIT_TAG"
+
+cache:
+  paths:
+    - ".m2/repository"
+
+default:
+  image: $MAVEN_IMAGE
+  tags:
+    - docker
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS compile
+  artifacts:
+    paths:
+      - target/
+    expire_in: 30 min
+
+run_tests:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+
+docker_build_latest:
+  stage: docker
+  script:
+    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+      -DskipTests=true
+      -Ddocker.image.name=$LATEST_IMAGE_TAG
+#      -Ddocker.registry.username=gitlab-ci-token
+#      -Ddocker.registry.password=$CI_JOB_TOKEN
+#      -Ddocker.registry.url=$CI_REGISTRY
+#      -Ddocker.publish=true
+  only:
+    - ci/FLC-27-springboot-CI-pipeline
+    - dev-springboot
+
+#docker_release_tag:
+#  stage: release
+#  script:
+#    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+#      -DskipTests=true
+#      -Ddocker.image.name=$RELEASE_IMAGE_TAG
+#      -Ddocker.registry.username=gitlab-ci-token
+#      -Ddocker.registry.password=$CI_JOB_TOKEN
+#      -Ddocker.registry.url=$CI_REGISTRY
+#      -Ddocker.publish=true
+#  only:
+#    - tags
