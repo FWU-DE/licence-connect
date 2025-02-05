@@ -48,7 +48,7 @@ class BiloV1Tests {
         String licenceeId = "student.2";
         UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
 
-        var responseBody = mockMvc.perform(
+        mockMvc.perform(
                 post("/v1/ucs/request")
                         .header("x-api-key", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -61,7 +61,7 @@ class BiloV1Tests {
         String licenceeId = "student.2";
         UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
 
-        var responseBody = mockMvc.perform(
+        mockMvc.perform(
                 post("/v1/ucs/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
