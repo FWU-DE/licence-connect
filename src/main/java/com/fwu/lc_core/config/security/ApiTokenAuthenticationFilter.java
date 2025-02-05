@@ -23,7 +23,7 @@ public class ApiTokenAuthenticationFilter extends OncePerRequestFilter {
         if (apiKey != null && apiKey.equals(theOnlyApiKeyAvailableOnTheSystem))
             filterChain.doFilter(request, response);
         else
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     private static String extractApiKey(HttpServletRequest request) {
