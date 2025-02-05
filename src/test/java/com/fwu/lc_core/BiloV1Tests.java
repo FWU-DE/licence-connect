@@ -33,14 +33,40 @@ class BiloV1Tests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(post("/v1/ucs/request")).andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/v1/ucs/request")).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
                 post("/v1/ucs/request").header("X-API-KEY", "wrong-api-key")
-        ).andExpect(status().isUnauthorized());
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void requestWithLowercaseApiKeyHeaderName() throws Exception {
+        String licenceeId = "student.2";
+        UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
+
+        var responseBody = mockMvc.perform(
+                post("/v1/ucs/request")
+                        .header("x-api-key", correctApiKey)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    void requestWithUppercaseApiKeyHeaderName() throws Exception {
+        String licenceeId = "student.2";
+        UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
+
+        var responseBody = mockMvc.perform(
+                post("/v1/ucs/request")
+                        .header("X-API-KEY", correctApiKey)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+        ).andExpect(status().isOk());
     }
 
     @Test
@@ -99,9 +125,8 @@ class BiloV1Tests {
     }
 
     private static UcsRequestDto buildRequestForParametrizedTests(String userId, String clientId, String schulkennung, String bundesland) {
-        UcsRequestDto request = new UcsRequestDto(
+        return new UcsRequestDto(
                 userId, clientId, schulkennung, (bundesland == null || bundesland.isEmpty()) ? null : Bundesland.valueOf(bundesland)
         );
-        return request;
     }
 }
