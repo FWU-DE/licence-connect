@@ -22,7 +22,7 @@ class LicencesTests {
 
     @Test
     void Unauthenticated_Request_Returns_Forbidden() throws Exception {
-        mockMvc.perform(post("/v1/licences/request")).andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/v1/licences/request")).andExpect(status().isForbidden());
     }
 
     @Test
