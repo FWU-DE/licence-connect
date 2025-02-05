@@ -14,18 +14,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Value("${vidis.api-key}")
-    private String theOnlyApiKeyAvailableOnTheSystem;
+    private String vidisApiKey;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new ApiTokenAuthenticationFilter(theOnlyApiKeyAvailableOnTheSystem), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new ApiKeyAuthenticationFilter(vidisApiKey), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
         return http.build();
     }
-
-
 }
