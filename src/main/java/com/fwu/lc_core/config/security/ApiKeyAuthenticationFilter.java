@@ -25,17 +25,11 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String apiKey = extractApiKey(request);
+        String apiKey = request.getHeader("X-API-KEY");
         if (apiKey != null && apiKey.equals(this.apiKey)) {
             SecurityContextHolder.getContext().setAuthentication(new ApiKeyAuthenticationToken(apiKey, AuthorityUtils.NO_AUTHORITIES));
         }
         filterChain.doFilter(request, response);
-    }
-
-    private static String extractApiKey(HttpServletRequest request) {
-        String headerLowerCase = request.getHeader("x-api-key");
-        String headerUpperCase = request.getHeader("X-API-KEY");
-        return headerLowerCase != null ? headerLowerCase : headerUpperCase;
     }
 }
 
