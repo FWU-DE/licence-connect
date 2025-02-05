@@ -45,40 +45,37 @@ class BiloV1Tests {
 
     @Test
     void requestWithLowercaseApiKeyHeaderName() throws Exception {
-        String licenceeId = "student.2";
-        UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
+        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
 
-        var responseBody = mockMvc.perform(
+        mockMvc.perform(
                 post("/v1/ucs/request")
                         .header("x-api-key", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request))
+                        .content(content)
         ).andExpect(status().isOk());
     }
 
     @Test
     void requestWithUppercaseApiKeyHeaderName() throws Exception {
-        String licenceeId = "student.2";
-        UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
+        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
 
-        var responseBody = mockMvc.perform(
+        mockMvc.perform(
                 post("/v1/ucs/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request))
+                        .content(content)
         ).andExpect(status().isOk());
     }
 
     @Test
     void requestWithCorrectInfo() throws Exception {
-        String licenceeId = "student.2";
-        UcsRequestDto request = new UcsRequestDto(licenceeId, "test", null, Bundesland.MV);
+        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
 
         var responseBody = mockMvc.perform(
                 post("/v1/ucs/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request))
+                        .content(content)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         String cannedResponseFromOldApi = "{\"id\":\"student.2\",\"first_name\":\"student\",\"last_name\":\"2\",\"licenses\":[\"WES-VIDT-2369-P85R-KOUD\"],\"context\":{\"92490b9dc18341906b557bbd4071e1c97db9f9b65d348fafd30988b85a2f6924\":{\"school_name\":\"testfwu\",\"classes\":[{\"name\":\"1\",\"id\":\"cda6b1ddfa321de5a456c69fd5cee2cde7eeeae9b9d9ed24eb84fd88a35cfecb\",\"licenses\":[\"WES-VIDT-0346-P85R-KOUD\",\"WES-VIDT-9775-P85R-VWYX\"]}],\"roles\":[\"student\"],\"licenses\":[\"WES-VIDT-7368-P85R-KOUD\"]}}}";
@@ -122,6 +119,10 @@ class BiloV1Tests {
                 Arguments.of("userId", "", "schulkennung", "BY"),
                 Arguments.of("userId", "clientId", "schulkennung", "")
         );
+    }
+
+    private static UcsRequestDto createValidUcsRequestDto() {
+        return new UcsRequestDto("student.2", "test", null, Bundesland.MV);
     }
 
     private static UcsRequestDto buildRequestForParametrizedTests(String userId, String clientId, String schulkennung, String bundesland) {
