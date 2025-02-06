@@ -1,7 +1,8 @@
 stages:
-  - build
-  - test
-  - docker
+  - debug
+#  - build
+#  - test
+#  - docker
 #  - release
 
 variables:
@@ -23,33 +24,40 @@ default:
   tags:
     - docker
 
-build:
-  stage: build
+debug:
+  stage: debug
   script:
-    - mvn $MAVEN_CLI_OPTS compile
-  artifacts:
-    paths:
-      - target/
-    expire_in: 30 min
+    - echo "Debugging the CI/CD pipeline"
+    - echo "$CI_REGISTRY"
+    - echo "$LATEST_IMAGE_TAG"
 
-run_tests:
-  stage: test
-  script:
-    - mvn $MAVEN_CLI_OPTS test
-
-docker_build_latest:
-  stage: docker
-  script:
-    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
-      -DskipTests=true
-      -Ddocker.image.name=$LATEST_IMAGE_TAG
-      -Ddocker.registry.username=gitlab-ci-token
-      -Ddocker.registry.password=$CI_JOB_TOKEN
-      -Ddocker.registry.url=$CI_REGISTRY
-      -Ddocker.publish=true
-  only:
-    - develop
-    - cd/FLC-27-enable-deployment
+#build:
+#  stage: build
+#  script:
+#    - mvn $MAVEN_CLI_OPTS compile
+#  artifacts:
+#    paths:
+#      - target/
+#    expire_in: 30 min
+#
+#run_tests:
+#  stage: test
+#  script:
+#    - mvn $MAVEN_CLI_OPTS test
+#
+#docker_build_latest:
+#  stage: docker
+#  script:
+#    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+#      -DskipTests=true
+#      -Ddocker.image.name=$LATEST_IMAGE_TAG
+#      -Ddocker.registry.username=gitlab-ci-token
+#      -Ddocker.registry.password=$CI_JOB_TOKEN
+#      -Ddocker.registry.url=$CI_REGISTRY
+#      -Ddocker.publish=true
+#  only:
+#    - develop
+#    - cd/FLC-27-enable-deployment
 
 #docker_release_tag:
 #  stage: release
