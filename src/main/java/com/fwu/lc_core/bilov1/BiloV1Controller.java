@@ -18,20 +18,20 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class BiloV1Controller {
-    @Value("${ucs.base-url}")
-    private String baseUrl = "";
+    @Value("${bilo.v1.base-url}")
+    private String baseUrl;
 
-    @Value("${ucs.auth.admin.username}")
+    @Value("${bilo.v1.auth.admin.username}")
     private String technicalUserName;
 
-    @Value("${ucs.auth.admin.password}")
-    private String technicalUserPassword = "";
+    @Value("${bilo.v1.auth.admin.password}")
+    private String technicalUserPassword;
 
-    @Value("${ucs.auth.endpoint}")
-    private String authEndpoint = "";
+    @Value("${bilo.v1.auth.endpoint}")
+    private String authEndpoint;
 
-    @Value("${ucs.licence.endpoint}")
-    private String licenceEndpoint = "";
+    @Value("${bilo.v1.licence.endpoint}")
+    private String licenceEndpoint;
 
     @Validated
     @PostMapping("/v1/ucs/request")
