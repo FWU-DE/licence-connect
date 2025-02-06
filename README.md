@@ -24,7 +24,7 @@ populate the `application.properties` file.
 - `BILO_V1_PASSWORD`: Password for the Bilo V1 admin user.
 - `BILO_V2_CLIENT_ID`: Client ID for Bilo V2 authentication.
 - `BILO_V2_CLIENT_SECRET`: Client secret for Bilo V2 authentication.
-- `VIDIS_API_KEY`: API key for Vidis authentication.
+- `VIDIS_API_KEY`: API Key with which VIDIS can authenticate its requests to licenceconnect.
 
 You need to have all the Environment Variables set before running any of the following commands which can be done either
 by setting them in the environment or by passing them as arguments to the maven command as shown below:
