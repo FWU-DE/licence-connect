@@ -24,7 +24,9 @@ echo $payload | base64 --decode | jq .
 
 echo "token encoded:" $TOKEN
 
-curl -X POST "https://lizenzverwaltung.bildungslogin-test.de/starbackend-v1/lookup/v1/USR__OOC_BY_LicenseConnectFWU/user/student.2?inc=license" \
+curl -X GET "https://lizenzverwaltung.bildungslogin-test.de/starbackend-v1/lookup/v1/USR__OOC_BY_LicenseConnectFWU/user/student.2?inc=license" \
   -H "Content-Type: application/json" \
-  -H "license-user-id=student.2" \
+  -H "license-user-id: student.2" \
   -H "Authorization: Bearer ${TOKEN}"
+
+
