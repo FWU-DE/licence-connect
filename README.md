@@ -49,6 +49,8 @@ To run the application, use the following command:
 mvn spring-boot:run
 ```
 
+On local development, the swagger UI can be accessed at `http://localhost:8080/swagger-ui/index.html`
+
 ### Running Tests
 
 To run the tests, use the following command:
