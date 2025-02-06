@@ -17,16 +17,16 @@ import java.util.Optional;
 @RestController
 public class BiloV2Controller {
     @Value("${bilo.v2.auth.tokenUrl}")
-    private String tokenUrl = "";
+    private String tokenUrl;
 
     @Value("${bilo.v2.auth.clientId}")
     private String clientId;
 
     @Value("${bilo.v2.auth.clientSecret}")
-    private String clientSecret = "";
+    private String clientSecret;
 
     @Value("${bilo.v2.auth.licenceUrl}")
-    private String licenceUrl = "";
+    private String licenceUrl;
 
 
     @Validated
@@ -37,7 +37,6 @@ public class BiloV2Controller {
     }
 
     private String fetchAuthToken() {
-        String ucsAuthEndpoint = tokenUrl;
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -46,7 +45,7 @@ public class BiloV2Controller {
             body.add("client_id", clientId);
             body.add("client_secret", clientSecret);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-            ResponseEntity<String> response = (new RestTemplate()).postForEntity(ucsAuthEndpoint, request, String.class);
+            ResponseEntity<String> response = (new RestTemplate()).postForEntity(tokenUrl, request, String.class);
             String responseBody = Optional.ofNullable(response.getBody())
                     .orElseThrow(() -> new RuntimeException("Failed to retrieve access token: response body is null"));
             return Optional.ofNullable(new ObjectMapper().readTree(responseBody).get("access_token"))
