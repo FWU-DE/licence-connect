@@ -1,5 +1,6 @@
 package com.fwu.lc_core.bilov2;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
 
 @RestController
 public class BiloV2Controller {
@@ -26,9 +28,10 @@ public class BiloV2Controller {
     @Value("${bilo.v2.auth.licenceUrl}")
     private String licenceUrl = "";
 
+
     @Validated
     @PostMapping("/bilo/request/{userId}")
-    private ResponseEntity<String> request(@PathVariable String userId) {
+    public ResponseEntity<String> request(@PathVariable String userId) {
         String bearerToken = fetchAuthToken();
         return ResponseEntity.ok(fetchLicenses(userId, bearerToken));
     }
@@ -43,16 +46,12 @@ public class BiloV2Controller {
             body.add("client_id", clientId);
             body.add("client_secret", clientSecret);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-            ResponseEntity<String> response = new RestTemplate().postForEntity(ucsAuthEndpoint, request, String.class);
-            String responseBody = response.getBody();
-            if (responseBody == null) {
-                throw new RuntimeException("Failed to retrieve access token: response body is null");
-            }
-            String token = new ObjectMapper().readTree(responseBody).get("access_token").asText();
-            if (token == null || token.isEmpty()) {
-                throw new RuntimeException("Failed to retrieve access token: token is null or empty");
-            }
-            return token;
+            ResponseEntity<String> response = (new RestTemplate()).postForEntity(ucsAuthEndpoint, request, String.class);
+            String responseBody = Optional.ofNullable(response.getBody())
+                    .orElseThrow(() -> new RuntimeException("Failed to retrieve access token: response body is null"));
+            return Optional.ofNullable(new ObjectMapper().readTree(responseBody).get("access_token"))
+                    .map(JsonNode::asText)
+                    .orElseThrow(() -> new RuntimeException("Failed to retrieve access token: token is null or empty"));
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch auth token", e);
         }
@@ -66,7 +65,7 @@ public class BiloV2Controller {
             headers.set("license-user-id", licenceeId);
             headers.set("Authorization", "Bearer " + bearerToken);
             HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<String> response = new RestTemplate().exchange(url, HttpMethod.GET, request, String.class);
+            ResponseEntity<String> response = (new RestTemplate()).exchange(url, HttpMethod.GET, request, String.class);
             if (response.getStatusCode() != HttpStatus.OK) {
                 throw new RuntimeException("Failed to retrieve licenses: " + response.getStatusCode());
             }
