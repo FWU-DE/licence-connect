@@ -43,12 +43,13 @@ docker_build_latest:
     - mvn $MAVEN_CLI_OPTS spring-boot:build-image
       -DskipTests=true
       -Ddocker.image.name=$LATEST_IMAGE_TAG
-#      -Ddocker.registry.username=gitlab-ci-token
-#      -Ddocker.registry.password=$CI_JOB_TOKEN
-#      -Ddocker.registry.url=$CI_REGISTRY
-#      -Ddocker.publish=true
+      -Ddocker.registry.username=gitlab-ci-token
+      -Ddocker.registry.password=$CI_JOB_TOKEN
+      -Ddocker.registry.url=$CI_REGISTRY
+      -Ddocker.publish=true
   only:
     - develop
+    - cd/FLC-27-enable-deployment
 
 #docker_release_tag:
 #  stage: release
