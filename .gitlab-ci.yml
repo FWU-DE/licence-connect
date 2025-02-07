@@ -11,7 +11,7 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
 
-  LATEST_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:debug_image_pull"
+  LATEST_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:flc-27-enable-deployment"
   RELEASE_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:$CI_COMMIT_TAG"
 
 cache:
