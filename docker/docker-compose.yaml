@@ -12,6 +12,7 @@ services:
   licence-connect:
     image: gitcr.fwu.de/licenceconnect/api/licence-connect:flc-27-enable-deployment
     container_name: licence-connect
+    pull_policy: always
     env_file: ".env"
     ports:
       - "8080:8080"
