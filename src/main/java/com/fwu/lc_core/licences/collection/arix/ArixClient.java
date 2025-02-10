@@ -4,6 +4,7 @@ import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -17,7 +18,7 @@ public class ArixClient {
         this.apiUrl = apiUrl;
     }
 
-    public Mono<UnparsedLicences> GetLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId){
+    public Mono<UnparsedLicences> GetLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
@@ -31,6 +32,12 @@ public class ArixClient {
                 .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class));
 
-        return responseMono.map(rawResponseBody -> new UnparsedLicences("ARIX", rawResponseBody));
+
+        return responseMono.flatMapMany(rawResponseBody -> {
+            if (!rawResponseBody.startsWith("<result>"))
+                return Mono.error(new RuntimeException(rawResponseBody));
+            else
+                return Mono.just(new UnparsedLicences("ARIX", rawResponseBody));
+        }).next();
     }
 }

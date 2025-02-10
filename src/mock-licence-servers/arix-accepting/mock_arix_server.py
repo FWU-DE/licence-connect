@@ -40,7 +40,7 @@ def format_response(licenses: list[ArixLicence], field_names: list[str]):
     result = etree.Element("result")
     for licence in licenses:
         licence_element = etree.SubElement(result, "r")
-        licence_element.set("identifier", licence.nr) # TODO: Is this correct?
+        licence_element.set("identifier", licence.id)
         for field_name in field_names:
             if (field_value := getattr(licence, field_name)) is not None:
                 field_element = etree.SubElement(licence_element, "f")
