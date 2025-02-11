@@ -1,14 +1,22 @@
 # Licence Connect Core Application
+## Introduction and Goals
+
+Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
+
+Licence Connect Core provides a way of accessing licenses in a unified way.
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Building the Project](#building-the-project)
-- [Running the Application](#running-the-application)
-- [Environment Variables](#environment-variables)
-- [Running Tests](#running-tests)
-- [Docker Deployment](#docker-deployment)
+- [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Building the Project](#building-the-project)
+  - [Running the Application](#running-the-application)
+  - [Running Tests](#running-tests)
+  - [Docker Deployment](#docker-deployment)
 - [License](#license)
+
+## Setup
 
 ### Prerequisites
 
@@ -68,14 +76,10 @@ To build and run the Docker image, use the following commands:
 docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<api_key> -p 8080:8080 lc-core:latest
 ```
 
-## License
-
-This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.
-
 ## Mock License Servers
 To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
 Currently, this includes:
-- Arix 
+- Arix
 
 All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
 
@@ -83,8 +87,13 @@ If the profile is set to `auto-start-docker` when running the application (e.g. 
 
 
 ### Arix
-There are two versions of Arix mock servers: 
-- `arix-accepting` to allow testing the connection to an Arix server that has whitelisted lc core. 
+There are two versions of Arix mock servers:
+- `arix-accepting` to allow testing the connection to an Arix server that has whitelisted lc core.
 - `arix-rejecting` to allow testing the connection to an Arix server that has not whitelisted lc core.
 
 Please be aware that neither is a complete Arix server but rather only provides the functionality needed for the tests currently implemented.
+
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.

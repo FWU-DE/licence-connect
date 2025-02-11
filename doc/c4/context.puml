@@ -1,0 +1,27 @@
+﻿@startuml C4_Elements
+!include <C4/C4_Container>
+SHOW_PERSON_OUTLINE()
+
+
+Person_Ext(student, "Schüler und Lehrer", "")
+
+System_Ext(ln, "Lizenznutzende", "z. B. Bildungsplattform, Verlage, Bilo")
+
+System_Ext(vidis, "Vidis", "")
+
+System(lc, "LC core", "")
+
+System_Ext(lh, "Lizenzhalter [1..]", "z. B. Bilo, Verlage, Arix")
+
+
+Rel_R(student, ln, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
+
+Rel_R(ln, vidis, "Login umleiten\nLizenzen anfragen", "")
+
+Rel_R(vidis, lc, "Lizenzen anfragen", "")
+Rel_L(lc, vidis, "Gesammelte Lizenzen zurückgeben", "")
+
+Rel_R(lc, lh, "Lizenzen anfragen","")
+Rel_L(lh, lc, "Lizenzen bereitstellen", "")
+
+@enduml
