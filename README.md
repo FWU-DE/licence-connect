@@ -71,3 +71,20 @@ docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BI
 ## License
 
 This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.
+
+## Mock License Servers
+To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
+Currently, this includes:
+- Arix 
+
+All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
+
+If the profile is set to `auto-start-docker` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-startup-docker`, the mock servers will be started automatically.
+
+
+### Arix
+There are two versions of Arix mock servers: 
+- `arix-accepting` to allow testing the connection to an Arix server that has whitelisted lc core. 
+- `arix-rejecting` to allow testing the connection to an Arix server that has not whitelisted lc core.
+
+Please be aware that neither is a complete Arix server but rather only provides the functionality needed for the tests currently implemented.
