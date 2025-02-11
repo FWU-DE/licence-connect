@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +13,9 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${swagger.target.url}")
+    private String targetUrl;
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -24,7 +28,6 @@ public class SwaggerConfig {
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("apiKey"))
-                // TODO: Replace with env var
-                .servers(List.of(new Server().url("https://api.licenceconnect.schule")));
+                .servers(List.of(new Server().url(targetUrl)));
     }
 }
