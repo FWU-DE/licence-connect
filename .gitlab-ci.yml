@@ -10,7 +10,7 @@ variables:
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
-  MAVEN_CLI_TEST_OPTS: "-Dspring.profiles.active=auto-startup-docker"
+  MAVEN_CLI_TEST_OPTS: "-Dspring.profiles.active=auto-start-mocks"
 
   LATEST_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/API/$IMAGE_NAME:latest"
   RELEASE_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/API/$IMAGE_NAME:$CI_COMMIT_TAG"

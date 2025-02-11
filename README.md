@@ -79,7 +79,7 @@ Currently, this includes:
 
 All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
 
-If the profile is set to `auto-start-docker` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-startup-docker`, the mock servers will be started automatically.
+If the profile is set to `auto-start-docker` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-start-mocks`, the mock servers will be started automatically.
 
 
 ### Arix
