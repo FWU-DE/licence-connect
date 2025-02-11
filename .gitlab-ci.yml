@@ -22,12 +22,12 @@ cache:
     - ".m2/repository"
 
 default:
-  image: $MAVEN_IMAGE
   tags:
     - docker
 
 #build:
 #  stage: build
+#  image: $MAVEN_IMAGE
 #  script:
 #    - mvn $MAVEN_CLI_OPTS compile
 #  artifacts:
@@ -36,13 +36,12 @@ default:
 #    expire_in: 30 min
 
 create_test_image:
-  image: docker:latest
+  image: docker:27.2.0-rc.1-cli
   stage: pre_test
   script:
-    - docker build -t $TEST_IMAGE_NAME -f src/test/resources/Dockerfile .
-      -Ddocker.registry.username=gitlab-ci-token
-      -Ddocker.registry.password=$CI_JOB_TOKEN
-      -Ddocker.registry.url=$CI_REGISTRY
+    - echo "$CI_JOB_TOKEN" | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
+    - docker build -f src/test/resources/Dockerfile -t $TEST_IMAGE_NAME
+    - docker push $TEST_IMAGE_NAME
 
 run_tests:
   image: $TEST_IMAGE_NAME
@@ -52,6 +51,7 @@ run_tests:
 #    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
 
 docker_build_latest:
+  image: $MAVEN_IMAGE
   stage: docker
   script:
     - mvn $MAVEN_CLI_OPTS spring-boot:build-image
