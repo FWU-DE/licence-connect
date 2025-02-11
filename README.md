@@ -1,14 +1,22 @@
 # Licence Connect Core Application
+## Introduction and Goals
+
+Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
+
+Licence Connect Core provides a way of accessing licenses in a unified way.
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Building the Project](#building-the-project)
-- [Running the Application](#running-the-application)
-- [Environment Variables](#environment-variables)
-- [Running Tests](#running-tests)
-- [Docker Deployment](#docker-deployment)
+- [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Building the Project](#building-the-project)
+  - [Running the Application](#running-the-application)
+  - [Running Tests](#running-tests)
+  - [Docker Deployment](#docker-deployment)
 - [License](#license)
+
+## Setup
 
 ### Prerequisites
 
@@ -71,3 +79,4 @@ docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BI
 ## License
 
 This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.
+
