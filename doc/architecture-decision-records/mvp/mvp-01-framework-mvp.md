@@ -1,11 +1,11 @@
-# ADR 1: Primary framework for the "Licence Connect" MVP
+# ADR MVP1: Primary framework for the "Licence Connect" MVP
 
 Date: 2024-04-26
 
 
 ## Status
 
-Superseeded by [ADR 4: Primary framework for the "Licence Connect" product](0004-framework-product.md)
+Superseeded by [ADR 1: Primary framework for the "Licence Connect" product](../0001-framework-product.md)
 
 ## Context
 

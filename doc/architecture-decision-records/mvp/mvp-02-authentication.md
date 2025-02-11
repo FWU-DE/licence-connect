@@ -1,4 +1,4 @@
-# ADR 2: Authentication for MVP API
+# ADR MVP2: Authentication for MVP API
 
 Date: 2024-05-29
 

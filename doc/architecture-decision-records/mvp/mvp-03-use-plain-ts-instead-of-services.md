@@ -1,10 +1,10 @@
-# ADR 3: Use Use Case for Clean Architecture instead of injectable Services
+# ADR MVP3: Use Use Case for Clean Architecture instead of injectable Services
 
 Date: 2024-07-15
 
 ## Status
 
-Superseeded by [ADR 4: Primary framework for the "Licence Connect" product](0004-framework-product.md)
+Superseeded by [ADR 1: Primary framework for the "Licence Connect" product](../0001-framework-product.md)
 
 ## Context
 

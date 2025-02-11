@@ -1,4 +1,4 @@
-# ADR 4: Switch to SpringBoot
+# ADR 1: Primary framework for the "Licence Connect" product
 
 Date: 2025-02-05
 
@@ -6,9 +6,9 @@ Date: 2025-02-05
 
 Accepted
 
-Supersedes [ADR 1: Primary framework for the "Licence Connect" MVP](0001-framework-mvp.md)
+Supersedes [ADR MVP1: Primary framework for the "Licence Connect" MVP](mvp/mvp-01-framework-mvp.md)
 
-Supersedes [ADR 3: Use Use Case for Clean Architecture instead of injectable Services](0003-use-plain-ts-instead-of-services.md)
+Supersedes [ADR MVP3: Use Use Case for Clean Architecture instead of injectable Services](mvp/mvp-03-use-plain-ts-instead-of-services.md)
 
 ## Context
 
