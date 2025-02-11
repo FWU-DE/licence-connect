@@ -3,7 +3,7 @@
 
 Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
 
-Licence Connect Core provides a way of accessing licenses in a unified way.
+Licence Connect Core provides a way of accessing licences in a unified way.
 
 ## Table of Contents
 
@@ -76,7 +76,7 @@ To build and run the Docker image, use the following commands:
 docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<api_key> -p 8080:8080 lc-core:latest
 ```
 
-## Mock License Servers
+## Mock Licence Servers
 To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
 Currently, this includes:
 - Arix
