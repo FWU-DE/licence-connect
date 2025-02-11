@@ -10,8 +10,7 @@ app = Flask(__name__)
 
 class RequestType(Enum):
     Search = 1
-    Login = 2
-    Invalid = 3
+    Other = 2
 
 @dataclass
 class SearchRequest:
@@ -22,19 +21,17 @@ class SearchRequest:
 @app.route('/<land>/<standortnummer>', methods=['POST'])
 @app.route('/<land>', methods=['POST'])
 def endpoint(land = None, standortnummer = None, schulnummer = None, userid = None):
-    xmlstatement = request.form.get("xmlstatement")
-    if xmlstatement is None:
+    xml_statement = request.form.get("xmlstatement")
+    if xml_statement is None:
         abort(400)
-    request_type, parsed_request = parse_request(xmlstatement)
+    request_type, parsed_request = parse_request(xml_statement)
     match request_type:
         case RequestType.Search:
             licences = get_example_licences(land, standortnummer, schulnummer, userid)
-            xml = format_response(licences, parsed_request.fields)
-            return Response(xml, mimetype='text/xml')
-        case RequestType.Login:
+            answer_xml = format_response(licences, parsed_request.fields)
+            return Response(answer_xml, mimetype='text/xml')
+        case RequestType.Other:
             abort(501)
-        case RequestType.Invalid:
-            abort(400)
 
 def format_response(licenses: list[ArixLicence], field_names: list[str]):
     result = etree.Element("result")
@@ -53,10 +50,8 @@ def parse_request(xml_string: str):
     match root.tag:
         case "search":
             return RequestType.Search, SearchRequest(root.get("fields").replace(" ", "").split(","))
-        case "login":
-            return RequestType.Login, None
         case _:
-            return RequestType.Invalid, None
+            return RequestType.Other, None
 
 
 if __name__ == '__main__':
