@@ -40,9 +40,9 @@ create_test_image:
   stage: pre_test
   script:
     - docker build -t $TEST_IMAGE_NAME -f src/test/resources/Dockerfile .
-    - Ddocker.registry.username=gitlab-ci-token
-    - Ddocker.registry.password=$CI_JOB_TOKEN
-    - Ddocker.registry.url=$CI_REGISTRY
+      -Ddocker.registry.username=gitlab-ci-token
+      -Ddocker.registry.password=$CI_JOB_TOKEN
+      -Ddocker.registry.url=$CI_REGISTRY
 
 run_tests:
   image: $TEST_IMAGE_NAME
