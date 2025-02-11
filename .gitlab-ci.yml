@@ -1,5 +1,6 @@
 stages:
 #  - build
+  - pre_test
   - test
   - docker
 #  - release
@@ -7,6 +8,7 @@ stages:
 variables:
   IMAGE_NAME: lc-core
   MAVEN_IMAGE: maven:3-amazoncorretto-21
+  TEST_IMAGE_NAME: corretto-with-python
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
@@ -33,12 +35,20 @@ default:
 #      - target/
 #    expire_in: 30 min
 
+create_test_image:
+  image: docker:latest
+  stage: pre_test
+  script:
+    - docker build -t $TEST_IMAGE_NAME -f src/test/resources/Dockerfile .
+    - Ddocker.registry.username=gitlab-ci-token
+    - Ddocker.registry.password=$CI_JOB_TOKEN
+    - Ddocker.registry.url=$CI_REGISTRY
+
 run_tests:
-  services:
-    - docker:dind
+  image: $TEST_IMAGE_NAME
   stage: test
   script:
-    - docker --version
+#    - python --version
 #    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
 
 docker_build_latest:
