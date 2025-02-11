@@ -48,7 +48,7 @@ run_tests:
   image: $TEST_IMAGE_NAME
   stage: test
   script:
-#    - python --version
+    - mvn --version
 #    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
 
 docker_build_latest:
