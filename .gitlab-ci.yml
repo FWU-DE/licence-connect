@@ -40,7 +40,7 @@ create_test_image:
   stage: pre_test
   script:
     - echo "$CI_JOB_TOKEN" | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
-    - docker build -f src/test/resources/Dockerfile -t $TEST_IMAGE_NAME
+    - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE_NAME
     - docker push $TEST_IMAGE_NAME
 
 run_tests:
