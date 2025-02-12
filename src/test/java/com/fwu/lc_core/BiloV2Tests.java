@@ -2,7 +2,7 @@ package com.fwu.lc_core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fwu.lc_core.bilov1.Bundesland;
+import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.bilov1.UcsRequestDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
