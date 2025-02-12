@@ -69,12 +69,19 @@ mvn test
 
 ### Docker Deployment
 
-To build and run the Docker image, use the following commands:
+To build the Docker image, use the following command:
 
 ```sh
 ./mvnw spring-boot:build-image -DskipTests
+```
+
+To run the Docker image locally, use the following command:
+```sh
 docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<api_key> -p 8080:8080 lc-core:latest
 ```
+
+On the server, instead of providing the environment variables directly to the command, copy the docker/.env.example to ./.env on the server and fill in the credentials. The credentials can be found in the FLC vault.
+
 
 ## License
 
