@@ -4,7 +4,6 @@ import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -18,7 +17,7 @@ public class ArixClient {
         this.apiUrl = apiUrl;
     }
 
-    public Mono<UnparsedLicences> GetLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<UnparsedLicences> getLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         if((bundesland == null && standortnummer != null) | (standortnummer == null && schulnummer != null) | (schulnummer == null && userId != null))
             return Mono.error(new IllegalArgumentException("If you provide a parameter, you must provide all parameters before it."));
         WebClient webClient = WebClient.builder()
