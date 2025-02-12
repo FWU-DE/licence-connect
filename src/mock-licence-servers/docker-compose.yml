@@ -11,3 +11,8 @@ services:
       context: arix-rejecting
     ports:
       - "127.0.0.1:1235:1235"
+  mock-bilo-v2-server:
+    build:
+      context: bilo-v2
+    ports:
+      - "127.0.0.1:1236:1236"
