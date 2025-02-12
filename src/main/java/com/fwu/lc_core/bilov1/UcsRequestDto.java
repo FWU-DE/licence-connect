@@ -2,6 +2,7 @@ package com.fwu.lc_core.bilov1;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.shared.Bundesland;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

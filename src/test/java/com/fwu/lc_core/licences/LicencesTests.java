@@ -1,4 +1,4 @@
-package com.fwu.lc_core;
+package com.fwu.lc_core.licences;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

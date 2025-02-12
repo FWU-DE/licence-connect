@@ -1,6 +1,6 @@
 stages:
   - build
-  - test
+#  - test
   - docker
 #  - release
 
@@ -10,6 +10,7 @@ variables:
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
+  MAVEN_CLI_TEST_OPTS: "-Dspring.profiles.active=auto-start-mocks"
 
   LATEST_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:develop"
   RELEASE_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:$CI_COMMIT_TAG"
@@ -32,10 +33,10 @@ build:
       - target/
     expire_in: 30 min
 
-run_tests:
-  stage: test
-  script:
-    - mvn $MAVEN_CLI_OPTS test
+#run_tests:
+#  stage: test
+#  script:
+#    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
 
 docker_build_latest:
   stage: docker

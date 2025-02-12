@@ -1,0 +1,13 @@
+﻿version: '3.8'
+
+services:
+  mock-arix-server-accepting:
+    build:
+      context: arix-accepting
+    ports:
+      - "127.0.0.1:1234:1234"
+  mock-arix-server-rejecting:
+    build:
+      context: arix-rejecting
+    ports:
+      - "127.0.0.1:1235:1235"
