@@ -34,11 +34,11 @@ public class ArixClient {
                 .exchangeToMono(response -> response.bodyToMono(String.class));
 
 
-        return responseMono.flatMapMany(rawResponseBody -> {
+        return responseMono.flatMap(rawResponseBody -> {
             if (!rawResponseBody.startsWith("<result>"))
                 return Mono.error(new RuntimeException(rawResponseBody));
             else
                 return Mono.just(new UnparsedLicences("ARIX", rawResponseBody));
-        }).next();
+        });
     }
 }
