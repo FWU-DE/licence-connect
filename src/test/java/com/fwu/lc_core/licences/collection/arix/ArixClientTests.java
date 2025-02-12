@@ -2,9 +2,14 @@ package com.fwu.lc_core.licences.collection.arix;
 
 import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.test.StepVerifier;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,10 +47,30 @@ public class ArixClientTests {
         assertThat(licences.rawResult).isEqualTo("<result><r identifier=\"3\"><f n=\"nr\">BY_1_23ui4g23c</f></r><r identifier=\"4\"><f n=\"nr\">ORT1_LIZENZ_1</f></r><r identifier=\"7\"><f n=\"nr\">F3453_LIZENZ_1</f></r><r identifier=\"8\"><f n=\"nr\">F3453_LIZENZ_2</f></r></result>");
     }
 
+    @ParameterizedTest
+    @MethodSource("provideIncorrectInfo")
+    public void RequestLicences_ArgumentsAreNotAPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        var arixClient = new ArixClient(baseUrlAccepting);
+        var licencesMono = arixClient.GetLicences(bundesland, standortnummer, schulnummer, userId);
+        StepVerifier.create(licencesMono).expectError().verify();
+    }
+
     @Test
     public void RequestLicences_notWhitelisted_throwsError() {
         var arixClient = new ArixClient(baseUrlRejecting);
         var licencesMono = arixClient.GetLicences(Bundesland.valueOf("BY"), "ORT1", null, null);
         StepVerifier.create(licencesMono).expectError().verify();
+    }
+
+    private static Stream<Arguments> provideIncorrectInfo() {
+        return Stream.of(
+                Arguments.of("BY", "Std", null, "userId"),
+                Arguments.of("BY", null, "Schule", "userId"),
+                Arguments.of(null, "Std", "Schule", "userId"),
+                Arguments.of("BY", null, "Schule", "userId"),
+                Arguments.of("BY", null, "Schule", "userId"),
+                Arguments.of("BY", null, null, "userId"),
+                Arguments.of("BY", null, "Schule", null)
+        );
     }
 }

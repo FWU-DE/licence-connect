@@ -19,6 +19,8 @@ public class ArixClient {
     }
 
     public Mono<UnparsedLicences> GetLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        if((bundesland == null && standortnummer != null) | (standortnummer == null && schulnummer != null) | (schulnummer == null && userId != null))
+            return Mono.error(new IllegalArgumentException("If you provide a parameter, you must provide all parameters before it."));
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
