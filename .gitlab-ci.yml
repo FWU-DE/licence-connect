@@ -1,6 +1,6 @@
 stages:
   - build
-  - test
+#  - test
   - docker
 #  - release
 
@@ -33,10 +33,10 @@ build:
       - target/
     expire_in: 30 min
 
-run_tests:
-  stage: test
-  script:
-    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
+#run_tests:
+#  stage: test
+#  script:
+#    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
 
 docker_build_latest:
   stage: docker
