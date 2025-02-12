@@ -8,7 +8,8 @@ stages:
 variables:
   IMAGE_NAME: licence-connect
   MAVEN_IMAGE: maven:3-amazoncorretto-21
-  TEST_IMAGE_NAME: gitcr.fwu.de/licenceconnect/test/corretto-with-python
+  REGISTRY_SUB_PATH: licenceconnect/api
+  TEST_IMAGE_NAME: $CI_REGISTRY/$REGISTRY_SUB_PATH/corretto-with-python:testing
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
@@ -39,7 +40,7 @@ create_test_image:
   image: docker:27.2.0-rc.1-cli
   stage: pre_test
   script:
-    - echo "$CI_JOB_TOKEN" | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
+    - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
     - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE_NAME
     - docker push $TEST_IMAGE_NAME
 
