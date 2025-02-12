@@ -1,4 +1,4 @@
-package com.fwu.lc_core.bilov1;
+package com.fwu.lc_core.shared;
 
 public enum Bundesland {
     MV("MV"),
