@@ -49,6 +49,8 @@ run_tests:
   stage: test
   script:
     - mvn --version
+    - docker --version
+    - docker compose --version
 #    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
 
 docker_build_latest:
