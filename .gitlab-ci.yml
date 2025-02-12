@@ -8,7 +8,7 @@ stages:
 variables:
   IMAGE_NAME: licence-connect
   MAVEN_IMAGE: maven:3-amazoncorretto-21
-  TEST_IMAGE_NAME: corretto-with-python
+  TEST_IMAGE_NAME: gitcr.fwu.de/licenceconnect/test/corretto-with-python
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
