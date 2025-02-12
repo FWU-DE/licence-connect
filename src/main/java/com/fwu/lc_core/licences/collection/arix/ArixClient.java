@@ -41,4 +41,25 @@ public class ArixClient {
                 return Mono.just(new UnparsedLicences("ARIX", rawResponseBody));
         });
     }
+
+    private UnparsedLicences getLicencesBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        if((bundesland == null && standortnummer != null) | (standortnummer == null && schulnummer != null) | (schulnummer == null && userId != null))
+            throw new IllegalArgumentException("If you provide a parameter, you must provide all parameters before it.");
+        WebClient webClient = WebClient.builder()
+                .baseUrl(apiUrl)
+                .build();
+        String uri = Stream
+                .of(bundesland.toString(), standortnummer, schulnummer, userId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining("/"));
+        String responseBody = webClient.post()
+                .uri(uri)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
+                .exchangeToMono(response -> response.bodyToMono(String.class)).block();
+
+        if(!responseBody.startsWith("<result>"))
+            throw new RuntimeException(responseBody);
+        return new UnparsedLicences("ARIX", responseBody);
+    }
 }
