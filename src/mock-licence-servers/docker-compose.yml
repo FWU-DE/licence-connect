@@ -16,3 +16,5 @@ services:
       context: bilo-v2
     ports:
       - "127.0.0.1:1236:1236"
+    volumes:
+      - ../test/resources/application.properties:/app/application.properties:ro
