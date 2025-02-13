@@ -29,12 +29,6 @@ class BiloV2Tests {
     @Value("${vidis.api-key}")
     private String correctApiKey;
 
-    @Value("${bilo.v2.auth.clientId}")
-    private String clientId;
-
-    @Value("${bilo.v2.auth.clientSecret}")
-    private String clientSecret;
-
     @Value("${bilo.v2.auth.dummyUserId}")
     private String dummyUserId;
 

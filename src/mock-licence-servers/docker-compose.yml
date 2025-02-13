@@ -18,3 +18,10 @@ services:
       - "127.0.0.1:1236:1236"
     volumes:
       - ../test/resources/application.properties:/app/application.properties:ro
+  mock-bilo-v1-server:
+    build:
+      context: bilo-v1
+    ports:
+      - "127.0.0.1:1237:1237"
+    volumes:
+      - ../test/resources/application.properties:/app/application.properties:ro
