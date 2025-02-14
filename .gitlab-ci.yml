@@ -1,6 +1,6 @@
 stages:
-#  - build
-#  - pre_test
+  - build
+  - pre_test
   - test
   - docker
 #  - release
@@ -36,8 +36,11 @@ default:
 #      - target/
 #    expire_in: 30 min
 
+services:
+  - docker:dind
+
 create_test_image:
-  image: docker:27.2.0-rc.1-cli
+  image: docker:latest
   stage: pre_test
   script:
     - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
