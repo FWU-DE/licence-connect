@@ -49,6 +49,13 @@ To build the project, run the following command:
 mvn clean install
 ```
 
+### Active Profiles
+Several profiles allow for different configurations of the application. The following profiles are available:
+- `auto-start-mocks`: Automatically starts the dockerized mock-servers
+- `local`: Configures the application to query against the local mock servers
+If the profile is set to `auto-start-mocks` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-start-mocks`, the mock servers will be started automatically.
+
+
 ### Running the Application
 
 To run the application, use the following command:
@@ -87,11 +94,10 @@ On the server, instead of providing the environment variables directly to the co
 To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
 Currently, this includes:
 - Arix
+- Bildungslogin V1
+- Bildungslogin V2
 
 All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
-
-If the profile is set to `auto-start-mocks` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-start-mocks`, the mock servers will be started automatically.
-
 
 ### Arix
 There are two versions of Arix mock servers:
