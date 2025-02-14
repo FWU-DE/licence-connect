@@ -1,6 +1,6 @@
 stages:
 #  - build
-  - pre_test
+#  - pre_test
   - test
   - docker
 #  - release

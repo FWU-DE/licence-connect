@@ -4,7 +4,6 @@ import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -18,7 +17,17 @@ public class ArixClient {
         this.apiUrl = apiUrl;
     }
 
-    public Mono<UnparsedLicences> GetLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<UnparsedLicences> getLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        try {
+            return Mono.just(getLicencesBlocking(bundesland, standortnummer, schulnummer, userId));
+        } catch (Exception e) {
+            return Mono.error(e);
+        }
+    }
+
+    private UnparsedLicences getLicencesBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        if((bundesland == null && standortnummer != null) | (standortnummer == null && schulnummer != null) | (schulnummer == null && userId != null))
+            throw new IllegalArgumentException("If you provide a parameter, you must provide all parameters before it.");
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
@@ -26,18 +35,14 @@ public class ArixClient {
                 .of(bundesland.toString(), standortnummer, schulnummer, userId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining("/"));
-        Mono<String> responseMono = webClient.post()
+        String responseBody = webClient.post()
                 .uri(uri)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
-                .exchangeToMono(response -> response.bodyToMono(String.class));
+                .exchangeToMono(response -> response.bodyToMono(String.class)).block();
 
-
-        return responseMono.flatMapMany(rawResponseBody -> {
-            if (!rawResponseBody.startsWith("<result>"))
-                return Mono.error(new RuntimeException(rawResponseBody));
-            else
-                return Mono.just(new UnparsedLicences("ARIX", rawResponseBody));
-        }).next();
+        if(!responseBody.startsWith("<result>"))
+            throw new RuntimeException(responseBody);
+        return new UnparsedLicences("ARIX", responseBody);
     }
 }
