@@ -5,7 +5,7 @@ stages:
   - docker
 
 variables:
-  _IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_NAMESPACE
+  _IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/API
 
   MAVEN_IMAGE: maven:3-amazoncorretto-21
   TEST_IMAGE: $_IMAGE_PATH/corretto-with-python:testing
