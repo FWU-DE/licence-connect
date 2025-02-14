@@ -1,5 +1,5 @@
 stages:
-  # - build
+  - build
   - create_test_image
   - test
   - docker
@@ -28,15 +28,15 @@ default:
   tags:
     - docker
 
-build:
- stage: build
- image: $MAVEN_IMAGE
- script:
-   - mvn $MAVEN_CLI_OPTS compile $MAVEN_OPTS
- artifacts:
-   paths:
-     - target/
-   expire_in: 30 min
+# build:
+#  stage: build
+#  image: $MAVEN_IMAGE
+#  script:
+#    - mvn $MAVEN_CLI_OPTS compile $MAVEN_OPTS
+#  artifacts:
+#    paths:
+#      - target/
+#    expire_in: 30 min
 
 create_test_image_job:
   image: docker:latest
