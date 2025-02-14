@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("local")
 @SpringBootTest
 @AutoConfigureMockMvc
 class BiloV2Tests {
