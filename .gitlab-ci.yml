@@ -1,22 +1,24 @@
 stages:
   - build
-  - pre_test
+  - create_test_image
   - test
   - docker
-#  - release
 
 variables:
-  IMAGE_NAME: licence-connect
+  _IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api
+
   MAVEN_IMAGE: maven:3-amazoncorretto-21
-  REGISTRY_SUB_PATH: licenceconnect/api
-  TEST_IMAGE_NAME: $CI_REGISTRY/$REGISTRY_SUB_PATH/corretto-with-python:testing
+  TEST_IMAGE: $_IMAGE_PATH/corretto-with-python:testing
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
   MAVEN_CLI_TEST_OPTS: "-Dspring.profiles.active=auto-start-mocks"
 
-  LATEST_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:develop"
-  RELEASE_IMAGE_TAG: "$CI_REGISTRY/licenceconnect/api/$IMAGE_NAME:$CI_COMMIT_TAG"
+  DEVELOP_IMAGE_TAG: $_IMAGE_PATH:develop
+  RELEASE_IMAGE_TAG: $_IMAGE_PATH:$CI_COMMIT_TAG
+
+services:
+  - docker:dind
 
 cache:
   paths:
@@ -26,53 +28,40 @@ default:
   tags:
     - docker
 
-#build:
+# build:
 #  stage: build
 #  image: $MAVEN_IMAGE
 #  script:
-#    - mvn $MAVEN_CLI_OPTS compile
+#    - mvn $MAVEN_CLI_OPTS compile $MAVEN_OPTS
 #  artifacts:
 #    paths:
 #      - target/
 #    expire_in: 30 min
 
-create_test_image:
-  image: docker:27.2.0-rc.1-cli
-  stage: pre_test
+create_test_image_job:
+  image: docker:27
+  stage: create_test_image
   script:
+    - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE
     - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
-    - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE_NAME
-    - docker push $TEST_IMAGE_NAME
+    - docker push $TEST_IMAGE
 
-run_tests:
-  image: $TEST_IMAGE_NAME
+test_job:
+  image: $TEST_IMAGE
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS test $MAVEN_CLI_TEST_OPTS
+    - mvn $MAVEN_CLI_OPTS test $MAVEN_OPTS $MAVEN_CLI_TEST_OPTS
 
-docker_build_latest:
+docker_job:
   image: $MAVEN_IMAGE
   stage: docker
+  only:
+    - develop
   script:
     - mvn $MAVEN_CLI_OPTS spring-boot:build-image
       -DskipTests=true
-      -Ddocker.publishRegistry.username=gitlab-ci-token
-      -Ddocker.publishRegistry.password=$CI_JOB_TOKEN
-      -Ddocker.publishRegistry.url=$CI_REGISTRY
+      -Ddocker.registry.username=gitlab-ci-token
+      -Ddocker.registry.password=$CI_JOB_TOKEN
+      -Ddocker.registry.url=$CI_REGISTRY
       -Dspring-boot.build-image.publish=true
-      -Dspring-boot.build-image.imageName=$LATEST_IMAGE_TAG
-  only:
-    - develop
-
-#docker_release_tag:
-#  stage: release
-#  script:
-#    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
-#      -DskipTests=true
-#      -Ddocker.image.name=$RELEASE_IMAGE_TAG
-#      -Ddocker.registry.username=gitlab-ci-token
-#      -Ddocker.registry.password=$CI_JOB_TOKEN
-#      -Ddocker.registry.url=$CI_REGISTRY
-#      -Ddocker.publish=true
-#  only:
-#    - tags
+      -Dspring-boot.build-image.imageName=$DEVELOP_IMAGE_TAG
