@@ -39,12 +39,12 @@ default:
 #    expire_in: 30 min
 
 create_test_image_job:
-  image: docker:latest
+  image: docker:27
   stage: create_test_image
   script:
-    - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
     - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE
-    - docker push $TEST_IMAGE_NAME
+    - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
+    - docker push $TEST_IMAGE
 
 test_job:
   image: $TEST_IMAGE
