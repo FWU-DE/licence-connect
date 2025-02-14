@@ -33,7 +33,7 @@ public class BiloV2Controller {
     @PostMapping("/bilo/request/{userId}")
     public ResponseEntity<String> request(@PathVariable String userId) {
         String bearerToken = fetchAuthToken();
-        return ResponseEntity.ok(fetchLicenses(userId, bearerToken));
+        return fetchLicenses(userId, bearerToken);
     }
 
     private String fetchAuthToken() {
@@ -56,7 +56,7 @@ public class BiloV2Controller {
         }
     }
 
-    private String fetchLicenses(String licenceeId, String bearerToken) {
+    private ResponseEntity<String> fetchLicenses(String licenceeId, String bearerToken) {
         String url = licenceUrl + licenceeId + "?inc=license";
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -68,9 +68,9 @@ public class BiloV2Controller {
             if (response.getStatusCode() != HttpStatus.OK) {
                 throw new RuntimeException("Failed to retrieve licenses: " + response.getStatusCode());
             }
-            return response.getBody();
+            return ResponseEntity.ok(response.getBody());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch licenses", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to fetch licenses");
         }
     }
 }
