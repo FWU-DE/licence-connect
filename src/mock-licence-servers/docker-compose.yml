@@ -22,7 +22,6 @@ services:
       - type: bind
         source: ../test/resources/application.properties
         target: /app/application.properties
-        read_only: true
 
   mock-bilo-v1-server:
     build:
@@ -33,4 +32,3 @@ services:
       - type: bind
         source: ../test/resources/application.properties
         target: /app/application.properties
-        read_only: true
