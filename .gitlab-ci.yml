@@ -51,9 +51,6 @@ test_job:
   stage: test
   script:
     - docker compose -f src/mock-licence-servers/docker-compose.yml up -d
-    - ls -halt src
-    - ls -halt src/test
-    - ls -halt src/test/resources
     - mvn $MAVEN_CLI_OPTS test $MAVEN_OPTS $MAVEN_CLI_TEST_OPTS
     - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
