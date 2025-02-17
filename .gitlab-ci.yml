@@ -17,6 +17,8 @@ variables:
   DEVELOP_IMAGE_TAG: $_IMAGE_PATH:develop
   RELEASE_IMAGE_TAG: $_IMAGE_PATH:$CI_COMMIT_TAG
 
+  NETZHAUT_DOCKER_HOST: 172.17.0.1
+
   #DOCKER_HOST: tcp://docker:2375
   #DOCKER_TLS_CERTDIR: ""
   #COMPOSE_PROJECT_NAME: ${CI_JOB_ID}  # Unique name for each job
@@ -61,7 +63,7 @@ test_job:
     - docker info
     - docker context inspect
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
-    - curl -f http://172.17.0.1:1235/healthcheck
+    - curl -f http://$NETZHAUT_DOCKER_HOST:1235/healthcheck
     - mvn test -Dspring.profiles.active=local
 
 docker_job:
