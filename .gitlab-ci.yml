@@ -17,9 +17,9 @@ variables:
   DEVELOP_IMAGE_TAG: $_IMAGE_PATH:develop
   RELEASE_IMAGE_TAG: $_IMAGE_PATH:$CI_COMMIT_TAG
 
-  DOCKER_HOST: tcp://localhost:2375
-  DOCKER_TLS_CERTDIR: ""
-  COMPOSE_PROJECT_NAME: ${CI_JOB_ID}  # Unique name for each job
+  #DOCKER_HOST: tcp://localhost:2375
+  #DOCKER_TLS_CERTDIR: ""
+  #COMPOSE_PROJECT_NAME: ${CI_JOB_ID}  # Unique name for each job
 
 cache:
   paths:
@@ -60,6 +60,7 @@ test_job:
     - docker:dind
   script:
     - apk add --no-cache openjdk21-jre maven curl
+    - docker info
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
     - curl -f http://docker:1235/healthcheck
     - mvn test -Dspring.profiles.active=local
