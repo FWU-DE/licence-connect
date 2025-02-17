@@ -1,6 +1,6 @@
 stages:
-  - build
-  - create_test_image
+#  - build
+#  - create_test_image
   - test
   - docker
 
@@ -38,18 +38,26 @@ default:
 #      - target/
 #    expire_in: 30 min
 
-create_test_image_job:
-  image: docker:27
-  stage: create_test_image
-  script:
-    - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE
-    - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
-    - docker push $TEST_IMAGE
+#create_test_image_job:
+#  image: docker:27
+#  stage: create_test_image
+#  script:
+#    - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE
+#    - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
+#    - docker push $TEST_IMAGE
+
+#test_job:
+#  image: $TEST_IMAGE
+#  stage: test
+#  script:
+#    - mvn $MAVEN_CLI_OPTS test $MAVEN_OPTS $MAVEN_CLI_TEST_OPTS
 
 test_job:
-  image: $TEST_IMAGE
+  image: docker:latest
   stage: test
   script:
+    - apk add --no-cache openjdk21-jre maven
+    - mvn clean install compile
     - mvn $MAVEN_CLI_OPTS test $MAVEN_OPTS $MAVEN_CLI_TEST_OPTS
 
 docker_job:
