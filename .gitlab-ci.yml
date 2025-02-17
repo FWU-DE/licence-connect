@@ -61,7 +61,6 @@ test_job:
   script:
     - apk add --no-cache openjdk21-jre maven curl lsof
     - docker ps
-    - lsof -i :1236
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
     - curl -f http://$NETZHAUT_DOCKER_HOST:1235/healthcheck
     - mvn test
