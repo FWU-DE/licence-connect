@@ -65,6 +65,8 @@ test_job:
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
     - curl -f http://$NETZHAUT_DOCKER_HOST:1235/healthcheck
     - mvn test -Dspring.profiles.active=local
+  after_script:
+    - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
 docker_job:
   image: $MAVEN_IMAGE
