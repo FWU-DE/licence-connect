@@ -61,7 +61,7 @@ test_job:
     - docker info
     - docker context inspect
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
-    - curl -f http://host.docker.internal:1235/healthcheck
+    - curl -f http://172.17.0.1:1235/healthcheck
     - mvn test -Dspring.profiles.active=local
 
 docker_job:
