@@ -24,34 +24,34 @@
       retries: 50
       start_period: 5m
 
-  mock-bilo-v2-server:
-    build:
-      context: bilo-v2
-    ports:
-      - "127.0.0.1:1236:1236"
-    volumes:
-      - type: bind
-        source: ../test/resources/application.properties
-        target: /app/application.properties
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:1236/healthcheck"]
-      interval: 3s
-      timeout: 2s
-      retries: 50
-      start_period: 5m
-
-  mock-bilo-v1-server:
-    build:
-      context: bilo-v1
-    ports:
-      - "127.0.0.1:1237:1237"
-    volumes:
-      - type: bind
-        source: ../test/resources/application.properties
-        target: /app/application.properties
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
-      interval: 3s
-      timeout: 2s
-      retries: 50
-      start_period: 5m
+#  mock-bilo-v2-server:
+#    build:
+#      context: bilo-v2
+#    ports:
+#      - "127.0.0.1:1236:1236"
+#    volumes:
+#      - type: bind
+#        source: ../test/resources/application.properties
+#        target: /app/application.properties
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://127.0.0.1:1236/healthcheck"]
+#      interval: 3s
+#      timeout: 2s
+#      retries: 50
+#      start_period: 5m
+#
+#  mock-bilo-v1-server:
+#    build:
+#      context: bilo-v1
+#    ports:
+#      - "127.0.0.1:1237:1237"
+#    volumes:
+#      - type: bind
+#        source: ../test/resources/application.properties
+#        target: /app/application.properties
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
+#      interval: 3s
+#      timeout: 2s
+#      retries: 50
+#      start_period: 5m
