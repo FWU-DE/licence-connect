@@ -53,9 +53,11 @@ default:
 test_job:
   image: docker:latest
   stage: test
+  services:
+    - docker:dind
   script:
     - apk add --no-cache openjdk21-jre maven
-    - docker compose -f src/mock-licence-servers/docker-compose.yml up -d --build --wait
+    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
     - mvn test -Dspring.profiles.active=local
 
 docker_job:
