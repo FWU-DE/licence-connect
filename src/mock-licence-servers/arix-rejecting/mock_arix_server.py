@@ -1,6 +1,10 @@
-﻿from flask import Flask, Response
+﻿from flask import Flask, Response, jsonify
 
 app = Flask(__name__)
+
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return jsonify({"status": "ok"}), 200
 
 @app.route('/', defaults={'path': ''}, methods=['POST'])
 @app.route('/<path:path>', methods=['POST'])

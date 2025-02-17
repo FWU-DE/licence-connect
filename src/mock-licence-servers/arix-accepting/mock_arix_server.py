@@ -16,6 +16,10 @@ class RequestType(Enum):
 class SearchRequest:
     fields: list[str]
 
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return jsonify({"status": "ok"}), 200
+
 @app.route('/<land>/<standortnummer>/<schulnummer>/<userid>', methods=['POST'])
 @app.route('/<land>/<standortnummer>/<schulnummer>', methods=['POST'])
 @app.route('/<land>/<standortnummer>', methods=['POST'])
