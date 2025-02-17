@@ -43,8 +43,8 @@
       context: bilo-v1
     ports:
       - "1237:1237"
-    volumes:
-      - ../test/resources/application.properties:/app/application.properties:ro
+#    volumes:
+#      - ../test/resources/application.properties:/app/application.properties:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
       interval: 3s
