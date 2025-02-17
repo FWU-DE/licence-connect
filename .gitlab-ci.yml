@@ -62,7 +62,7 @@ test_job:
     - apk add --no-cache openjdk21-jre maven curl
     - docker info
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
-    - curl -f http://docker:1235/healthcheck
+    - curl -f localhost:1235/healthcheck
     - mvn test -Dspring.profiles.active=local
 
 docker_job:
