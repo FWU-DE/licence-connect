@@ -1,6 +1,5 @@
 stages:
-#  - build
-#  - create_test_image
+  - build
   - test
   - docker
 
@@ -12,16 +11,11 @@ variables:
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
-  MAVEN_CLI_TEST_OPTS: "-Dspring.profiles.active=auto-start-mocks"
 
   DEVELOP_IMAGE_TAG: $_IMAGE_PATH:develop
   RELEASE_IMAGE_TAG: $_IMAGE_PATH:$CI_COMMIT_TAG
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
-
-  #DOCKER_HOST: tcp://docker:2375
-  #DOCKER_TLS_CERTDIR: ""
-  #COMPOSE_PROJECT_NAME: ${CI_JOB_ID}  # Unique name for each job
 
 cache:
   paths:
@@ -31,29 +25,15 @@ default:
   tags:
     - docker
 
-# build:
-#  stage: build
-#  image: $MAVEN_IMAGE
-#  script:
-#    - mvn $MAVEN_CLI_OPTS compile $MAVEN_OPTS
-#  artifacts:
-#    paths:
-#      - target/
-#    expire_in: 30 min
-
-#create_test_image_job:
-#  image: docker:27
-#  stage: create_test_image
-#  script:
-#    - docker build . -f src/test/resources/Dockerfile -t $TEST_IMAGE
-#    - echo $CI_JOB_TOKEN | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
-#    - docker push $TEST_IMAGE
-
-#test_job:
-#  image: $TEST_IMAGE
-#  stage: test
-#  script:
-#    - mvn $MAVEN_CLI_OPTS test $MAVEN_OPTS $MAVEN_CLI_TEST_OPTS
+build:
+  stage: build
+  image: $MAVEN_IMAGE
+  script:
+    - mvn $MAVEN_CLI_OPTS compile $MAVEN_OPTS
+  artifacts:
+    paths:
+      - target/
+    expire_in: 30 min
 
 test_job:
   image: docker:latest
