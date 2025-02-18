@@ -4,6 +4,11 @@ app = Flask(__name__)
 
 mock_access_token_value = "mock_access_token"
 
+
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return jsonify({"status": "ok"}), 200
+
 @app.route('/ucsschool/apis/auth/token', methods=['GET', "POST"])
 def token():
     username = request.form.get('username')
