@@ -29,7 +29,7 @@ build:
   stage: build
   image: $MAVEN_IMAGE
   script:
-    - mvn $MAVEN_CLI_OPTS compile $MAVEN_OPTS
+    - mvn compile $MAVEN_OPTS
   artifacts:
     paths:
       - target/
