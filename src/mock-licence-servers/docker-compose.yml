@@ -1,27 +1,51 @@
-﻿version: '3.8'
-
-services:
+﻿services:
   mock-arix-server-accepting:
     build:
       context: arix-accepting
     ports:
-      - "127.0.0.1:1234:1234"
+      - "1234:1234"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:1234/healthcheck"]
+      interval: 3s
+      timeout: 2s
+      retries: 50
+      start_period: 5m
+
   mock-arix-server-rejecting:
     build:
       context: arix-rejecting
     ports:
-      - "127.0.0.1:1235:1235"
-  mock-bilo-v2-server:
-    build:
-      context: bilo-v2
-    ports:
-      - "127.0.0.1:1236:1236"
-    volumes:
-      - ../test/resources/application.properties:/app/application.properties:ro
+      - "1235:1235"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:1235/healthcheck"]
+      interval: 3s
+      timeout: 2s
+      retries: 50
+      start_period: 5m
+
   mock-bilo-v1-server:
     build:
-      context: bilo-v1
+      context: ..
+      dockerfile: ./mock-licence-servers/bilo-v1/Dockerfile
     ports:
-      - "127.0.0.1:1237:1237"
-    volumes:
-      - ../test/resources/application.properties:/app/application.properties:ro
+      - "1237:1237"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
+      interval: 3s
+      timeout: 2s
+      retries: 50
+      start_period: 5m
+
+  mock-bilo-v2-server:
+    build:
+      context: ..
+      dockerfile: ./mock-licence-servers/bilo-v2/Dockerfile
+    ports:
+      - "1236:1236"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:1236/healthcheck"]
+      interval: 3s
+      timeout: 2s
+      retries: 50
+      start_period: 5m
+
