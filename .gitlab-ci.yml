@@ -68,7 +68,7 @@ test_job:
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait || true
     - docker ps -a | grep mock-licence-servers-mock-bilo-v2-server | cut -d ' ' -f1 | xargs docker logs
     - curl -f http://$NETZHAUT_DOCKER_HOST:1235/healthcheck
-    #- mvn test
+    - mvn test
   after_script:
     - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
