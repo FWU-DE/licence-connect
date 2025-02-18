@@ -60,15 +60,9 @@ test_job:
   stage: test
   script:
     - apk add --no-cache openjdk21-jre maven curl lsof
-    - docker ps
-    - export PROJECT_ROOT_DIR=$(pwd)
-    - ls -halt ${PROJECT_ROOT_DIR}/src/test/resources/application.properties
-    - echo ${PROJECT_ROOT_DIR}/src/test/resources/application.properties
-    - cat ${PROJECT_ROOT_DIR}/src/test/resources/application.properties
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait || true
-    - docker ps -a | grep mock-licence-servers-mock-bilo-v2-server | cut -d ' ' -f1 | xargs docker logs
     - curl -f http://$NETZHAUT_DOCKER_HOST:1235/healthcheck
-    - mvn test
+    - mvn test -e -Dspring.profiles.active=local
   after_script:
     - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
