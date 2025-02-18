@@ -2,13 +2,15 @@ stages:
   - build
   - test
   - docker
+  - deploy
 
 variables:
   _IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api
 
   MAVEN_IMAGE: maven:3-amazoncorretto-21
+  MAVEN_LOCAL_REPO: ".m2/repository"
 
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
+  MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL_REPO -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
 
   DEVELOP_IMAGE_TAG: $_IMAGE_PATH:develop
@@ -16,15 +18,17 @@ variables:
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
+  SSH_PARAMS: -o StrictHostKeyChecking=no
+  SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
+  APP_DIR_ON_VM: /var/docker/apps/licenceconnect
+
 cache:
   paths:
-    - ".m2/repository"
-
-default:
-  tags:
-    - docker
+    - "$MAVEN_LOCAL_REPO"
 
 build:
+  tags:
+    - docker
   image: $MAVEN_IMAGE
   stage: build
   script:
@@ -35,6 +39,8 @@ build:
     expire_in: 30 min
 
 test_job:
+  tags:
+    - docker
   image: docker:latest
   stage: test
   script:
@@ -45,16 +51,32 @@ test_job:
   after_script:
     - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
-docker_job:
+docker_develop_job:
+  tags:
+    - docker
   image: $MAVEN_IMAGE
   stage: docker
   only:
     - develop
   script:
     - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+      $MAVEN_OPTS
       -DskipTests=true
       -Ddocker.registry.username=gitlab-ci-token
       -Ddocker.registry.password=$CI_JOB_TOKEN
       -Ddocker.registry.url=$CI_REGISTRY
       -Dspring-boot.build-image.publish=true
       -Dspring-boot.build-image.imageName=$DEVELOP_IMAGE_TAG
+
+deploy_develop_job:
+  stage: deploy
+  only:
+    - develop
+    - cd/FLC-27-connect-pipeline-via-ssh
+  script:
+    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
+    - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    - ssh $SSH_PARAMS $SSH_USER_AND_HOST <<EOF
+      cd $APP_DIR_ON_VM
+      pwd
+      EOF
