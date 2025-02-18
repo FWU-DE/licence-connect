@@ -7,7 +7,6 @@ variables:
   _IMAGE_PATH: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api
 
   MAVEN_IMAGE: maven:3-amazoncorretto-21
-  TEST_IMAGE: $_IMAGE_PATH/corretto-with-python:testing
 
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
@@ -26,8 +25,8 @@ default:
     - docker
 
 build:
-  stage: build
   image: $MAVEN_IMAGE
+  stage: build
   script:
     - mvn compile $MAVEN_OPTS
   artifacts:
@@ -42,6 +41,7 @@ test_job:
     - apk add --no-cache openjdk21-jre maven
     - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
     - mvn test $MAVEN_OPTS
+    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
   after_script:
     - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
