@@ -26,11 +26,10 @@
 
   mock-bilo-v2-server:
     build:
-      context: bilo-v2
+      context: ..
+      dockerfile: ./mock-licence-servers/bilo-v2/Dockerfile
     ports:
       - "1236:1236"
-    volumes:
-      - ./src/test/resources/application.properties:/app/application.properties
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:1236/healthcheck"]
       interval: 3s
