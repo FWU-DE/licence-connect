@@ -1,5 +1,4 @@
 ﻿services:
-
   mock-arix-server-accepting:
     build:
       context: arix-accepting
@@ -24,6 +23,19 @@
       retries: 50
       start_period: 5m
 
+  mock-bilo-v1-server:
+    build:
+      context: ..
+      dockerfile: ./mock-licence-servers/bilo-v1/Dockerfile
+    ports:
+      - "1237:1237"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
+      interval: 3s
+      timeout: 2s
+      retries: 50
+      start_period: 5m
+
   mock-bilo-v2-server:
     build:
       context: ..
@@ -37,16 +49,3 @@
       retries: 50
       start_period: 5m
 
-#  mock-bilo-v1-server:
-#    build:
-#      context: bilo-v1
-#    ports:
-#      - "1237:1237"
-#    volumes:
-#      - ${PROJECT_ROOT_DIR:-../..}/src/test/resources/application.properties:/app/application.properties
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
-#      interval: 3s
-#      timeout: 2s
-#      retries: 50
-#      start_period: 5m

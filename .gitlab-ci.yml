@@ -60,7 +60,7 @@ test_job:
   stage: test
   script:
     - apk add --no-cache openjdk21-jre maven curl lsof
-    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait || true
+    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
     - curl -f http://$NETZHAUT_DOCKER_HOST:1235/healthcheck
     - mvn test -e -Dspring.profiles.active=local
   after_script:
