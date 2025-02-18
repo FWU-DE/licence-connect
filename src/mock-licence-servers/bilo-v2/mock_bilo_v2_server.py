@@ -1,6 +1,12 @@
 from flask import Flask, jsonify, request, Response
+import sys
+from contextlib import redirect_stdout, redirect_stderr
 
 app = Flask(__name__)
+
+@app.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    return jsonify({"status": "ok"}), 200
 
 @app.route('/realms/BiLo-Broker/protocol/openid-connect/token', methods=['POST'])
 def token():
