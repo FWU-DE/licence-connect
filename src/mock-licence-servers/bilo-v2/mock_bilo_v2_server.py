@@ -68,5 +68,5 @@ def parse_file(file_path):
 
 if __name__ == '__main__':
     global config
-    config = parse_file('./resources/application.properties')
+    config = parse_file('./application.properties')
     app.run(debug=True, port=1236, host="0.0.0.0")
