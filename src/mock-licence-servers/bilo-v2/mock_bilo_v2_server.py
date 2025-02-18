@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request, Response
+import sys
+from contextlib import redirect_stdout, redirect_stderr
 
 app = Flask(__name__)
 
@@ -66,5 +68,5 @@ def parse_file(file_path):
 
 if __name__ == '__main__':
     global config
-    config = parse_file('./application.properties')
+    config = parse_file('./resources/application.properties')
     app.run(debug=True, port=1236, host="0.0.0.0")
