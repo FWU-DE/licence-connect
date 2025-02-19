@@ -76,7 +76,7 @@ deploy_job:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; docker compose down || echo "docker compose down failed, continuing"
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; docker compose down || echo 'docker compose down failed, continuing'"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # Copy the (potentially) new version of the nginx configuration into the directory on the VM
