@@ -51,7 +51,7 @@ docker_job:
   image: $MAVEN_IMAGE
   stage: docker
   rules:
-    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
+#    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
     - if: $CI_COMMIT_BRANCH == 'main'
   script:
     - mvn $MAVEN_CLI_OPTS spring-boot:build-image
@@ -66,26 +66,27 @@ docker_job:
 deploy_job:
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
+#    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
     - if: $CI_COMMIT_BRANCH == 'main'
   variables:
     SSH_PARAMS: -o StrictHostKeyChecking=no
     SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
+    SSH_EVAL: "ssh $SSH_PARAMS $SSH_USER_AND_HOST"
     APP_DIR_ON_VM: /var/docker/apps/licenceconnect
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
+    - $SSH_EVAL "mkdir -p $APP_DIR_ON_VM"
     # log into the private registry on the VM
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
+    - $SSH_EVAL "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
     # pull the latest licenceconnect image on the VM
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "docker pull $RELEASE_IMAGE"
+    - $SSH_EVAL "docker pull $RELEASE_IMAGE"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose down"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose down"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # Copy the (potentially) new version of the nginx directory (and its contents) into the directory on the VM
     - scp -r $SSH_PARAMS docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d"
     # delete all dangling docker images on the VM
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "docker image prune -f"
+    - $SSH_EVAL "docker image prune -f"
