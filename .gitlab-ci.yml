@@ -16,10 +16,6 @@ variables:
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
-  SSH_PARAMS: -o StrictHostKeyChecking=no
-  SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
-  APP_DIR_ON_VM: /var/docker/apps/licenceconnect
-
 cache:
   paths:
     - "$MAVEN_LOCAL_REPO"
@@ -72,6 +68,10 @@ deploy_job:
   rules:
     - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
     - if: $CI_COMMIT_BRANCH == 'main'
+  variables:
+    SSH_PARAMS: -o StrictHostKeyChecking=no
+    SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
+    APP_DIR_ON_VM: /var/docker/apps/licenceconnect
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
