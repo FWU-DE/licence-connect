@@ -12,18 +12,18 @@ public class ArixRequestDto {
     public final Bundesland bundesland;
 
     @JsonProperty()
-    public final String schulnummer;
+    public final String standortnummer;
 
     @JsonProperty()
-    public final String standortnummer;
+    public final String schulnummer;
 
     @JsonProperty()
     public final String userId;
 
-    public ArixRequestDto(Bundesland bundesland, String schulnummer, String standortnummer, String userId) {
+    public ArixRequestDto(Bundesland bundesland, String standortnummer, String schulnummer,  String userId) {
         this.bundesland = bundesland;
-        this.schulnummer = schulnummer;
         this.standortnummer = standortnummer;
+        this.schulnummer = schulnummer;
         this.userId = userId;
     }
 }
