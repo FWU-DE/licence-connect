@@ -87,6 +87,6 @@ deploy_job:
     # Copy the (potentially) new version of the nginx directory (and its contents) into the directory on the VM
     - scp -r $SSH_PARAMS docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
-    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d --wait"
     # delete all dangling docker images on the VM
     - $SSH_EVAL "docker image prune -f"

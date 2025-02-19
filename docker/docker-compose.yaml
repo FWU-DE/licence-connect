@@ -12,7 +12,11 @@ services:
   licence-connect:
     image: ${LC_IMAGE}
     container_name: licence-connect
-    pull_policy: always
     env_file: ".env"
     ports:
       - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/healthcheck" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
