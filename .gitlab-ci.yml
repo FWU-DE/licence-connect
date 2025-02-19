@@ -87,3 +87,5 @@ deploy_job:
     - scp -r $SSH_PARAMS docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d"
+    # delete all dangling docker images on the VM
+    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "docker image prune -f"
