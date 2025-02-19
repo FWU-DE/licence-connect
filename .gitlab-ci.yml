@@ -51,7 +51,6 @@ docker_job:
   image: $MAVEN_IMAGE
   stage: docker
   rules:
-    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
     - if: $CI_COMMIT_BRANCH == 'main'
   script:
     - mvn $MAVEN_CLI_OPTS spring-boot:build-image
@@ -66,7 +65,6 @@ docker_job:
 deploy_job:
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
     - if: $CI_COMMIT_BRANCH == 'main'
   variables:
     SSH_PARAMS: -o StrictHostKeyChecking=no
