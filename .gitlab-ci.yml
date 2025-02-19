@@ -1,7 +1,7 @@
 stages:
-#  - build
-#  - test
-#  - docker
+  - build
+  - test
+  - docker
   - deploy
 
 variables:
@@ -10,9 +10,9 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL_REPO -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
 
-  # `api` is inserted literally here, as if we used $CI_PROJECT_NAME,
-  # it would be uppercased, which docker does not accept for image names.
-  LC_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:$CI_COMMIT_SHORT_SHA
+  # `api` is intentionally inserted literally here. If we used $CI_PROJECT_NAME,
+  # it would be uppercased (API), which docker does not accept for image names.
+  RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:$CI_COMMIT_SHORT_SHA
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
@@ -24,53 +24,54 @@ cache:
   paths:
     - "$MAVEN_LOCAL_REPO"
 
-#build:
-#  tags:
-#    - docker
-#  image: $MAVEN_IMAGE
-#  stage: build
-#  script:
-#    - mvn compile $MAVEN_OPTS
-#  artifacts:
-#    paths:
-#      - target/
-#    expire_in: 30 min
-#
-#test_job:
-#  tags:
-#    - docker
-#  image: docker:latest
-#  stage: test
-#  script:
-#    - apk add --no-cache openjdk21-jre maven
-#    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
-#    - mvn test $MAVEN_OPTS
-#    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
-#  after_script:
-#    - docker compose -f src/mock-licence-servers/docker-compose.yml down
-#
-#docker_job:
-#  tags:
-#    - docker
-#  image: $MAVEN_IMAGE
-#  stage: docker
-#  only:
-#    - main
-#    - cd/FLC-27-connect-pipeline-via-ssh
-#  script:
-#    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
-#      $MAVEN_OPTS
-#      -DskipTests=true
-#      -Ddocker.registry.username=gitlab-ci-token
-#      -Ddocker.registry.password=$CI_JOB_TOKEN
-#      -Ddocker.registry.url=$CI_REGISTRY
-#      -Dspring-boot.build-image.publish=true
-#      -Dspring-boot.build-image.imageName=$LC_IMAGE
+build:
+  tags:
+    - docker
+  image: $MAVEN_IMAGE
+  stage: build
+  script:
+    - mvn compile $MAVEN_OPTS
+  artifacts:
+    paths:
+      - target/
+    expire_in: 30 min
+
+test_job:
+  tags:
+    - docker
+  image: docker:latest
+  stage: test
+  script:
+    - apk add --no-cache openjdk21-jre maven
+    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
+    - mvn test $MAVEN_OPTS
+    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
+  after_script:
+    - docker compose -f src/mock-licence-servers/docker-compose.yml down
+
+docker_job:
+  tags:
+    - docker
+  image: $MAVEN_IMAGE
+  stage: docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
+    - if: $CI_COMMIT_BRANCH == 'main'
+  script:
+    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+      $MAVEN_OPTS
+      -DskipTests=true
+      -Ddocker.registry.username=gitlab-ci-token
+      -Ddocker.registry.password=$CI_JOB_TOKEN
+      -Ddocker.registry.url=$CI_REGISTRY
+      -Dspring-boot.build-image.publish=true
+      -Dspring-boot.build-image.imageName=$RELEASE_IMAGE
 
 deploy_job:
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Change this to `main`
+    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Remove this rule once the pipeline works
+    - if: $CI_COMMIT_BRANCH == 'main'
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
@@ -79,4 +80,4 @@ deploy_job:
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM, start the containers using the (potentially) new docker-compose.yaml
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "LC_IMAGE=$LC_IMAGE docker compose up -d"
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "LC_IMAGE=$RELEASE_IMAGE docker compose up -d"
