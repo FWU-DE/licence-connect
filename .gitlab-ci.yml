@@ -70,11 +70,13 @@ cache:
 deploy_job:
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh'
+    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh' # TODO: Change this to `main`
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
-    # Copy the current version of the `docker-compose.yaml` into the directory on the VM
-#    - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
-    # cd into the directory on the VM and run the `deploy_main.sh` script from there
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; $(cat deploy_main.sh $LC_IMAGE)"
+    # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; docker compose down;"
+    # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
+    - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    # cd into the directory on the VM, start the containers using the (potentially) new docker-compose.yaml
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "LC_IMAGE=$LC_IMAGE docker compose up -d"
