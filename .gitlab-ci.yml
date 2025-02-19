@@ -12,7 +12,7 @@ variables:
 
   # `api` is intentionally inserted literally here. If we used $CI_PROJECT_NAME,
   # it would be uppercased (API), which docker does not accept for image names.
-  RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:$CI_COMMIT_SHORT_SHA
+  RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:latest
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
@@ -75,8 +75,8 @@ deploy_job:
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
-    # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; docker compose down;"
+    # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; docker compose down || echo "docker compose down failed, continuing"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM, start the containers using the (potentially) new docker-compose.yaml
