@@ -12,7 +12,7 @@ variables:
 
   # `api` is inserted literally here, as if we used $CI_PROJECT_NAME,
   # it would be uppercased, which docker does not accept for image names.
-  RELEASE_IMAGE_TAG: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:$CI_COMMIT_TAG
+  LC_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:$CI_COMMIT_SHORT_SHA
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
@@ -65,14 +65,16 @@ cache:
 #      -Ddocker.registry.password=$CI_JOB_TOKEN
 #      -Ddocker.registry.url=$CI_REGISTRY
 #      -Dspring-boot.build-image.publish=true
-#      -Dspring-boot.build-image.imageName=$RELEASE_IMAGE_TAG
+#      -Dspring-boot.build-image.imageName=$LC_IMAGE
 
 deploy_job:
   stage: deploy
-  only:
-    - main
-    - cd/FLC-27-connect-pipeline-via-ssh
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'cd/FLC-27-connect-pipeline-via-ssh'
   script:
+    # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
-    - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; $(cat deploy_main.sh)"
+    # Copy the current version of the `docker-compose.yaml` into the directory on the VM
+#    - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    # cd into the directory on the VM and run the `deploy_main.sh` script from there
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; $(cat deploy_main.sh $LC_IMAGE)"

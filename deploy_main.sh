@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-touch FOOBARFILE.md
+#docker compose down
+#LC_IMAGE="$1" docker compose up -d
+
+echo "$1" > FOOBARTEST.md

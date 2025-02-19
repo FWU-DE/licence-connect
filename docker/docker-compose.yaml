@@ -10,7 +10,7 @@ services:
       - licence-connect
 
   licence-connect:
-    image: gitcr.fwu.de/licenceconnect/api/licence-connect:develop
+    image: ${LC_IMAGE}
     container_name: licence-connect
     pull_policy: always
     env_file: ".env"
