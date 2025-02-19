@@ -76,7 +76,7 @@ deploy_job:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
     # log into the private registry on the VM
-    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY"
+    - ssh $SSH_PARAMS $SSH_USER_AND_HOST "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
     # pull the latest licenceconnect image on the VM
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "docker pull $RELEASE_IMAGE"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
