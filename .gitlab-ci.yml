@@ -80,7 +80,7 @@ deploy_job:
     # pull the new image on the VM
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "docker pull $RELEASE_IMAGE"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; docker compose down || echo 'docker compose down failed, continuing'"
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose down"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # Copy the (potentially) new version of the nginx configuration into the directory on the VM
