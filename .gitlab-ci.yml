@@ -75,4 +75,4 @@ deploy_job:
   script:
     - ssh $SSH_PARAMS $SSH_USER_AND_HOST "mkdir -p $APP_DIR_ON_VM"
     - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
-    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST < deploy_main.sh
+    - ssh -T $SSH_PARAMS $SSH_USER_AND_HOST "cd $APP_DIR_ON_VM; $(cat deploy_main.sh)"
