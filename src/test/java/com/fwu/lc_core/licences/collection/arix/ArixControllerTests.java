@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -64,7 +63,7 @@ class ArixControllerTests {
     }
 
     @Test
-    public void RequestLicences_BundeslandOnly_Returns_StringWithLicenceId()  throws Exception  {
+    public void RequestLicences_BundeslandOnly_Returns_StringWithRespectiveLicenceId()  throws Exception  {
         String content = new ObjectMapper().writeValueAsString(generateValidArixRequestDtoWithBundesland());
 
         String responseBody = mockMvc.perform(
@@ -79,6 +78,6 @@ class ArixControllerTests {
     }
 
     private static ArixRequestDto generateValidArixRequestDtoWithBundesland() {
-        return new ArixRequestDto(Bundesland.BY, null, null, null);
+        return new ArixRequestDto(Bundesland.valueOf("BY"), null, null, null);
     }
 }

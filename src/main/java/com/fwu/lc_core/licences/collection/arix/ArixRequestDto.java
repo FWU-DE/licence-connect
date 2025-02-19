@@ -4,13 +4,11 @@ package com.fwu.lc_core.licences.collection.arix;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.shared.Bundesland;
-import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ArixRequestDto {
 
     @JsonProperty(required = true)
-    @NotNull
     public final Bundesland bundesland;
 
     @JsonProperty()
