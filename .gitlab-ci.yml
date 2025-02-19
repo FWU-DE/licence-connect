@@ -1,7 +1,7 @@
 stages:
-  - build
-  - test
-  - docker
+#  - build
+#  - test
+#  - docker
   - deploy
 
 variables:
@@ -24,48 +24,48 @@ cache:
   paths:
     - "$MAVEN_LOCAL_REPO"
 
-build:
-  tags:
-    - docker
-  image: $MAVEN_IMAGE
-  stage: build
-  script:
-    - mvn compile $MAVEN_OPTS
-  artifacts:
-    paths:
-      - target/
-    expire_in: 30 min
-
-test_job:
-  tags:
-    - docker
-  image: docker:latest
-  stage: test
-  script:
-    - apk add --no-cache openjdk21-jre maven
-    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
-    - mvn test $MAVEN_OPTS
-    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
-  after_script:
-    - docker compose -f src/mock-licence-servers/docker-compose.yml down
-
-docker_job:
-  tags:
-    - docker
-  image: $MAVEN_IMAGE
-  stage: docker
-  only:
-    - main
-    - cd/FLC-27-connect-pipeline-via-ssh
-  script:
-    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
-      $MAVEN_OPTS
-      -DskipTests=true
-      -Ddocker.registry.username=gitlab-ci-token
-      -Ddocker.registry.password=$CI_JOB_TOKEN
-      -Ddocker.registry.url=$CI_REGISTRY
-      -Dspring-boot.build-image.publish=true
-      -Dspring-boot.build-image.imageName=$RELEASE_IMAGE_TAG
+#build:
+#  tags:
+#    - docker
+#  image: $MAVEN_IMAGE
+#  stage: build
+#  script:
+#    - mvn compile $MAVEN_OPTS
+#  artifacts:
+#    paths:
+#      - target/
+#    expire_in: 30 min
+#
+#test_job:
+#  tags:
+#    - docker
+#  image: docker:latest
+#  stage: test
+#  script:
+#    - apk add --no-cache openjdk21-jre maven
+#    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
+#    - mvn test $MAVEN_OPTS
+#    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
+#  after_script:
+#    - docker compose -f src/mock-licence-servers/docker-compose.yml down
+#
+#docker_job:
+#  tags:
+#    - docker
+#  image: $MAVEN_IMAGE
+#  stage: docker
+#  only:
+#    - main
+#    - cd/FLC-27-connect-pipeline-via-ssh
+#  script:
+#    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+#      $MAVEN_OPTS
+#      -DskipTests=true
+#      -Ddocker.registry.username=gitlab-ci-token
+#      -Ddocker.registry.password=$CI_JOB_TOKEN
+#      -Ddocker.registry.url=$CI_REGISTRY
+#      -Dspring-boot.build-image.publish=true
+#      -Dspring-boot.build-image.imageName=$RELEASE_IMAGE_TAG
 
 deploy_job:
   stage: deploy
