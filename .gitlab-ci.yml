@@ -72,6 +72,7 @@ deploy_job:
     SSH_PARAMS: -o StrictHostKeyChecking=no
     SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
     SSH_EVAL: "ssh $SSH_PARAMS $SSH_USER_AND_HOST"
+    SCP_EVAL: "scp $SSH_PARAMS"
     APP_DIR_ON_VM: /var/docker/apps/licenceconnect
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
@@ -83,9 +84,9 @@ deploy_job:
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
     - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose down"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
-    - scp $SSH_PARAMS docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    - $SCP_EVAL docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # Copy the (potentially) new version of the nginx directory (and its contents) into the directory on the VM
-    - scp -r $SSH_PARAMS docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    - $SCP_EVAL -r docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
     - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d --wait"
     # delete all dangling docker images on the VM
