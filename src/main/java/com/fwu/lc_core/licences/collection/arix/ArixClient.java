@@ -5,13 +5,14 @@ import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArixClient {
-    private String apiUrl;
+    private final String apiUrl;
 
     public ArixClient(String apiUrl) {
         this.apiUrl = apiUrl;
@@ -19,14 +20,16 @@ public class ArixClient {
 
     public Mono<UnparsedLicences> getLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         try {
-            return Mono.just(getLicencesBlocking(bundesland, standortnummer, schulnummer, userId));
+            return Mono.fromCallable(() -> getLicencesBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
         } catch (Exception e) {
             return Mono.error(e);
         }
     }
 
     private UnparsedLicences getLicencesBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        if((bundesland == null && standortnummer != null) | (standortnummer == null && schulnummer != null) | (schulnummer == null && userId != null))
+        if (bundesland == null)
+            throw new IllegalArgumentException("You must provide a Bundesland.");
+        if ((standortnummer == null && schulnummer != null) | (schulnummer == null && userId != null))
             throw new IllegalArgumentException("If you provide a parameter, you must provide all parameters before it.");
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
@@ -41,7 +44,7 @@ public class ArixClient {
                 .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
 
-        if(!responseBody.startsWith("<result>"))
+        if (responseBody == null || !responseBody.startsWith("<result>"))
             throw new RuntimeException(responseBody);
         return new UnparsedLicences("ARIX", responseBody);
     }
