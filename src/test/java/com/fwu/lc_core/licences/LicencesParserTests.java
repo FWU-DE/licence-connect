@@ -1,15 +1,12 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.UnparsedLicences;
-import com.fwu.lc_core.licences.models.Licence;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.test.StepVerifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -27,15 +24,19 @@ public class LicencesParserTests {
         StepVerifier.create(licencesFlux).expectError().verify();
     }
 
-    private static Stream<Arguments> provideInvalidInput(){
+    private static Stream<Arguments> provideInvalidInput() {
         return Stream.of(
-                Arguments.of("INVALID_SOURCE", ""),
-                Arguments.of("ARIX", "dies ist kein xml"),
-                Arguments.of("ARIX", "<kein xml></kein xml>"),
-                Arguments.of("ARIX", "<result><FALSCH></result>"),
-                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r><nonclosingtag></result>"),
-                Arguments.of("ARIX", ""),
-                Arguments.of("ARIX", null)
+                // Common:
+                Arguments.of("INVALID_SOURCE", ""),                                                                                 // invalid source
+                // Source ARIX:
+                Arguments.of("ARIX", "dies ist kein xml"),                                                                          // invalid xml: no root element
+                Arguments.of("ARIX", "<kein xml></kein xml>"),                                                                      // invalid xml: space in element
+                Arguments.of("ARIX", "<result><FALSCH></result>"),                                                                  // invalid xml: no closing tag
+                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r><nonclosingtag></result>"), // invalid xml: no closing tag
+                Arguments.of("ARIX", ""),                                                                                           // invalid xml: no root element
+                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr2\">ABCD_EFGH_IJKL</f></r></result>"),               // invalid rawResult: no f with n="nr"
+                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><x><f n=\"nr\">ABCD_EFGH_IJKL</f></x></r></result>"),         // invalid rawResult: f with n="nr" not direct child of r
+                Arguments.of("ARIX", null)                                                                                          // invalid rawResult: null
         );
     }
 
@@ -50,11 +51,11 @@ public class LicencesParserTests {
 
         assertThat(licences).isNotNull();
 
-        var licenceCodes = licences.stream().map(l->l.licenceCode).toList();
+        var licenceCodes = licences.stream().map(l -> l.licenceCode).toList();
         assertThat(licenceCodes).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
-    private static Stream<Arguments> provideValidInputAndOutput(){
+    private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
                 Arguments.of("ARIX", "<result></result>", List.of()),
                 Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r></result>", List.of("ABCD_EFGH_IJKL")),
