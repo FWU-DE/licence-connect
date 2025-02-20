@@ -36,6 +36,8 @@ public class LicencesParserTests {
                 Arguments.of("ARIX", ""),                                                                                           // invalid xml: no root element
                 Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr2\">ABCD_EFGH_IJKL</f></r></result>"),               // invalid rawResult: no f with n="nr"
                 Arguments.of("ARIX", "<result><r identifier=\"abcde\"><x><f n=\"nr\">ABCD_EFGH_IJKL</f></x></r></result>"),         // invalid rawResult: f with n="nr" not direct child of r
+                Arguments.of("ARIX", "<x><result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r></result></x>"),         // invalid rawResult: result not root element
+                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\"><x>ABCD_EFGH_IJKL</x></f></r></result>"),         // invalid rawResult: f with n="nr" not containing text as first child
                 Arguments.of("ARIX", null)                                                                                          // invalid rawResult: null
         );
     }
