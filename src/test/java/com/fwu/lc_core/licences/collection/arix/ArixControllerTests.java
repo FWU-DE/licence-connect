@@ -108,7 +108,7 @@ class ArixControllerTests {
     }
 
     @Test
-    public void RequestLicences_ValidRequest_ButNoResults_Returns_EmptyRespone()  throws Exception  {
+    public void RequestLicences_ValidRequest_ButNoResults_Returns_EmptyResponse()  throws Exception  {
         ArixRequestDto requestForNoResults =  new ArixRequestDto(Bundesland.MV, null, null, null);
         String content = new ObjectMapper().writeValueAsString(requestForNoResults);
 
