@@ -44,7 +44,7 @@ public class ArixClient {
                 .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
 
-        if(!responseBody.startsWith("<result>"))
+        if(!responseBody.startsWith("<result"))
             throw new RuntimeException(responseBody);
         return new UnparsedLicences("ARIX", responseBody);
     }

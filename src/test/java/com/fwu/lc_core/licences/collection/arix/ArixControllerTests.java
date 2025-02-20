@@ -13,7 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -28,13 +30,13 @@ class ArixControllerTests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(get("/arix/request")).andExpect(status().isForbidden());
+        mockMvc.perform(post("/arix/request")).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
-                get("/arix/request").header("X-API-KEY", "wrong-api-key")
+                post("/arix/request").header("X-API-KEY", "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
 
@@ -43,7 +45,7 @@ class ArixControllerTests {
         String content = new ObjectMapper().writeValueAsString(generateOnlyBundelandDto());
 
         mockMvc.perform(
-                get("/arix/request")
+                post("/arix/request")
                         .header("x-api-key", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -55,7 +57,7 @@ class ArixControllerTests {
         String content = new ObjectMapper().writeValueAsString(generateOnlyBundelandDto());
 
         mockMvc.perform(
-                get("/arix/request")
+                post("/arix/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -68,7 +70,7 @@ class ArixControllerTests {
         String content = new ObjectMapper().writeValueAsString(emptyDto);
 
         mockMvc.perform(
-                get("/arix/request")
+                post("/arix/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -81,7 +83,7 @@ class ArixControllerTests {
         String content = new ObjectMapper().writeValueAsString(generateOnlyBundelandDto());
 
         String responseBody = mockMvc.perform(
-                get("/arix/request")
+                post("/arix/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -96,7 +98,7 @@ class ArixControllerTests {
         String content = new ObjectMapper().writeValueAsString(fullValidDto);
 
         String responseBody = mockMvc.perform(
-                get("/arix/request")
+                post("/arix/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -106,16 +108,19 @@ class ArixControllerTests {
     }
 
     @Test
-    public void RequestLicences_FullValidDto_Returns_BadRequest()  throws Exception  {
-        ArixRequestDto invalidDto =  new ArixRequestDto(Bundesland.BY, null, "Std", null);
-        String content = new ObjectMapper().writeValueAsString(invalidDto);
+    public void RequestLicences_ValidRequest_ButNoResults_Returns_EmptyRespone()  throws Exception  {
+        ArixRequestDto requestForNoResults =  new ArixRequestDto(Bundesland.MV, null, null, null);
+        String content = new ObjectMapper().writeValueAsString(requestForNoResults);
 
-        mockMvc.perform(
-                get("/arix/request")
+        String responseBody = mockMvc.perform(
+                post("/arix/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
-        ).andExpect(status().isBadRequest());
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        assertThat(responseBody).isEqualTo("<result/>");
+
     }
 
     private ArixRequestDto generateOnlyBundelandDto() {
