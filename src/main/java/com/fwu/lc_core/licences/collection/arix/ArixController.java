@@ -19,14 +19,19 @@ public class ArixController {
     @Validated
     @GetMapping("/arix/request")
     private ResponseEntity<String> request(@Valid @RequestBody ArixRequestDto request) {
+        try {
+            UnparsedLicences unparsedLicences = arixClientAccepting.getLicences(
+                    request.bundesland,
+                    request.standortnummer,
+                    request.schulnummer,
+                    request.userId).block();
 
-        UnparsedLicences unparsedLicences = arixClientAccepting.getLicences(
-                request.bundesland,
-                request.standortnummer,
-                request.schulnummer,
-                request.userId).block();
-
-        return ResponseEntity.ok(unparsedLicences.rawResult);
+            return ResponseEntity.ok(unparsedLicences.rawResult);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

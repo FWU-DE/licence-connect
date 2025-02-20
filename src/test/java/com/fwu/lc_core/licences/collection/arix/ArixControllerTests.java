@@ -77,7 +77,7 @@ class ArixControllerTests {
     }
 
     @Test
-    public void RequestLicences_BundeslandOnly_Returns_StringWithRespectiveLicenceId()  throws Exception  {
+    public void RequestLicences_BundeslandOnly_Returns_ExpectedResult()  throws Exception  {
         String content = new ObjectMapper().writeValueAsString(generateOnlyBundelandDto());
 
         String responseBody = mockMvc.perform(
@@ -91,7 +91,7 @@ class ArixControllerTests {
     }
 
     @Test
-    public void RequestLicences_FullValidDto_Returns_StringWithRespectiveLicenceId()  throws Exception  {
+    public void RequestLicences_FullValidDto_Returns_ExpectedResult()  throws Exception  {
         ArixRequestDto fullValidDto =  new ArixRequestDto(Bundesland.BY, "ORT1", "f3453b", null);
         String content = new ObjectMapper().writeValueAsString(fullValidDto);
 
@@ -110,14 +110,12 @@ class ArixControllerTests {
         ArixRequestDto invalidDto =  new ArixRequestDto(Bundesland.BY, null, "Std", null);
         String content = new ObjectMapper().writeValueAsString(invalidDto);
 
-        String responseBody = mockMvc.perform(
+        mockMvc.perform(
                 get("/arix/request")
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
-        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-
-        assertThat(responseBody).contains("BY_1_23ui4g23c");
+        ).andExpect(status().isBadRequest());
     }
 
     private ArixRequestDto generateOnlyBundelandDto() {
