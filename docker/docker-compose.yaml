@@ -5,34 +5,18 @@ services:
     volumes:
       - ./nginx/config/default.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - 80:80
-    restart: always
+      - "80:80"
     depends_on:
       - licence-connect
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://licence-connect:8080/healthcheck" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   licence-connect:
-    image: licence-connect:latest
-    # image: gitcr.fwu.de/licenceconnect/api/licence-connect:latest
+    image: ${LC_IMAGE}
     container_name: licence-connect
     env_file: ".env"
-    environment:
-      LOG_PATH: /var/log/
-      LOG_FILE: licenceconnect.log
     ports:
-      - 3000:3000
-    restart: always
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-    volumes:
-      - ../logs/:/var/log/
-
-  watchtower:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      WATCHTOWER_POLL_INTERVAL: 60
-      WATCHTOWER_CLEANUP: true
-      WATCHTOWER_LABEL_ENABLE: true
-      REPO_USER: ${REPO_USER}
-      REPO_PASS: ${REPO_PASS}
+      - "8080:8080"

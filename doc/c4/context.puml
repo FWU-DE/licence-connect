@@ -3,7 +3,7 @@
 SHOW_PERSON_OUTLINE()
 
 
-Person_Ext(student, "Schüler", "")
+Person_Ext(student, "Schüler und Lehrer", "")
 
 System_Ext(ln, "Lizenznutzende", "z. B. Bildungsplattform, Verlage, Bilo")
 

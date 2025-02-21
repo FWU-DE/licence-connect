@@ -1,9 +1,16 @@
+.mvn/
+
 node_modules/
+**.venv/
 
 # compiled output
 licence-connect/dist
 licence-connect/node_modules
 licence-connect/build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 # Logs
 licence-connect/log
