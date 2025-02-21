@@ -49,7 +49,7 @@ public class ArixClientTests {
 
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
-    public void RequestLicences_ArgumentsAreNotAPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public void RequestLicences_ArgumentsAreNotANonemptyPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         var arixClient = new ArixClient(baseUrlAccepting);
         var licencesMono = arixClient.getLicences(bundesland, standortnummer, schulnummer, userId);
         StepVerifier.create(licencesMono).expectError().verify();
@@ -70,7 +70,8 @@ public class ArixClientTests {
                 Arguments.of("BY", null, "Schule", "userId"),
                 Arguments.of("BY", null, "Schule", "userId"),
                 Arguments.of("BY", null, null, "userId"),
-                Arguments.of("BY", null, "Schule", null)
+                Arguments.of("BY", null, "Schule", null),
+                Arguments.of(null, null, null, null)
         );
     }
 }
