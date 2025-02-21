@@ -8,11 +8,15 @@ services:
       - "80:80"
     depends_on:
       - licence-connect
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://licence-connect:8080/healthcheck" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   licence-connect:
-    image: gitcr.fwu.de/licenceconnect/api/licence-connect:develop
+    image: ${LC_IMAGE}
     container_name: licence-connect
-    pull_policy: always
     env_file: ".env"
     ports:
       - "8080:8080"
