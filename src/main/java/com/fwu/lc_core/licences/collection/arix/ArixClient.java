@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 public class ArixClient {
     private final String apiUrl;
 
@@ -44,7 +45,7 @@ public class ArixClient {
                 .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
 
-        if (responseBody == null || !responseBody.startsWith("<result>"))
+        if (responseBody == null || !responseBody.startsWith("<result"))
             throw new RuntimeException(responseBody);
         return new UnparsedLicences("ARIX", responseBody);
     }
