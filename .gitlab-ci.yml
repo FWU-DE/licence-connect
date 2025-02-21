@@ -1,55 +1,91 @@
-# This file is a template, and might need editing before it works on your project.
-# You can copy and paste this template into a new `.gitlab-ci.yml` file.
-# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-image: node:20
-
 stages:
+  - build
   - test
-  - release
+  - docker
+  - deploy
 
-.node_cached:
+variables:
+  MAVEN_IMAGE: maven:3-amazoncorretto-21
+  MAVEN_LOCAL_REPO: ".m2/repository"
+  MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL_REPO -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--settings mvn_ci_settings.xml --batch-mode --errors --fail-at-end"
+
+  # `api` is intentionally inserted literally here. If we used $CI_PROJECT_NAME,
+  # it would be uppercased (API), which docker does not accept for image names.
+  RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:latest
+
+  NETZHAUT_DOCKER_HOST: 172.17.0.1
+
+cache:
+  paths:
+    - "$MAVEN_LOCAL_REPO"
+
+build:
   tags:
     - docker
-  cache:
+  image: $MAVEN_IMAGE
+  stage: build
+  script:
+    - mvn compile $MAVEN_OPTS
+  artifacts:
     paths:
-      - node_modules/
-    key:
-      files:
-        - yarn.lock
+      - target/
+    expire_in: 30 min
 
-install_dependencies:
-  stage: .pre
-  extends:
-    - .node_cached
-  script:
-    - yarn
-
-test_licence_connect:
+test_job:
+  tags:
+    - docker
+  image: docker:latest
   stage: test
-  extends:
-    - .node_cached
   script:
-    - yarn workspace licence-connect test
-  cache:
-    policy: pull
+    - apk add --no-cache openjdk21-jre maven
+    - docker compose -f src/mock-licence-servers/docker-compose.yml up --build --wait
+    - mvn test $MAVEN_OPTS
+    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
+  after_script:
+    - docker compose -f src/mock-licence-servers/docker-compose.yml down
 
-test_e2e_licence_connect:
-  stage: test
-  extends:
-    - .node_cached
+docker_job:
+  tags:
+    - docker
+  image: $MAVEN_IMAGE
+  stage: docker
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
   script:
-    - yarn workspace licence-connect test:e2e
-  cache:
-    policy: pull
+    - mvn $MAVEN_CLI_OPTS spring-boot:build-image
+      $MAVEN_OPTS
+      -DskipTests=true
+      -Ddocker.registry.username=gitlab-ci-token
+      -Ddocker.registry.password=$CI_JOB_TOKEN
+      -Ddocker.registry.url=$CI_REGISTRY
+      -Dspring-boot.build-image.publish=true
+      -Dspring-boot.build-image.imageName=$RELEASE_IMAGE
 
-build_docker_licence_connect:
-  image: docker:27.2.0-rc.1-cli
-  stage: release
-  extends:
-    - .node_cached
+deploy_job:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  variables:
+    SSH_PARAMS: -o StrictHostKeyChecking=no
+    SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
+    SSH_EVAL: "ssh $SSH_PARAMS $SSH_USER_AND_HOST"
+    SCP_EVAL: "scp $SSH_PARAMS"
+    APP_DIR_ON_VM: /var/docker/apps/licenceconnect
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build . -f licence-connect/Dockerfile -t gitcr.fwu.de/licenceconnect/api/licence-connect
-    - docker push gitcr.fwu.de/licenceconnect/api/licence-connect
-  cache:
-    policy: pull
+    # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
+    - $SSH_EVAL "mkdir -p $APP_DIR_ON_VM"
+    # log into the private registry on the VM
+    - $SSH_EVAL "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
+    # pull the latest licenceconnect image on the VM
+    - $SSH_EVAL "docker pull $RELEASE_IMAGE"
+    # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose down"
+    # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
+    - $SCP_EVAL docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    # Copy the (potentially) new version of the nginx directory (and its contents) into the directory on the VM
+    - $SCP_EVAL -r docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d --wait"
+    # delete all dangling docker images on the VM
+    - $SSH_EVAL "docker image prune -f"
