@@ -20,7 +20,7 @@ public class ArixRequestDto {
     @JsonProperty()
     public final String userId;
 
-    public ArixRequestDto(Bundesland bundesland, String standortnummer, String schulnummer,  String userId) {
+    public ArixRequestDto(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         this.bundesland = bundesland;
         this.standortnummer = standortnummer;
         this.schulnummer = schulnummer;
