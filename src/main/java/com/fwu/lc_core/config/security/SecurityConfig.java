@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new ApiKeyAuthenticationFilter(vidisApiKey), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/healthcheck").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
