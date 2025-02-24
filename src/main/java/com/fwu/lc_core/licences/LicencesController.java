@@ -3,6 +3,7 @@ package com.fwu.lc_core.licences;
 import com.fwu.lc_core.licences.collection.LicencesCollector;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 public class LicencesController {
     @PostMapping("/v1/licences/request")
-    private ResponseEntity<List<Licence>> request(@RequestBody LicencesRequestDto params) {
+    private ResponseEntity<List<Licence>> request(@Valid @RequestBody LicencesRequestDto params) {
         if (!paramsValid(params)) {
             return ResponseEntity.badRequest().build();
         }
