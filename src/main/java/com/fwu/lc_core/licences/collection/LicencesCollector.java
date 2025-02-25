@@ -11,8 +11,8 @@ import reactor.core.publisher.Flux;
 @Component
 public class LicencesCollector {
 
-    public LicencesCollector(@Value("${mocks.arix.accepting.url}") String myProperty) {
-        arixUrl = myProperty;
+    public LicencesCollector(@Value("${mocks.arix.accepting.url}") String arixUrl) {
+        LicencesCollector.arixUrl = arixUrl;
     }
 
     private static String arixUrl;
