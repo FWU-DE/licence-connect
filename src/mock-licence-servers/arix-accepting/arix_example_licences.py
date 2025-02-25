@@ -2,8 +2,8 @@
 
 from arix_licence import ArixLicence
 
-NRW_LICENCE_1 = ArixLicence(id="1", nr="NRW_LIZENZ_1")
-NRW_LICENCE_2 = ArixLicence(id="2", nr="NRW_LIZENZ_2")
+NW_LICENCE_1 = ArixLicence(id="1", nr="NW_LIZENZ_1")
+NW_LICENCE_2 = ArixLicence(id="2", nr="NW_LIZENZ_2")
 BY_LICENCE_1 = ArixLicence(id="3", nr="BY_1_23ui4g23c")
 ORT1_LICENCE_1 = ArixLicence(id="4", nr="ORT1_LIZENZ_1")
 ORT2_LICENCE_1 = ArixLicence(id="5", nr="ORT2_LIZENZ_1")
@@ -18,7 +18,7 @@ USER_2_LICENCE_1 = ArixLicence(id="13", nr="UIOC_QWUE_QASD_REIJ")
 USER_2_LICENCE_2 = ArixLicence(id="14", nr="HPOA_SJKC_EJKA_WHOO")
 
 land_licences={
-    "NRW": [NRW_LICENCE_1, NRW_LICENCE_2],
+    "NW": [NW_LICENCE_1, NW_LICENCE_2],
     "BY": [BY_LICENCE_1],
 }
 standort_licences={
