@@ -15,10 +15,15 @@ import java.util.Collection;
 
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String apiKey;
+    private final String unprivilegedApiKey;
+    private final String adminApiKey;
 
-    public ApiKeyAuthenticationFilter(String apiKey) {
-        this.apiKey = apiKey;
+    public ApiKeyAuthenticationFilter(
+            String unprivilegedApiKey,
+            String adminApiKey
+    ) {
+        this.unprivilegedApiKey = unprivilegedApiKey;
+        this.adminApiKey = adminApiKey;
     }
 
     @Override
@@ -26,10 +31,17 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String apiKey = request.getHeader("X-API-KEY");
-        if (apiKey != null && apiKey.equals(this.apiKey)) {
-            SecurityContextHolder.getContext().setAuthentication(new ApiKeyAuthenticationToken(apiKey, AuthorityUtils.NO_AUTHORITIES));
+        if (apiKey != null && (apiKey.equals(this.unprivilegedApiKey) || apiKey.equals(this.adminApiKey))) {
+            SecurityContextHolder.getContext().setAuthentication(new ApiKeyAuthenticationToken(apiKey, getAuthoritiesForApiKey(apiKey)));
         }
         filterChain.doFilter(request, response);
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthoritiesForApiKey(String apiKey) {
+        if (adminApiKey.equals(apiKey)) {
+            return AuthorityUtils.createAuthorityList("ROLE_ADMIN");
+        }
+        return AuthorityUtils.NO_AUTHORITIES;
     }
 }
 

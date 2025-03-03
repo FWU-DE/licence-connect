@@ -27,7 +27,7 @@ class BiloV1Tests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Value("${vidis.api-key}")
+    @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
 
     @Test

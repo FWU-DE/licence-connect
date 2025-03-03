@@ -1,5 +1,8 @@
-package com.fwu.lc_core.clientLicenseHolderFilter;
+package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
