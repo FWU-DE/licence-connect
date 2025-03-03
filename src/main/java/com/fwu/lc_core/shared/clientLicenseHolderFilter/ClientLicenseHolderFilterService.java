@@ -17,7 +17,7 @@ public class ClientLicenseHolderFilterService {
         return mapping.map(m -> EnumSetConverter.toEnumSet(m.getAllowedEntries())).orElse(EnumSet.noneOf(AvailableLicenceHolders.class));
     }
 
-    public void setAllowedLicenceHolders(String requesterName, EnumSet<AvailableLicenceHolders> allowedEntries) throws Exception {
+    public void setAllowedLicenceHolders(String requesterName, EnumSet<AvailableLicenceHolders> allowedEntries) {
         ClientLicenceHolderMapping mapping = new ClientLicenceHolderMapping();
         mapping.setRequesterName(requesterName);
         mapping.setAllowedEntries(EnumSetConverter.toStringSet(allowedEntries));
