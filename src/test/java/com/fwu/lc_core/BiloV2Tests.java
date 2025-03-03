@@ -16,8 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.accessibility.AccessibleValue;
-
 import java.util.EnumSet;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureMockMvc
 class BiloV2Tests {
 
-    public static final String BILO_TEST_CLIENT_ID = "bilo test client id";
+    public static final String BILO_TEST_CLIENT_NAME = "bilo v2 test client id";
     @Autowired
     private MockMvc mockMvc;
 
@@ -38,6 +36,7 @@ class BiloV2Tests {
 
     @Value("${bilo.v2.auth.dummyUserId}")
     private String dummyUserId;
+
     @Autowired
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
     @Autowired
@@ -46,7 +45,7 @@ class BiloV2Tests {
     @BeforeEach
     void setUp() {
         clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_ID, EnumSet.of(AvailableLicenceHolders.BILO_V2));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.BILO_V2));
     }
 
     @Test
@@ -68,7 +67,7 @@ class BiloV2Tests {
 
         mockMvc.perform(
                 post("/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_ID)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header("x-api-key", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -81,7 +80,7 @@ class BiloV2Tests {
 
         mockMvc.perform(
                 post("/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_ID)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
 
                         .header("X-API-KEY", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +120,7 @@ class BiloV2Tests {
     void requestWithCorrectInfo() throws Exception {
         var responseBody = mockMvc.perform(
                 post("/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_ID)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header("X-API-KEY", correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -136,7 +135,7 @@ class BiloV2Tests {
     void requestWithNonExistingUser() throws Exception {
         mockMvc.perform(
                 post("/bilo/request/" + dummyUserId + "123")
-                        .param("clientName", BILO_TEST_CLIENT_ID)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header("X-API-KEY", correctApiKey)
         ).andExpect(status().isNotFound());
     }
