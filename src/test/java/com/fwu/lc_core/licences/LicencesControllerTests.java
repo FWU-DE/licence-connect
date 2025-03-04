@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -29,11 +34,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class LicencesControllerTests {
 
+    private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
     @Autowired
     private MockMvc mockMvc;
 
     @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
+    @Autowired
+    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+    @Autowired
+    private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
+
+    @BeforeEach
+    void setUp() {
+        clientLicenceHolderMappingRepository.deleteAll();
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
+    }
 
     @Test
     void Unauthenticated_Request_Returns_Forbidden() throws Exception {
@@ -45,14 +61,6 @@ class LicencesControllerTests {
         mockMvc.perform(
                 post("/v1/licences/request").header("X-API-KEY", correctApiKey)
         ).andExpect(status().isBadRequest());
-    }
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private record RelaxedLicencesRequestDto(
-            @JsonProperty() String bundesland,
-            @JsonProperty() String standortnummer,
-            @JsonProperty() String schulnummer,
-            @JsonProperty() String userId) {
     }
 
     @Test
@@ -75,6 +83,7 @@ class LicencesControllerTests {
         var responseBody = mockMvc.perform(
                 post("/v1/licences/request")
                         .header("X-API-KEY", correctApiKey)
+                        .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -83,16 +92,6 @@ class LicencesControllerTests {
         List<Licence> actualLicences = new ObjectMapper().readValue(responseBody, new TypeReference<List<Licence>>() {
         });
         assertThat(actualLicences.stream().map(l -> l.licenceCode)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
-    }
-
-    private static Stream<Arguments> provideValidInputAndOutput() {
-        return Stream.of(
-                Arguments.of(Bundesland.BB, null, null, null, List.of()),
-                Arguments.of(Bundesland.BY, null, null, null, List.of("BY_1_23ui4g23c")),
-                Arguments.of(Bundesland.BY, "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
-                Arguments.of(Bundesland.BY, "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
-                Arguments.of(Bundesland.BY, "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
-        );
     }
 
     @ParameterizedTest
@@ -106,6 +105,40 @@ class LicencesControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
         ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void Authenticated_Request_WithInvalidClientName_Returns_emptyResponse() throws Exception {
+        var requestDto = new RelaxedLicencesRequestDto(Bundesland.BY.name(), null, null, null);
+        String unregisteredClientName = "unregistered client name";
+
+        var result = mockMvc.perform(
+                post("/v1/licences/request")
+                        .header("X-API-KEY", correctApiKey)
+                        .param("clientName", unregisteredClientName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto))
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        assertThat(result).isEqualTo("[]");
+    }
+
+    private static Stream<Arguments> provideValidInputAndOutput() {
+        return Stream.of(
+                Arguments.of(Bundesland.BB, null, null, null, List.of()),
+                Arguments.of(Bundesland.BY, null, null, null, List.of("BY_1_23ui4g23c")),
+                Arguments.of(Bundesland.BY, "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
+                Arguments.of(Bundesland.BY, "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
+                Arguments.of(Bundesland.BY, "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
+        );
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private record RelaxedLicencesRequestDto(
+            @JsonProperty() String bundesland,
+            @JsonProperty() String standortnummer,
+            @JsonProperty() String schulnummer,
+            @JsonProperty() String userId) {
     }
 
     private static Stream<Arguments> provideInvalidInput() {
