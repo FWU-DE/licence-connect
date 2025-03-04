@@ -18,6 +18,6 @@ class HealthCheckTests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(get("/healthcheck")).andExpect(status().isOk());
+        mockMvc.perform(get("/v1/healthcheck")).andExpect(status().isOk());
     }
 }
