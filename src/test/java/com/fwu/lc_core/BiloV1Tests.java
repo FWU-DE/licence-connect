@@ -1,15 +1,11 @@
 package com.fwu.lc_core;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.EnumSet;
@@ -171,17 +166,17 @@ class BiloV1Tests {
         );
     }
 
-    private static UcsRequestDto createValidUcsRequestDto() {
-        return new UcsRequestDto("student.2", "test", null, Bundesland.MV);
+    private static UcsRequestParams createValidUcsRequestDto() {
+        return new UcsRequestParams("student.2", "test", null, Bundesland.MV);
     }
 
-    static class UcsRequestDto {
+    private static class UcsRequestParams {
         public final String userId;
         public final String clientName;
         public final String schulkennung;
         public final Bundesland bundesland;
 
-        public UcsRequestDto(String userId, String clientName, String schulkennung, Bundesland bundesland) {
+        public UcsRequestParams(String userId, String clientName, String schulkennung, Bundesland bundesland) {
             this.userId = userId;
             this.clientName = clientName;
             this.schulkennung = schulkennung;
