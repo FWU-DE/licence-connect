@@ -1,12 +1,15 @@
 package com.fwu.lc_core;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fwu.lc_core.bilov1.UcsRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +27,7 @@ import java.util.stream.Stream;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -52,52 +55,55 @@ class BiloV1Tests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(post("/v1/ucs/request")).andExpect(status().isForbidden());
+        mockMvc.perform(get("/v1/ucs/request")).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
-                post("/v1/ucs/request").header(API_KEY_HEADER, "wrong-api-key")
+                get("/v1/ucs/request").header(API_KEY_HEADER, "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithLowercaseApiKeyHeaderName() throws Exception {
-        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
-
+        var request = createValidUcsRequestDto();
         mockMvc.perform(
-                post("/v1/ucs/request")
+                get("/v1/ucs/request")
                         .header("x-api-key", correctApiKey)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+                        .param("userId", request.userId)
+                        .param("clientId", request.clientName)
+                        .param("schulkennung", request.schulkennung)
+                        .param("bundesland", request.bundesland.toString())
         ).andExpect(status().isOk());
     }
 
     @Test
     void requestWithUppercaseApiKeyHeaderName() throws Exception {
-        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
-
+        var request = createValidUcsRequestDto();
         mockMvc.perform(
-                post("/v1/ucs/request")
+                get("/v1/ucs/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+                        .param("userId", request.userId)
+                        .param("clientId", request.clientName)
+                        .param("schulkennung", request.schulkennung)
+                        .param("bundesland", request.bundesland.toString())
         ).andExpect(status().isOk());
     }
 
     @Test
     void requestWithCorrectInfo() throws Exception {
-        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
-
+        var request = createValidUcsRequestDto();
         var responseBody = mockMvc.perform(
-                post("/v1/ucs/request")
+                get("/v1/ucs/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+                        .param("userId", request.userId)
+                        .param("clientId", request.clientName)
+                        .param("schulkennung", request.schulkennung)
+                        .param("bundesland", request.bundesland.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         String cannedResponseFromOldApi = "{\"id\":\"student.2\",\"first_name\":\"student\",\"last_name\":\"2\",\"licenses\":[\"WES-VIDT-2369-P85R-KOUD\"],\"context\":{\"92490b9dc18341906b557bbd4071e1c97db9f9b65d348fafd30988b85a2f6924\":{\"school_name\":\"testfwu\",\"classes\":[{\"name\":\"1\",\"id\":\"cda6b1ddfa321de5a456c69fd5cee2cde7eeeae9b9d9ed24eb84fd88a35cfecb\",\"licenses\":[\"WES-VIDT-0346-P85R-KOUD\",\"WES-VIDT-9775-P85R-VWYX\"]}],\"roles\":[\"student\"],\"licenses\":[\"WES-VIDT-7368-P85R-KOUD\"]}}}";
@@ -109,15 +115,17 @@ class BiloV1Tests {
 
     @Test
     void requestWithCorrectInfoButUnconfiguredClient() throws Exception {
-        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
+        var request = createValidUcsRequestDto();
         String clientName = "unconfigured-client";
 
         var responseBody = mockMvc.perform(
-                post("/v1/ucs/request")
+                get("/v1/ucs/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", clientName)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+                        .param("userId", request.userId)
+                        .param("clientId", request.clientName)
+                        .param("schulkennung", request.schulkennung)
+                        .param("bundesland", request.bundesland.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         assertThat(responseBody).isEqualTo("");
@@ -126,25 +134,29 @@ class BiloV1Tests {
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
     void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) throws Exception {
-        UcsRequestDto request = buildRequestForParametrizedTests(userId, clientId, schulkennung, bundesland);
-
         mockMvc.perform(
-                post("/v1/ucs/request")
+                get("/v1/ucs/request")
                         .header(API_KEY_HEADER, correctApiKey)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
+                        .param("userId", userId)
+                        .param("clientId", clientId)
+                        .param("schulkennung", schulkennung)
+                        .param("bundesland", bundesland)
         ).andExpect(status().isBadRequest());
     }
 
     @Test
     void requestWithIncorrectBundesland() throws Exception {
+        var request = createValidUcsRequestDto();
         String invalidBundesland = "XX";
-        String content = "{\"userId\":\"student.2\",\"clientId\":\"test\",\"schulkennung\":\"random\",\"bundesland\":\"" + invalidBundesland + "\"}";
         mockMvc.perform(
-                post("/v1/ucs/request")
+                get("/v1/ucs/request")
                         .header(API_KEY_HEADER, correctApiKey)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
+                        .param("userId", request.userId)
+                        .param("clientId", request.clientName)
+                        .param("schulkennung", request.schulkennung)
+                        .param("bundesland", invalidBundesland)
         ).andExpect(status().isBadRequest());
     }
 
@@ -163,9 +175,17 @@ class BiloV1Tests {
         return new UcsRequestDto("student.2", "test", null, Bundesland.MV);
     }
 
-    private static UcsRequestDto buildRequestForParametrizedTests(String userId, String clientId, String schulkennung, String bundesland) {
-        return new UcsRequestDto(
-                userId, clientId, schulkennung, (bundesland == null || bundesland.isEmpty()) ? null : Bundesland.valueOf(bundesland)
-        );
+    static class UcsRequestDto {
+        public final String userId;
+        public final String clientName;
+        public final String schulkennung;
+        public final Bundesland bundesland;
+
+        public UcsRequestDto(String userId, String clientName, String schulkennung, Bundesland bundesland) {
+            this.userId = userId;
+            this.clientName = clientName;
+            this.schulkennung = schulkennung;
+            this.bundesland = bundesland;
+        }
     }
 }
