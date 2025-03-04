@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.bilov1.UcsRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,8 +19,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.EnumSet;
 import java.util.stream.Stream;
 
+import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,11 +31,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class BiloV1Tests {
 
+    public static final String BILO_TEST_CLIENT_NAME = "bilo v1 test client id";
+
     @Autowired
     private MockMvc mockMvc;
 
-    @Value("${vidis.api-key}")
+    @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
+
+    @Autowired
+    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+    @Autowired
+    private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
+
+    @BeforeEach
+    void setUp() {
+        clientLicenceHolderMappingRepository.deleteAll();
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.BILO_V1));
+    }
 
     @Test
     void requestWithoutApiKey() throws Exception {
@@ -38,7 +58,7 @@ class BiloV1Tests {
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
-                post("/v1/ucs/request").header("X-API-KEY", "wrong-api-key")
+                post("/v1/ucs/request").header(API_KEY_HEADER, "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
 
@@ -49,6 +69,7 @@ class BiloV1Tests {
         mockMvc.perform(
                 post("/v1/ucs/request")
                         .header("x-api-key", correctApiKey)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
         ).andExpect(status().isOk());
@@ -60,7 +81,8 @@ class BiloV1Tests {
 
         mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
         ).andExpect(status().isOk());
@@ -72,7 +94,8 @@ class BiloV1Tests {
 
         var responseBody = mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -84,6 +107,22 @@ class BiloV1Tests {
         assert actual.equals(expected) : "JSON objects are not the same";
     }
 
+    @Test
+    void requestWithCorrectInfoButUnconfiguredClient() throws Exception {
+        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
+        String clientName = "unconfigured-client";
+
+        var responseBody = mockMvc.perform(
+                post("/v1/ucs/request")
+                        .header(API_KEY_HEADER, correctApiKey)
+                        .param("clientName", clientName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        assertThat(responseBody).isEqualTo("");
+    }
+
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
     void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) throws Exception {
@@ -91,7 +130,7 @@ class BiloV1Tests {
 
         mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request))
         ).andExpect(status().isBadRequest());
@@ -103,7 +142,7 @@ class BiloV1Tests {
         String content = "{\"userId\":\"student.2\",\"clientId\":\"test\",\"schulkennung\":\"random\",\"bundesland\":\"" + invalidBundesland + "\"}";
         mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
         ).andExpect(status().isBadRequest());

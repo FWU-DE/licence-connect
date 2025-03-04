@@ -31,12 +31,15 @@ The application requires several environment variables to be set for proper conf
 - `BILO_V1_PASSWORD`: Password for the Bilo V1 admin user with which licenceconnect authenticates its requests to BildungsLogin V1.
 - `BILO_V2_CLIENT_ID`: Client ID with which licenceconnect authenticates its requests to BildungsLogin V2.
 - `BILO_V2_CLIENT_SECRET`: Client secret with which licenceconnect authenticates its requests to BildungsLogin V2.
-- `VIDIS_API_KEY`: API Key with which VIDIS can authenticate its requests to licenceconnect.
+- `VIDIS_API_KEY`: Unprivileged API Key with which VIDIS can authenticate its requests for licence retrieval.
+- `VIDIS_API_KEY_ADMIN`: Admin API Key with which VIDIS can authenticate its requests for adding, removing and retrieving allowed licence holding systems for clients based on the client name.
+- `H2_DB_USER`: Username for the H2 database.
+- `H2_DB_USER_PASSWORD`: Password for the H2 database.
 
 You need to have all the Environment Variables set before running any of the following commands which can be done either by setting them in the environment or by passing them as arguments to the maven command as shown below:
 
 ```sh
-BILO_V1_PASSWORD=<admin password> VIDIS_API_KEY=<vidis key> BILO_V2_CLIENT_ID=<bilo client id> BILO_V2_CLIENT_SECRET=<bilo secret>  <COMMAND>
+BILO_V1_PASSWORD=<admin password> VIDIS_API_KEY=<unprivileged key> VIDIS_API_KEY_ADMIN=<admin key> BILO_V2_CLIENT_ID=<bilo client id> BILO_V2_CLIENT_SECRET=<bilo secret> H2_DB_USER=<db user> H2_DB_USER_PASSWORD=<db password> <COMMAND>
 ```
 
 ### Building the Project
@@ -53,7 +56,6 @@ Several profiles allow for different configurations of the application. The foll
 - `auto-start-mocks`: Automatically starts the dockerized mock-servers
 - `local`: Configures the application to query against the local mock servers
 If the profile is set to `auto-start-mocks` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-start-mocks`, the mock servers will be started automatically.
-
 
 ### Running the Application
 
@@ -83,7 +85,7 @@ To build the Docker image locally, use the following command:
 
 To run the Docker image locally, use the following command:
 ```sh
-docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<api_key> -p 8080:8080 lc-core:latest
+docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<unprivileged_key> -e VIDIS_API_KEY_ADMIN=<admin_key> -e H2_DB_USER=<db user> -e H2_DB_USER_PASSWORD=<db password> -p 8080:8080 lc-core:latest
 ```
 
 ### Deployment

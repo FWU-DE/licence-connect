@@ -14,17 +14,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${vidis.api-key}")
-    private String vidisApiKey;
+    @Value("${vidis.api-key.unprivileged}")
+    private String unprivilegedApiKey;
+
+    @Value("${vidis.api-key.admin}")
+    private String adminApiKey;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new ApiKeyAuthenticationFilter(vidisApiKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new ApiKeyAuthenticationFilter(unprivilegedApiKey, adminApiKey), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/healthcheck").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
         return http.build();

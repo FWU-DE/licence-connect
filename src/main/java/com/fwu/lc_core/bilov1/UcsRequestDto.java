@@ -15,7 +15,7 @@ public class UcsRequestDto {
 
     @JsonProperty(required = true)
     @NotBlank
-    public final String clientId;
+    public final String clientName;
 
     @JsonProperty()
     public final String schulkennung;
@@ -24,9 +24,9 @@ public class UcsRequestDto {
     @NotNull
     public final Bundesland bundesland;
 
-    public UcsRequestDto(String userId, String clientId, String schulkennung, Bundesland bundesland) {
+    public UcsRequestDto(String userId, String clientName, String schulkennung, Bundesland bundesland) {
         this.userId = userId;
-        this.clientId = clientId;
+        this.clientName = clientName;
         this.schulkennung = schulkennung;
         this.bundesland = bundesland;
     }
