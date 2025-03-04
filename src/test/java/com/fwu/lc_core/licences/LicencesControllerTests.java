@@ -64,6 +64,18 @@ class LicencesControllerTests {
     }
 
     @Test
+    void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() throws Exception {
+        var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
+
+        mockMvc.perform(
+                post("/v1/licences/request")
+                        .header("X-API-KEY", correctApiKey)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto))
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest() throws Exception {
         var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
 
