@@ -38,7 +38,7 @@ public class BiloV2Controller {
 
 
     @Validated
-    @PostMapping("/bilo/request/{userId}")
+    @PostMapping("/v1/bilo/request/{userId}")
     public ResponseEntity<String> request(@PathVariable String userId, @RequestParam String clientName) {
         if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2))
             return ResponseEntity.ok("[]");
