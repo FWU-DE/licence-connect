@@ -23,12 +23,11 @@ public class LicencesCollector {
     private static String arixUrl;
 
     public static Flux<UnparsedLicences> getUnparsedLicences(LicencesRequestDto params, String clientName) {
-        if (clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.ARIX)) {
-            var arixClient = new ArixClient(arixUrl);
-            var arixUnparsedLicences = arixClient.getLicences(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
-            return Flux.merge(arixUnparsedLicences);
-        }
-        return Flux.empty();
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.ARIX))
+            return Flux.empty();
+        var arixClient = new ArixClient(arixUrl);
+        var arixUnparsedLicences = arixClient.getLicences(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
+        return Flux.merge(arixUnparsedLicences);
     }
 }
 

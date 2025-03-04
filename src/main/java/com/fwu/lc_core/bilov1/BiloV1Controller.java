@@ -44,11 +44,10 @@ public class BiloV1Controller {
     @Validated
     @PostMapping("/v1/ucs/request")
     private ResponseEntity<UcsLicenceeDto> request(@Valid @RequestBody UcsRequestDto request, @RequestParam String clientName) {
-        if (clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V1)) {
-            String bearerToken = fetchAuthToken();
-            return ResponseEntity.ok(fetchLicencees(request.userId, bearerToken));
-        }
-        return ResponseEntity.ok(null);
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V1))
+            return ResponseEntity.ok(null);
+        String bearerToken = fetchAuthToken();
+        return ResponseEntity.ok(fetchLicencees(request.userId, bearerToken));
     }
 
     private String fetchAuthToken() {

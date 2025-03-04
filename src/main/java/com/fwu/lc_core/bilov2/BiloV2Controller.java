@@ -40,11 +40,10 @@ public class BiloV2Controller {
     @Validated
     @PostMapping("/bilo/request/{userId}")
     public ResponseEntity<String> request(@PathVariable String userId, @RequestParam String clientName) {
-        if (clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2)){
-            String bearerToken = fetchAuthToken();
-            return fetchLicenses(userId, bearerToken);
-        }
-        return ResponseEntity.ok("[]");
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2))
+            return ResponseEntity.ok("[]");
+        String bearerToken = fetchAuthToken();
+        return fetchLicenses(userId, bearerToken);
     }
 
     private String fetchAuthToken() {
