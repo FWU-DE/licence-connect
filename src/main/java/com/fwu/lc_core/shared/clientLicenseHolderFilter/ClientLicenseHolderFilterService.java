@@ -12,14 +12,14 @@ public class ClientLicenseHolderFilterService {
     @Autowired
     private ClientLicenceHolderMappingRepository repository;
 
-    public EnumSet<AvailableLicenceHolders> getAllowedLicenceHolders(String requesterName) {
-        Optional<ClientLicenceHolderMapping> mapping = repository.findByRequesterName(requesterName);
+    public EnumSet<AvailableLicenceHolders> getAllowedLicenceHolders(String clientName) {
+        Optional<ClientLicenceHolderMapping> mapping = repository.findByRequesterName(clientName);
         return mapping.map(m -> EnumSetConverter.toEnumSet(m.getAllowedEntries())).orElse(EnumSet.noneOf(AvailableLicenceHolders.class));
     }
 
-    public void setAllowedLicenceHolders(String requesterName, EnumSet<AvailableLicenceHolders> allowedEntries) {
+    public void setAllowedLicenceHolders(String clientName, EnumSet<AvailableLicenceHolders> allowedEntries) {
         ClientLicenceHolderMapping mapping = new ClientLicenceHolderMapping();
-        mapping.setRequesterName(requesterName);
+        mapping.setRequesterName(clientName);
         mapping.setAllowedEntries(EnumSetConverter.toStringSet(allowedEntries));
         repository.save(mapping);
     }

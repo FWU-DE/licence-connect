@@ -17,12 +17,12 @@ import java.util.List;
 @RestController
 public class LicencesController {
     @PostMapping("/v1/licences/request")
-    private ResponseEntity<List<Licence>> request(@Valid @RequestBody LicencesRequestDto request, @RequestParam String clientName) {
-        if (!paramsValid(request)) {
+    private ResponseEntity<List<Licence>> request(@Valid @RequestBody LicencesRequestDto requestDto, @RequestParam String clientName) {
+        if (!paramsValid(requestDto)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Mono<List<Licence>> licences = LicencesCollector.getUnparsedLicences(request, clientName).flatMap(LicencesParser::parse).collectList();
+        Mono<List<Licence>> licences = LicencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
         return licences
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().build()))
