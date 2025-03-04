@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -54,13 +54,13 @@ class LicencesControllerTests {
 
     @Test
     void Unauthenticated_Request_Returns_Forbidden() throws Exception {
-        mockMvc.perform(post("/v1/licences/request")).andExpect(status().isForbidden());
+        mockMvc.perform(get("/v1/licences/request")).andExpect(status().isForbidden());
     }
 
     @Test
     void Authenticated_Request_WithoutBody_Returns_BadRequest() throws Exception {
         mockMvc.perform(
-                post("/v1/licences/request").header(API_KEY_HEADER, correctApiKey)
+                get("/v1/licences/request").header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isBadRequest());
     }
 
@@ -69,7 +69,7 @@ class LicencesControllerTests {
         var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
 
         mockMvc.perform(
-                post("/v1/licences/request")
+                get("/v1/licences/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
@@ -81,30 +81,31 @@ class LicencesControllerTests {
         var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
 
         mockMvc.perform(
-                post("/v1/licences/request")
+                get("/v1/licences/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto))
+                        .param("bundesland", requestDto.bundesland())
+                        .param("standortnummer", requestDto.standortnummer())
+                        .param("schulnummer", requestDto.schulnummer())
+                        .param("userId", requestDto.userId())
         ).andExpect(status().isBadRequest());
     }
-
 
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) throws Exception {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
         var responseBody = mockMvc.perform(
-                post("/v1/licences/request")
+                get("/v1/licences/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto))
+                        .param("bundesland", requestDto.bundesland().name())
+                        .param("standortnummer", requestDto.standortnummer())
+                        .param("schulnummer", requestDto.schulnummer())
+                        .param("userId", requestDto.userId())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
-
-        List<Licence> actualLicences = new ObjectMapper().readValue(responseBody, new TypeReference<List<Licence>>() {
-        });
+        List<Licence> actualLicences = new ObjectMapper().readValue(responseBody, new TypeReference<List<Licence>>() {});
         assertThat(actualLicences.stream().map(l -> l.licenceCode)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
@@ -114,11 +115,13 @@ class LicencesControllerTests {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
 
         mockMvc.perform(
-                post("/v1/licences/request")
+                get("/v1/licences/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto))
+                        .param("bundesland", requestDto.bundesland() != null ? requestDto.bundesland().name() : null)
+                        .param("standortnummer", requestDto.standortnummer())
+                        .param("schulnummer", requestDto.schulnummer())
+                        .param("userId", requestDto.userId())
         ).andExpect(status().isBadRequest());
     }
 
@@ -128,11 +131,13 @@ class LicencesControllerTests {
         String unregisteredClientName = "unregistered client name";
 
         var result = mockMvc.perform(
-                post("/v1/licences/request")
+                get("/v1/licences/request")
                         .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", unregisteredClientName)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto))
+                        .param("bundesland", requestDto.bundesland())
+                        .param("standortnummer", requestDto.standortnummer())
+                        .param("schulnummer", requestDto.schulnummer())
+                        .param("userId", requestDto.userId())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         assertThat(result).isEqualTo("[]");

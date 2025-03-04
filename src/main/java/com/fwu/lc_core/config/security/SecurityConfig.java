@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new ApiKeyAuthenticationFilter(unprivilegedApiKey, adminApiKey), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/healthcheck").permitAll()
+                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/v1/healthcheck").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
