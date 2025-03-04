@@ -70,6 +70,7 @@ class LicencesControllerTests {
         mockMvc.perform(
                 post("/v1/licences/request")
                         .header("X-API-KEY", correctApiKey)
+                        .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
         ).andExpect(status().isBadRequest());
@@ -102,6 +103,7 @@ class LicencesControllerTests {
         mockMvc.perform(
                 post("/v1/licences/request")
                         .header("X-API-KEY", correctApiKey)
+                        .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
         ).andExpect(status().isBadRequest());
