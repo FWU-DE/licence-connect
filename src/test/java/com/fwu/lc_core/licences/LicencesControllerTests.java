@@ -26,6 +26,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,7 +60,7 @@ class LicencesControllerTests {
     @Test
     void Authenticated_Request_WithoutBody_Returns_BadRequest() throws Exception {
         mockMvc.perform(
-                post("/v1/licences/request").header("X-API-KEY", correctApiKey)
+                post("/v1/licences/request").header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isBadRequest());
     }
 
@@ -69,7 +70,7 @@ class LicencesControllerTests {
 
         mockMvc.perform(
                 post("/v1/licences/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
         ).andExpect(status().isBadRequest());
@@ -81,7 +82,7 @@ class LicencesControllerTests {
 
         mockMvc.perform(
                 post("/v1/licences/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
@@ -95,7 +96,7 @@ class LicencesControllerTests {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
         var responseBody = mockMvc.perform(
                 post("/v1/licences/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
@@ -114,7 +115,7 @@ class LicencesControllerTests {
 
         mockMvc.perform(
                 post("/v1/licences/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))
@@ -128,7 +129,7 @@ class LicencesControllerTests {
 
         var result = mockMvc.perform(
                 post("/v1/licences/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", unregisteredClientName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto))

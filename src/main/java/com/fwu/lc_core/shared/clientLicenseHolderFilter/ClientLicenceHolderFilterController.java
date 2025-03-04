@@ -20,7 +20,10 @@ public class ClientLicenceHolderFilterController {
     }
 
     @PutMapping("/admin/client-licence-holder-mapping/{clientName}")
-    public ResponseEntity<String> updateLicenceHolder(@RequestBody ClientLicenceHolderMappingDto newMapping, @PathVariable String clientName) throws Exception {
+    public ResponseEntity<String> updateLicenceHolder(
+            @RequestBody ClientLicenceHolderMappingDto newMapping,
+            @PathVariable String clientName
+    ) {
         clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders);
         return ResponseEntity.noContent().build();
     }

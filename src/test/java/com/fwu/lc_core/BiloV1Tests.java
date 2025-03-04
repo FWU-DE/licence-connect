@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.EnumSet;
 import java.util.stream.Stream;
 
+import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +58,7 @@ class BiloV1Tests {
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
-                post("/v1/ucs/request").header("X-API-KEY", "wrong-api-key")
+                post("/v1/ucs/request").header(API_KEY_HEADER, "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
 
@@ -80,7 +81,7 @@ class BiloV1Tests {
 
         mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -93,7 +94,7 @@ class BiloV1Tests {
 
         var responseBody = mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -113,7 +114,7 @@ class BiloV1Tests {
 
         var responseBody = mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .param("clientName", clientName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
@@ -129,7 +130,7 @@ class BiloV1Tests {
 
         mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(request))
         ).andExpect(status().isBadRequest());
@@ -141,7 +142,7 @@ class BiloV1Tests {
         String content = "{\"userId\":\"student.2\",\"clientId\":\"test\",\"schulkennung\":\"random\",\"bundesland\":\"" + invalidBundesland + "\"}";
         mockMvc.perform(
                 post("/v1/ucs/request")
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
         ).andExpect(status().isBadRequest());

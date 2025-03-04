@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.EnumSet;
 
+import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,21 +37,21 @@ class ClientLicenseHolderFilterControllerTests {
     @Test
     void Authenticated_Request_With_Unprivileged_ApiKey_Returns_403() throws Exception {
         mockMvc.perform(
-                get("/admin/client-licence-holder-mapping/non-existing").header("X-API-KEY", unprivilegedApiKey)
+                get("/admin/client-licence-holder-mapping/non-existing").header(API_KEY_HEADER, unprivilegedApiKey)
         ).andExpect(status().isForbidden());
     }
 
     @Test
     void Authenticated_Request_With_Admin_ApiKey_Returns_2xx() throws Exception {
         mockMvc.perform(
-                get("/admin/client-licence-holder-mapping/non-existing").header("X-API-KEY", adminApiKey)
+                get("/admin/client-licence-holder-mapping/non-existing").header(API_KEY_HEADER, adminApiKey)
         ).andExpect(status().is2xxSuccessful());
     }
 
     @Test
     void Authenticated_Request_With_Admin_ApiKey_Returns_Empty_List_For_Unknown_Client() throws Exception {
         var result = mockMvc.perform(
-                        get("/admin/client-licence-holder-mapping/non-existing").header("X-API-KEY", adminApiKey)
+                        get("/admin/client-licence-holder-mapping/non-existing").header(API_KEY_HEADER, adminApiKey)
                 ).andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -62,7 +63,7 @@ class ClientLicenseHolderFilterControllerTests {
         String wrongRequestBody = "{\"availableLicenceHolders\":[\"NOT_MATCHING\"]}";
         mockMvc.perform(
                 put("/admin/client-licence-holder-mapping/dummy-client-name")
-                        .header("X-API-KEY", adminApiKey)
+                        .header(API_KEY_HEADER, adminApiKey)
                         .content(wrongRequestBody)
                         .contentType("application/json")
         ).andExpect(status().isBadRequest());
@@ -73,7 +74,7 @@ class ClientLicenseHolderFilterControllerTests {
         String content = new ObjectMapper().writeValueAsString(new ClientLicenceHolderMappingDto(EnumSet.of(AvailableLicenceHolders.BILO_V1)));
         mockMvc.perform(
                 put("/admin/client-licence-holder-mapping/dummy-client-name")
-                        .header("X-API-KEY", adminApiKey)
+                        .header(API_KEY_HEADER, adminApiKey)
                         .content(content)
                         .contentType("application/json")
         ).andExpect(status().is2xxSuccessful());
@@ -85,13 +86,13 @@ class ClientLicenseHolderFilterControllerTests {
         String clientName = "dummy-client-name";
         mockMvc.perform(
                 put("/admin/client-licence-holder-mapping/" + clientName)
-                        .header("X-API-KEY", adminApiKey)
+                        .header(API_KEY_HEADER, adminApiKey)
                         .content(new ObjectMapper().writeValueAsString(expected))
                         .contentType("application/json")
         ).andExpect(status().is2xxSuccessful());
 
         var result = mockMvc.perform(
-                        get("/admin/client-licence-holder-mapping/" + clientName).header("X-API-KEY", adminApiKey))
+                        get("/admin/client-licence-holder-mapping/" + clientName).header(API_KEY_HEADER, adminApiKey))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 

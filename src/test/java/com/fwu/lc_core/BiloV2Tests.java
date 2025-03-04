@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.EnumSet;
 
+import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +58,7 @@ class BiloV2Tests {
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
                 post("/bilo/request/" + dummyUserId)
-                        .header("X-API-KEY", "wrong-api-key")
+                        .header(API_KEY_HEADER, "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
 
@@ -82,7 +83,7 @@ class BiloV2Tests {
                 post("/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
 
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
         ).andExpect(status().isOk());
@@ -91,14 +92,14 @@ class BiloV2Tests {
     @Test
     void requestWithIncorrectInfo() throws Exception {
         mockMvc.perform(
-                post("/bilo/request").header("X-API-KEY", correctApiKey)
+                post("/bilo/request").header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isNotFound());
     }
 
     @Test
     void requestWithCorrectInfoButWrongVerb() throws Exception {
         mockMvc.perform(
-                get("/bilo/request/" + dummyUserId).header("X-API-KEY", correctApiKey)
+                get("/bilo/request/" + dummyUserId).header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isMethodNotAllowed());
     }
 
@@ -109,7 +110,7 @@ class BiloV2Tests {
         var responseBody = mockMvc.perform(
                 post("/bilo/request/" + dummyUserId)
                         .param("clientName", clientId)
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         assertThat(responseBody).isEqualTo("[]");
@@ -121,7 +122,7 @@ class BiloV2Tests {
         var responseBody = mockMvc.perform(
                 post("/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         String cannedResponse = "{\"user\":{\"id\":\"" + dummyUserId + "\",\"first_name\":\"student\",\"last_name\":\"2\",\"user_alias\":null,\"roles\":[\"student\"],\"media\":[]},\"organizations\":[{\"id\":\"testfwu\",\"org_type\":\"school\",\"identifier\":null,\"authority\":null,\"name\":\"testfwu\",\"roles\":[\"student\"],\"media\":[],\"groups\":[{\"id\":\"1\",\"name\":\"1\",\"group_type\":\"class\",\"media\":[]}]}]}";
@@ -136,7 +137,7 @@ class BiloV2Tests {
         mockMvc.perform(
                 post("/bilo/request/" + dummyUserId + "123")
                         .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header("X-API-KEY", correctApiKey)
+                        .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isNotFound());
     }
 
