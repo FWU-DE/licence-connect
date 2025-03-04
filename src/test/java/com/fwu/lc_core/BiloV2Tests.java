@@ -51,13 +51,13 @@ class BiloV2Tests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(post("/bilo/request/" + dummyUserId)).andExpect(status().isForbidden());
+        mockMvc.perform(post("/v1/bilo/request/" + dummyUserId)).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                post("/v1/bilo/request/" + dummyUserId)
                         .header(API_KEY_HEADER, "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
@@ -67,7 +67,7 @@ class BiloV2Tests {
         var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
 
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                post("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header("x-api-key", correctApiKey)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +80,7 @@ class BiloV2Tests {
         var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
 
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                post("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
 
                         .header(API_KEY_HEADER, correctApiKey)
@@ -92,14 +92,14 @@ class BiloV2Tests {
     @Test
     void requestWithIncorrectInfo() throws Exception {
         mockMvc.perform(
-                post("/bilo/request").header(API_KEY_HEADER, correctApiKey)
+                post("/v1/bilo/request").header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isNotFound());
     }
 
     @Test
     void requestWithCorrectInfoButWrongVerb() throws Exception {
         mockMvc.perform(
-                get("/bilo/request/" + dummyUserId).header(API_KEY_HEADER, correctApiKey)
+                get("/v1/bilo/request/" + dummyUserId).header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isMethodNotAllowed());
     }
 
@@ -108,7 +108,7 @@ class BiloV2Tests {
         String clientId = "unconfigured-client";
 
         var responseBody = mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                post("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", clientId)
                         .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -120,7 +120,7 @@ class BiloV2Tests {
     @Test
     void requestWithCorrectInfo() throws Exception {
         var responseBody = mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                post("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
