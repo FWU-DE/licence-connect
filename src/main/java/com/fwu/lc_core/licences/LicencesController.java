@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -16,12 +17,12 @@ import java.util.List;
 @RestController
 public class LicencesController {
     @PostMapping("/v1/licences/request")
-    private ResponseEntity<List<Licence>> request(@Valid @RequestBody LicencesRequestDto params) {
-        if (!paramsValid(params)) {
+    private ResponseEntity<List<Licence>> request(@Valid @RequestBody LicencesRequestDto requestDto, @RequestParam String clientName) {
+        if (!paramsValid(requestDto)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Mono<List<Licence>> licences = LicencesCollector.getUnparsedLicences(params).flatMap(LicencesParser::parse).collectList();
+        Mono<List<Licence>> licences = LicencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
         return licences
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().build()))

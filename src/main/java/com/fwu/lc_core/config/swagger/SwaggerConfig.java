@@ -13,6 +13,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
+
 @Configuration
 public class SwaggerConfig {
 
@@ -26,7 +28,7 @@ public class SwaggerConfig {
                         .addSecuritySchemes("apiKey", new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
-                                .name("X-API-KEY")
+                                .name(API_KEY_HEADER)
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("apiKey"))
