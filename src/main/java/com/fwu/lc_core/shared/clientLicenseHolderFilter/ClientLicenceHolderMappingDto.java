@@ -13,8 +13,4 @@ public class ClientLicenceHolderMappingDto {
     @JsonProperty(required = true)
     @NotNull
     public final EnumSet<AvailableLicenceHolders> availableLicenceHolders;
-
-    @JsonProperty(required = true)
-    @NotNull
-    public final String clientName;
 }

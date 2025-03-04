@@ -59,9 +59,9 @@ class ClientLicenseHolderFilterControllerTests {
 
     @Test
     void Admin_Request_Returns_400_When_Not_Matching_Enum() throws Exception {
-        String wrongRequestBody = "{\"availableLicenceHolders\":[\"NOT_MATCHING\"], \"clientName\":\"dummy clientName\"}";
+        String wrongRequestBody = "{\"availableLicenceHolders\":[\"NOT_MATCHING\"]}";
         mockMvc.perform(
-                put("/admin/client-licence-holder-mapping")
+                put("/admin/client-licence-holder-mapping/dummy-client-name")
                         .header("X-API-KEY", adminApiKey)
                         .content(wrongRequestBody)
                         .contentType("application/json")
@@ -70,9 +70,9 @@ class ClientLicenseHolderFilterControllerTests {
 
     @Test
     void Admin_Request_Returns_2xx_When_Matching_Enum() throws Exception {
-        String content = new ObjectMapper().writeValueAsString(new ClientLicenceHolderMappingDto(EnumSet.of(AvailableLicenceHolders.BILO_V1), "dummy clientName"));
+        String content = new ObjectMapper().writeValueAsString(new ClientLicenceHolderMappingDto(EnumSet.of(AvailableLicenceHolders.BILO_V1)));
         mockMvc.perform(
-                put("/admin/client-licence-holder-mapping")
+                put("/admin/client-licence-holder-mapping/dummy-client-name")
                         .header("X-API-KEY", adminApiKey)
                         .content(content)
                         .contentType("application/json")
@@ -81,17 +81,18 @@ class ClientLicenseHolderFilterControllerTests {
 
     @Test
     void Authenticated_Request_With_Admin_ApiKey_Returns_Mapping_For_Existing_Client() throws Exception {
-        ClientLicenceHolderMappingDto expected = new ClientLicenceHolderMappingDto(EnumSet.of(AvailableLicenceHolders.BILO_V1, AvailableLicenceHolders.BILO_V2), "dummy clientName");
+        ClientLicenceHolderMappingDto expected = new ClientLicenceHolderMappingDto(EnumSet.of(AvailableLicenceHolders.BILO_V1, AvailableLicenceHolders.BILO_V2));
+        String clientName = "dummy-client-name";
         mockMvc.perform(
-                put("/admin/client-licence-holder-mapping")
+                put("/admin/client-licence-holder-mapping/" + clientName)
                         .header("X-API-KEY", adminApiKey)
                         .content(new ObjectMapper().writeValueAsString(expected))
                         .contentType("application/json")
         ).andExpect(status().is2xxSuccessful());
 
         var result = mockMvc.perform(
-                        get("/admin/client-licence-holder-mapping/" + expected.clientName).header("X-API-KEY", adminApiKey)
-                ).andExpect(status().is2xxSuccessful())
+                        get("/admin/client-licence-holder-mapping/" + clientName).header("X-API-KEY", adminApiKey))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
         String contentAsString = result.getResponse().getContentAsString();
