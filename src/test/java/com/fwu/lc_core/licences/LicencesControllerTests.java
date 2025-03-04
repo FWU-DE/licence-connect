@@ -26,7 +26,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
+import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

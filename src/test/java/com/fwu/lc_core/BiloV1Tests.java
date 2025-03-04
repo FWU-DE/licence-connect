@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.EnumSet;
 import java.util.stream.Stream;
 
-import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
+import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

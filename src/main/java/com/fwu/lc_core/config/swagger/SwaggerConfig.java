@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
+import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
 @Configuration
 public class SwaggerConfig {

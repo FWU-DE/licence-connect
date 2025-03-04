@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collection;
 
-import static com.fwu.lc_core.shared.constants.API_KEY_HEADER;
+import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
