@@ -3,7 +3,6 @@ package com.fwu.lc_core;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.bilov1.UcsRequestDto;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
@@ -19,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.EnumSet;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,55 +49,46 @@ class BiloV2Tests {
 
     @Test
     void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(post("/bilo/request/" + dummyUserId)).andExpect(status().isForbidden());
+        mockMvc.perform(get("/v1/bilo/request/" + dummyUserId)).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithWrongApiKey() throws Exception {
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                get("/v1/bilo/request/" + dummyUserId)
                         .header(API_KEY_HEADER, "wrong-api-key")
         ).andExpect(status().isForbidden());
     }
 
     @Test
     void requestWithLowercaseApiKeyHeaderName() throws Exception {
-        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
-
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                get("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header("x-api-key", correctApiKey)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
         ).andExpect(status().isOk());
     }
 
     @Test
     void requestWithUppercaseApiKeyHeaderName() throws Exception {
-        var content = new ObjectMapper().writeValueAsString(createValidUcsRequestDto());
-
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                get("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
-
                         .header(API_KEY_HEADER, correctApiKey)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
         ).andExpect(status().isOk());
     }
 
     @Test
     void requestWithIncorrectInfo() throws Exception {
         mockMvc.perform(
-                post("/bilo/request").header(API_KEY_HEADER, correctApiKey)
+                get("/v1/bilo/request").header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isNotFound());
     }
 
     @Test
     void requestWithCorrectInfoButWrongVerb() throws Exception {
         mockMvc.perform(
-                get("/bilo/request/" + dummyUserId).header(API_KEY_HEADER, correctApiKey)
+                post("/v1/bilo/request/" + dummyUserId).header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isMethodNotAllowed());
     }
 
@@ -108,7 +97,7 @@ class BiloV2Tests {
         String clientId = "unconfigured-client";
 
         var responseBody = mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                get("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", clientId)
                         .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -120,7 +109,7 @@ class BiloV2Tests {
     @Test
     void requestWithCorrectInfo() throws Exception {
         var responseBody = mockMvc.perform(
-                post("/bilo/request/" + dummyUserId)
+                get("/v1/bilo/request/" + dummyUserId)
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -135,13 +124,9 @@ class BiloV2Tests {
     @Test
     void requestWithNonExistingUser() throws Exception {
         mockMvc.perform(
-                post("/bilo/request/" + dummyUserId + "123")
+                get("/bilo/request/" + dummyUserId + "123")
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isNotFound());
-    }
-
-    private UcsRequestDto createValidUcsRequestDto() {
-        return new UcsRequestDto(dummyUserId, "test", null, Bundesland.MV);
     }
 }

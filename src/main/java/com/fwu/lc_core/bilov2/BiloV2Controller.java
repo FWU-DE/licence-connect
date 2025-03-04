@@ -9,10 +9,7 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -38,7 +35,7 @@ public class BiloV2Controller {
 
 
     @Validated
-    @PostMapping("/bilo/request/{userId}")
+    @GetMapping("/v1/bilo/request/{userId}")
     public ResponseEntity<String> request(@PathVariable String userId, @RequestParam String clientName) {
         if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2))
             return ResponseEntity.ok("[]");

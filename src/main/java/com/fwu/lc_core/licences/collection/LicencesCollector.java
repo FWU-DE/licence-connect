@@ -1,11 +1,13 @@
 package com.fwu.lc_core.licences.collection;
 
+import com.fwu.lc_core.licences.models.LicencesRequestDto;
+import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.fwu.lc_core.licences.collection.arix.ArixClient;
-import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
