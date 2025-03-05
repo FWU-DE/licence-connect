@@ -20,6 +20,10 @@ services:
     env_file: ".env"
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/data/database.h2;DB_CLOSE_ON_EXIT=FALSE
+    volumes:
+      - ~/tmp/db:/workspace/data:rw
 
   loki:
     image: grafana/loki:latest
