@@ -99,8 +99,12 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.loki4j</groupId>
+            <artifactId>loki-logback-appender</artifactId>
+            <version>1.6.0</version>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -111,6 +115,7 @@
                         <createdDate>${maven.build.timestamp}</createdDate>
                     </image>
                     <docker>
+                        <bindHostToBuilder>true</bindHostToBuilder>
                         <publishRegistry>
                             <url>${docker.registry.url}</url>
                             <username>${docker.registry.username}</username>
