@@ -18,7 +18,6 @@ services:
     image: ${LC_IMAGE}
     container_name: licence-connect
     env_file: ".env"
-    user: "1002:1000"
     volumes:
       - ~/tmp/db:/workspace/data
     ports:
