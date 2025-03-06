@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 public class HealthCheckController {
-    @GetMapping("/healthcheck")
+    @GetMapping("/v1/healthcheck")
     public ResponseEntity<String> healthcheck() {
         return ResponseEntity.ok("Application is up");
     }
