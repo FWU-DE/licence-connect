@@ -20,7 +20,7 @@ services:
     env_file: ".env"
     user: "1002:1000"
     volumes:
-      - ~/tmp/db:/workspace/tatata
+      - ~/tmp/db:/workspace/data
     ports:
       - "8080:8080"
     environment:

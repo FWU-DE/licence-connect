@@ -85,6 +85,13 @@ To run the Docker image locally, use the following command:
 ```sh
 docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<api_key> -p 8080:8080 lc-core:latest
 ```
+or use the provided downup.sh script:
+```sh
+sudo chown -R 1002:1000 ~/tmp/db 
+./downup.sh 
+``` 
+
+Changing the ownership of the db folder is necessary because the docker container runs as a different user and needs write access to the db folder.
 
 ### Deployment
 
