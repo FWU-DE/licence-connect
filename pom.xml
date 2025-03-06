@@ -97,8 +97,12 @@
 				<configuration>
 					<image>
 						<createdDate>${maven.build.timestamp}</createdDate>
-					</image>
+					<builder>paketobuildpacks/builder-jammy-tiny</builder>
+                        <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+                        <runImage>docker.io/library/mana:latest</runImage>
+                    </image>
 					<docker>
+						<bindHostToBuilder>true</bindHostToBuilder>
 						<publishRegistry>
 							<url>${docker.registry.url}</url>
 							<username>${docker.registry.username}</username>
