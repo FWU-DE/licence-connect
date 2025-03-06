@@ -94,6 +94,7 @@ sudo chown -R 1002:1000 ~/tmp/db
 ``` 
 
 Changing the ownership of the db folder is necessary because the docker container runs as a different user and needs write access to the db folder.
+CAUTION: Docker in rootless mode does not seem to work with the spring-boot:build-image command.
 
 ### Deployment
 
