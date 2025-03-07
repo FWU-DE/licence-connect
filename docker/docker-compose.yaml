@@ -12,14 +12,14 @@ services:
       test: [ "CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck" ]
       interval: 1s
       timeout: 5s
-      retries: 10
+      retries: 100
 
   licence-connect:
     image: ${LC_IMAGE}
     container_name: licence-connect
     env_file: ".env"
     volumes:
-      - ~/tmp/db:/workspace/data
+      - ${DB_FILE_PATH:-./db}:/workspace/data
     ports:
       - "8080:8080"
     environment:
