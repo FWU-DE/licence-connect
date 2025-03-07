@@ -102,6 +102,15 @@ or use the provided downup.sh script:
 
 CAUTION: Docker in rootless mode does not seem to work with the spring-boot:build-image command.
 
+#### Logging
+
+When running in docker, it is possible to store logs in loki and display them with grafana.
+To configure grafana to use loki, enter the following link: http://localhost:3000/connections/add-new-connection
+chose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
+Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
+
+http://localhost:3000/connections/add-new-connection
+
 ### Deployment
 
 The app is deployed for every push to the `main` branch.
