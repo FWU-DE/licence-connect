@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.EnumSet;
 
@@ -18,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith(OutputCaptureExtension.class)
 class ClientLicenseHolderFilterControllerTests {
 
     @Autowired
@@ -101,4 +105,28 @@ class ClientLicenseHolderFilterControllerTests {
         });
         assertThat(actual).isEqualTo(expected.availableLicenceHolders);
     }
+
+    @Test
+    void getLicenceHolders_Logs_Request(CapturedOutput output) throws Exception {
+        mockMvc.perform(
+                get("/admin/client-licence-holder-mapping/non-existing").header(API_KEY_HEADER, adminApiKey)
+        ).andExpect(status().is2xxSuccessful());
+
+        assertThat(output.getOut()).contains("Received request to get licence holders for client: non-existing");
+    }
+
+    @Test
+    void setLicenceHolders_Logs_new_allowed_systems(CapturedOutput output) throws Exception {
+        ClientLicenceHolderMappingDto expected = new ClientLicenceHolderMappingDto(EnumSet.of(AvailableLicenceHolders.BILO_V1, AvailableLicenceHolders.BILO_V2));
+        String clientName = "dummy-client-name";
+        mockMvc.perform(
+                put("/admin/client-licence-holder-mapping/" + clientName)
+                        .header(API_KEY_HEADER, adminApiKey)
+                        .content(new ObjectMapper().writeValueAsString(expected))
+                        .contentType("application/json")
+        ).andExpect(status().is2xxSuccessful());
+
+        assertThat(output.getOut()).contains("Received request to set licence holders for client: " + clientName + ". New allowed systems: " + expected.availableLicenceHolders.toString());
+    }
+
 }
