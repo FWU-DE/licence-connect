@@ -2,6 +2,7 @@ package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,13 @@ class ClientLicenseHolderFilterControllerTests {
 
     @Value("${vidis.api-key.admin}")
     private String adminApiKey;
+    @Autowired
+    private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
+
+    @BeforeEach
+    void setUp() {
+        clientLicenceHolderMappingRepository.deleteAll();
+    }
 
     @Test
     void Unauthenticated_Request_Returns_Forbidden() throws Exception {
