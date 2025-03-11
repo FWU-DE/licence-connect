@@ -36,6 +36,9 @@ The application requires several environment variables to be set for proper conf
 - `H2_DB_USER`: Username for the H2 database.
 - `H2_DB_USER_PASSWORD`: Password for the H2 database.
 
+optional:
+- `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
+
 You need to have all the Environment Variables set before running any of the following commands which can be done either by setting them in the environment or by passing them as arguments to the maven command as shown below:
 
 ```sh
@@ -83,10 +86,21 @@ To build the Docker image locally, use the following command:
 ./mvnw spring-boot:build-image -DskipTests
 ```
 
+Before running docker, make sure to change the ownership of the db folder to the user running the docker container. This is necessary because the docker container runs as a different user and needs write access to the db folder.
+```sh
+sudo chown -R 1002:1000 ${DB_FILE_PATH} # default is ./docker/db
+```
+
 To run the Docker image locally, use the following command:
 ```sh
 docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<unprivileged_key> -e VIDIS_API_KEY_ADMIN=<admin_key> -e H2_DB_USER=<db user> -e H2_DB_USER_PASSWORD=<db password> -p 8080:8080 lc-core:latest
 ```
+or use the provided downup.sh script:
+```sh
+./downup.sh 
+```
+
+CAUTION: Docker in rootless mode does not seem to work with the spring-boot:build-image command.
 
 ### Deployment
 

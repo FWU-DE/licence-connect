@@ -101,14 +101,15 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <createdDate>${maven.build.timestamp}</createdDate>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<createdDate>${maven.build.timestamp}</createdDate>
+						<builder>paketobuildpacks/builder-jammy-tiny</builder>
                     </image>
                     <docker>
                         <publishRegistry>

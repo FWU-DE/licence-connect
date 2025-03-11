@@ -61,6 +61,8 @@ lerna-debug.log*
 # data base files
 *.h2
 *.db
+db/*
+db
 
 # Runtime data
 pids
