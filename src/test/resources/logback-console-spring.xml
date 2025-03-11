@@ -3,9 +3,7 @@
     <appender name="LOKI" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <!-- This matches the configuration of the loki appender in main/resources -->
-            <pattern>app=licenceConnect,host=localhost,traceID=%X{traceId:-NONE},level=%level %d{HH:mm:ss.SSS} [%thread]
-                %-5level %logger{36} - %msg%n
-            </pattern>
+            <pattern>app=licenceConnect,host=localhost,traceID=%X{traceId:-NONE},level=%level %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
         </encoder>
     </appender>
 
