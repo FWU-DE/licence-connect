@@ -35,6 +35,11 @@ The application requires several environment variables to be set for proper conf
 - `VIDIS_API_KEY_ADMIN`: Admin API Key with which VIDIS can authenticate its requests for adding, removing and retrieving allowed licence holding systems for clients based on the client name.
 - `H2_DB_USER`: Username for the H2 database.
 - `H2_DB_USER_PASSWORD`: Password for the H2 database.
+- `GF_AUTH_ANONYMOUS_ENABLED`: Allows access for unauthenticated users to the grafana dashboard if set to `true`, defaults to `false`
+- `GF_AUTH_ANONYMOUS_ORG_ROLE` Sets unauthenticated users as `Admin`, defaults to `Viewer`
+
+optional:
+- `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
 
 optional:
 - `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
@@ -102,6 +107,14 @@ or use the provided downup.sh script:
 
 CAUTION: Docker in rootless mode does not seem to work with the spring-boot:build-image command.
 
+#### Logging
+
+When running in docker, it is possible to store logs in loki and display them with grafana.
+To configure grafana to use loki, enter the following link: http://localhost:3000/connections/add-new-connection
+choose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
+Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
+
+For security reasons the grafana is not available for everyone. During development, you can activate anonymous access by setting the environment variable `GF_AUTH_ANONYMOUS_ENABLED` to `true` and `GF_AUTH_ANONYMOUS_ORG_ROLE` to `Admin`.
 ### Deployment
 
 The app is deployed for every push to the `main` branch.
