@@ -10,9 +10,9 @@ services:
       - licence-connect
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck" ]
-      interval: 10s
+      interval: 1s
       timeout: 5s
-      retries: 10
+      retries: 100
 
   licence-connect:
     image: ${LC_IMAGE}
@@ -35,6 +35,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=${GF_AUTH_ANONYMOUS_ENABLED:-false}
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=${GF_AUTH_ANONYMOUS_ORG_ROLE:-Viewer}
 
