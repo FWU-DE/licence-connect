@@ -9,14 +9,18 @@ services:
     depends_on:
       - licence-connect
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://licence-connect:8080/healthcheck" ]
-      interval: 10s
+      test: [ "CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck" ]
+      interval: 1s
       timeout: 5s
-      retries: 10
+      retries: 100
 
   licence-connect:
     image: ${LC_IMAGE}
     container_name: licence-connect
     env_file: ".env"
+    volumes:
+      - ${DB_FILE_PATH:-./db}:/workspace/data
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/data/database.h2;DB_CLOSE_ON_EXIT=FALSE
