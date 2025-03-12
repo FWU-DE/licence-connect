@@ -2,8 +2,6 @@ package com.fwu.lc_core.licences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.licences.collection.LicencesCollector;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
@@ -13,6 +11,7 @@ import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappi
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,29 +22,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
+import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
+import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
-
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -295,31 +285,7 @@ class LicencesControllerWithWorkingServerTests {
         assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
     }
 
-    private String findLineContaining(String text, String searchString) {
-        return text.lines()
-                .filter(line -> line.contains(searchString))
-                .findFirst()
-                .orElse("");
-    }
 
-    private String extractTraceId(String logLine) {
-        Pattern pattern = Pattern.compile("traceID=([^,]+)");
-        Matcher matcher = pattern.matcher(logLine);
-        return matcher.find() ? matcher.group(1) : "";
-    }
-
-    private void assertThatBothLogsHaveTheSameTraceId(String logs, String expectedFirstLog, String expectedSecondLog) {
-        String firstLogLine = findLineContaining(logs, expectedFirstLog);
-        String secondLogLine = findLineContaining(logs, expectedSecondLog);
-        String traceId1 = extractTraceId(firstLogLine);
-        String traceId2 = extractTraceId(secondLogLine);
-        assertThat(traceId1).isNotEmpty();
-        assertThat(traceId1).isEqualTo(traceId2);
-    }
-
-    private static void assertThatFirstLogComesBeforeSecondLog(String logs, String expectedFirstLog, String expectedSecondLog) {
-        assertThat(logs.indexOf(expectedFirstLog)).isLessThan(logs.indexOf(expectedSecondLog));
-    }
 
     private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
