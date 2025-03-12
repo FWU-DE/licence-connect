@@ -114,7 +114,10 @@ To configure grafana to use loki, enter the following link: http://localhost:300
 choose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
 Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
 
-For security reasons the grafana is not available for everyone. During development, you can activate anonymous access by setting the environment variable `GF_AUTH_ANONYMOUS_ENABLED` to `true` and `GF_AUTH_ANONYMOUS_ORG_ROLE` to `Admin`.
+The Grafana container is only started for the `debug` docker service profile, i.e. when you start the docker compose project with either the `--profile=debug` argument,
+or supply the `COMPOSE_PROFILES=debug` variable either directly before the command or via the environment. On the deployment-VM, the Grafana container should not run,
+as instead an existing Grafana instance will use the Loki container as a data source.
+
 ### Deployment
 
 The app is deployed for every push to the `main` branch.
