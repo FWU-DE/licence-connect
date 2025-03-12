@@ -1,7 +1,7 @@
 services:
   nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: lc-nginx
     volumes:
       - ./nginx/config/default.conf:/etc/nginx/conf.d/default.conf
     ports:
@@ -27,12 +27,14 @@ services:
 
   loki:
     image: grafana/loki:latest
+    container_name: lc-loki
     ports:
       - "3100:3100"
 
   grafana:
     profiles: [debug]
     image: grafana/grafana:latest
+    container_name: lc-debug-grafana
     ports:
       - "3000:3000"
     environment:
