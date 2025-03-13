@@ -137,12 +137,11 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() throws Exception {
-        var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
+        var requestDto = new RelaxedLicencesRequestDto(Bundesland.BY.value, null, null, null);
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
-                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
