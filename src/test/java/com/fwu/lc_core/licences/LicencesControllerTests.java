@@ -66,13 +66,15 @@ class LicencesControllerTests {
 
     @Test
     void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() throws Exception {
-        var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
+        var requestDto = new LicencesRequestDto(Bundesland.BY, null, null, null);
 
         mockMvc.perform(
                 get("/v1/licences/request")
                         .header(API_KEY_HEADER, correctApiKey)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(requestDto))
+                        .param("bundesland", requestDto.bundesland().name())
+                        .param("standortnummer", requestDto.standortnummer())
+                        .param("schulnummer", requestDto.schulnummer())
+                        .param("userId", requestDto.userId())
         ).andExpect(status().isBadRequest());
     }
 
