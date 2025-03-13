@@ -1,6 +1,7 @@
 package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -9,12 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.EnumSet;
 
+@Slf4j
 @RestController
 @Validated
 @AllArgsConstructor
 public class ClientLicenceHolderFilterController {
-
-    private final Logger log = LoggerFactory.getLogger(ClientLicenceHolderFilterController.class);
     private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
     @GetMapping("/admin/client-licence-holder-mapping/{clientName}")

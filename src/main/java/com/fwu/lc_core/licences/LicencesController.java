@@ -6,6 +6,7 @@ import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -28,10 +29,9 @@ import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+@Slf4j
 @RestController
 public class LicencesController {
-    private final Logger log = LoggerFactory.getLogger(LicencesController.class);
-
     @GetMapping("/v1/licences/request")
     private ResponseEntity<List<Licence>> request(
             @Valid @ValidLicencesRequest LicencesRequestDto requestDto,
