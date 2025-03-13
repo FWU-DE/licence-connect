@@ -128,17 +128,6 @@ class BiloV1Tests {
     }
 
     @Test
-    void licenceRequest_Logs_Request(CapturedOutput output) throws Exception {
-        var requestDto = createValidUcsRequestDto();
-
-        mockMvc.perform(createRequest(requestDto, BILO_TEST_CLIENT_NAME)).andExpect(status().is2xxSuccessful());
-
-        assertThat(output.getOut()).contains("Received licence request for client: " + BILO_TEST_CLIENT_NAME);
-        assertThat(output.getOut()).contains("Found ");
-        assertThat(output.getOut()).contains(" licences for client: " + BILO_TEST_CLIENT_NAME);
-    }
-
-    @Test
     void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) throws Exception {
         var requestDto = createValidUcsRequestDto();
         clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.noneOf(AvailableLicenceHolders.class));

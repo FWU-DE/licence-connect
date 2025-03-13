@@ -26,6 +26,7 @@ public class loggingAssertions{
         String traceId2 = extractTraceId(secondLogLine);
         assertThat(traceId1).isNotEmpty();
         assertThat(traceId1).isEqualTo(traceId2);
+        assertThat(firstLogLine).doesNotContain("NONE");
     }
 
     public static void assertThatFirstLogComesBeforeSecondLog(String logs, String expectedFirstLog, String expectedSecondLog) {

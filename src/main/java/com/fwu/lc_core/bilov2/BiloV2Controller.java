@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 public class BiloV2Controller {
     private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
@@ -37,10 +39,13 @@ public class BiloV2Controller {
     @Validated
     @GetMapping("/v1/bilo/request/{userId}")
     public ResponseEntity<String> request(@PathVariable String userId, @RequestParam String clientName) {
-        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2))
+        log.info("Received licence request for client: {} and userId: {}", clientName, userId);
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2)) {
+            log.warn("Client {} is not allowed to access BILO_V2", clientName);
             return ResponseEntity.ok("[]");
+        }
         String bearerToken = fetchAuthToken();
-        return fetchLicenses(userId, bearerToken);
+        return fetchLicenses(userId, bearerToken, clientName);
     }
 
     private String fetchAuthToken() {
@@ -63,7 +68,7 @@ public class BiloV2Controller {
         }
     }
 
-    private ResponseEntity<String> fetchLicenses(String licenceeId, String bearerToken) {
+    private ResponseEntity<String> fetchLicenses(String licenceeId, String bearerToken, String clientName) {
         String url = licenceUrl + licenceeId + "?inc=license";
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -75,6 +80,7 @@ public class BiloV2Controller {
             if (response.getStatusCode() != HttpStatus.OK) {
                 throw new RuntimeException("Failed to retrieve licenses: " + response.getStatusCode());
             }
+            log.info("Found licences for client: {} and userId: {}", clientName, licenceeId);
             return ResponseEntity.ok(response.getBody());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to fetch licenses");

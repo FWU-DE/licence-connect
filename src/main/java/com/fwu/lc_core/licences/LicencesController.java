@@ -38,7 +38,7 @@ public class LicencesController {
             @RequestParam String clientName) {
         Map<String, String> contextMap = MDC.getCopyOfContextMap();
         log.info("Received licence request for client: {}", clientName);
-        
+
         Mono<List<Licence>> licences = LicencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
         return licences
                 .map(licenceList -> {
