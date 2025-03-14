@@ -46,7 +46,6 @@ class LicencesControllerWithFailingServerTests {
     @Autowired
     private WebTestClient webTestClient;
 
-
     @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
     @Autowired
@@ -54,28 +53,26 @@ class LicencesControllerWithFailingServerTests {
     @Autowired
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
-
-    @BeforeEach
-    void setUp() {
-        clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
-    }
-
     @TestConfiguration
     static class CustomTestConfig {
-        private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-        private final String arixUrlRejecting;
 
-        public CustomTestConfig(ClientLicenseHolderFilterService clientLicenseHolderFilterService, @Value("${mocks.arix.rejecting.url}") String arixUrlRejecting) {
-            this.clientLicenseHolderFilterService = clientLicenseHolderFilterService;
-            this.arixUrlRejecting = arixUrlRejecting;
-        }
+        @Autowired
+        private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+
+        @Value("${mocks.arix.rejecting.url}")
+        String arixUrlRejecting;
 
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
             return new LicencesCollector(clientLicenseHolderFilterService, arixUrlRejecting);
         }
+    }
+
+    @BeforeEach
+    void setUp() {
+        clientLicenceHolderMappingRepository.deleteAll();
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
     }
 
     @Test
