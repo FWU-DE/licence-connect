@@ -41,12 +41,6 @@ The application requires several environment variables to be set for proper conf
 optional:
 - `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
 
-optional:
-- `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
-
-optional:
-- `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
-
 You need to have all the Environment Variables set before running any of the following commands which can be done either by setting them in the environment or by passing them as arguments to the maven command as shown below:
 
 ```sh
@@ -109,15 +103,6 @@ or use the provided downup.sh script:
 ```
 
 CAUTION: Docker in rootless mode does not seem to work with the spring-boot:build-image command.
-
-#### Logging
-
-When running in docker, it is possible to store logs in loki and display them with grafana.
-To configure grafana to use loki, enter the following link: http://localhost:3000/connections/add-new-connection
-chose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
-Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
-
-http://localhost:3000/connections/add-new-connection
 
 #### Logging
 

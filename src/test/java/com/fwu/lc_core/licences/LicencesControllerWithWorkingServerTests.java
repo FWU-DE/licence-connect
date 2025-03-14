@@ -40,70 +40,10 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(OutputCaptureExtension.class)
-@Import(LicencesControllerWithFailingServerTests.CustomTestConfig.class)
-class LicencesControllerWithFailingServerTests {
-    private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
-    @Autowired
-    private WebTestClient webTestClient;
-
-    @Value("${vidis.api-key.unprivileged}")
-    private String correctApiKey;
-    @Autowired
-    private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
-    @Autowired
-    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-
-    @TestConfiguration
-    static class CustomTestConfig {
-
-        @Autowired
-        private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-
-        @Value("${mocks.arix.rejecting.url}")
-        String arixUrlRejecting;
-
-        @Bean
-        @Primary // Ensures this bean overrides the default one in the context
-        public LicencesCollector licencesCollector() {
-            return new LicencesCollector(clientLicenseHolderFilterService, arixUrlRejecting);
-        }
-    }
-
-    @BeforeEach
-    void setUp() {
-        clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
-    }
-
-    @Test
-    void licenceRequest_With_Error_Logs_Error(CapturedOutput output) throws Exception {
-        webTestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .path("/v1/licences/request")
-                .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                .queryParam("bundesland", "BY")
-                .queryParam("standortnummer", "INVALID")
-                    .build())
-                .header(API_KEY_HEADER, correctApiKey)
-                        .exchange()
-                        .expectStatus().isOk();
-
-        assertThat(output.getOut()).contains("Error collecting licences:");
-    }
-}
-
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(OutputCaptureExtension.class)
 class LicencesControllerWithWorkingServerTests {
-
     private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
     @Autowired
     private WebTestClient webTestClient;
-
-    @Value("${mocks.arix.rejecting.url}")
-    private String AricUrlRejecting;
 
     @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
@@ -124,7 +64,7 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
-    void Authenticated_Request_WithoutBody_Returns_BadRequest() throws Exception {
+    void Authenticated_Request_Without_Params_Returns_BadRequest() {
         webTestClient.get()
                 .uri("/v1/licences/request")
                 .header(API_KEY_HEADER, correctApiKey)

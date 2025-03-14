@@ -11,6 +11,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -70,20 +72,21 @@ public class BiloV2Controller {
 
     private ResponseEntity<String> fetchLicenses(String licenceeId, String bearerToken, String clientName) {
         String url = licenceUrl + licenceeId + "?inc=license";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("license-user-id", licenceeId);
+        headers.set("Authorization", "Bearer " + bearerToken);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response;
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("license-user-id", licenceeId);
-            headers.set("Authorization", "Bearer " + bearerToken);
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<String> response = (new RestTemplate()).exchange(url, HttpMethod.GET, request, String.class);
-            if (response.getStatusCode() != HttpStatus.OK) {
-                throw new RuntimeException("Failed to retrieve licenses: " + response.getStatusCode());
-            }
-            log.info("Found licences for client: {} and userId: {}", clientName, licenceeId);
-            return ResponseEntity.ok(response.getBody());
-        } catch (Exception e) {
+            response = (new RestTemplate()).exchange(url, HttpMethod.GET, request, String.class);
+        } catch (HttpClientErrorException e) {
+            // Bilo returns 401 if the user is not found so we cannot do any sophisticated error handling or logging here
+            log.warn("No licences found for client: {} and userId: {}", clientName, licenceeId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to fetch licenses");
         }
+        log.info("Found licences for client: {} and userId: {}", clientName, licenceeId);
+        return ResponseEntity.ok(response.getBody());
     }
 }
