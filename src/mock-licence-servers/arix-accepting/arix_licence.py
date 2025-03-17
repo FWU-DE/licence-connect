@@ -1,10 +1,12 @@
 ﻿from dataclasses import dataclass
 from typing import Optional
 
+STANDARD_FIELD_NAMES = ["licence"]
 
 @dataclass
 class ArixLicence:
     id: str
+    licence: str
 
     nr: Optional[str] = None
     titel: Optional[str] = None
@@ -74,3 +76,4 @@ class ArixLicence:
     paranr2: Optional[str] = None
     paranr: Optional[str] = None
     didanmerk: Optional[str] = None
+
