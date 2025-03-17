@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
 
 
 @Slf4j
@@ -44,7 +45,7 @@ public class BiloV1Controller {
 
     @Validated
     @GetMapping("/v1/ucs/request")
-    private ResponseEntity<UcsLicenceeDto> request(
+    private Mono<ResponseEntity<UcsLicenceeDto>> request(
             @RequestParam @NotEmpty String userId,
             @RequestParam @NotEmpty String clientId,
             @RequestParam(required = false) String schulkennung,
@@ -53,12 +54,12 @@ public class BiloV1Controller {
         log.info("Received licence request for client: {} with Bundesland: {}, Schulkennung: {}, UserId: {}", clientName, bundesland, schulkennung, userId);
         if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V1)) {
             log.info("Client {} is not allowed to access BILO_V1", clientName);
-            return ResponseEntity.ok(null);
+            return Mono.just(ResponseEntity.ok(null));
         }
         String bearerToken = fetchAuthToken();
         UcsLicenceeDto licence = fetchLicencees(userId, bearerToken);
         log.info("Found {} licences for client: {}", licence.licenses.size(), clientName);
-        return ResponseEntity.ok(licence);
+        return Mono.just(ResponseEntity.ok(licence));
     }
 
     private String fetchAuthToken() {
