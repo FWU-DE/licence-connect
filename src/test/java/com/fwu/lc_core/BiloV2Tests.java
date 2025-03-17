@@ -2,27 +2,32 @@ package com.fwu.lc_core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.EnumSet;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
+import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@ExtendWith(OutputCaptureExtension.class)
 @AutoConfigureMockMvc
 class BiloV2Tests {
 
@@ -124,9 +129,56 @@ class BiloV2Tests {
     @Test
     void requestWithNonExistingUser() throws Exception {
         mockMvc.perform(
-                get("/bilo/request/" + dummyUserId + "123")
+                get("/v1/bilo/request/" + dummyUserId + "123")
                         .param("clientName", BILO_TEST_CLIENT_NAME)
                         .header(API_KEY_HEADER, correctApiKey)
         ).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) throws Exception {
+        String clientName = "unprivileged-client";
+        mockMvc.perform(
+                get("/v1/bilo/request/" + dummyUserId)
+                        .param("clientName", clientName)
+                        .header(API_KEY_HEADER, correctApiKey)
+        ).andExpect(status().isOk());
+
+        assertThat(output.getOut()).contains("Client " + clientName + " is not allowed to access BILO_V2");
+    }
+
+    @Test
+    void licenceRequest_Logs_Result_Count(CapturedOutput output) throws Exception {
+        String expectedFirstLog = "Received licence request for client: " + BILO_TEST_CLIENT_NAME;
+        String expectedSecondLog = "Found licences for client: " + BILO_TEST_CLIENT_NAME;
+
+        mockMvc.perform(
+                get("/v1/bilo/request/" + dummyUserId)
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
+                        .header(API_KEY_HEADER, correctApiKey)
+        ).andExpect(status().isOk());
+
+        String logs = output.getOut();
+        assertThat(logs).contains(expectedFirstLog);
+        assertThat(logs).contains(expectedSecondLog);
+        assertThat(logs).contains("userId: " + dummyUserId);
+        assertThatFirstLogComesBeforeSecondLog(logs, expectedFirstLog, expectedSecondLog);
+        assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
+    }
+
+    @Test
+    void licenceRequest_Logs_Empty(CapturedOutput output) throws Exception {
+        String expectedClientLog = "Received licence request for client: " + BILO_TEST_CLIENT_NAME;
+        String notExpectedResultsLog = "Found licences for client: " + BILO_TEST_CLIENT_NAME;
+
+        mockMvc.perform(
+                get("/v1/bilo/request/non-existing-user-id")
+                        .param("clientName", BILO_TEST_CLIENT_NAME)
+                        .header(API_KEY_HEADER, correctApiKey)
+        ).andExpect(status().isNotFound());
+
+        String logs = output.getOut();
+        assertThat(logs).contains(expectedClientLog);
+        assertThat(logs).doesNotContain(notExpectedResultsLog);
     }
 }
