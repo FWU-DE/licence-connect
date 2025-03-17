@@ -15,7 +15,8 @@ public class ClientLicenceHolderMapping {
     private Long id;
 
     @Setter
-    private String requesterName;
+    @Column(name = "clientName", unique = true, nullable = false)
+    private String clientName;
 
     @Getter
     @Setter
