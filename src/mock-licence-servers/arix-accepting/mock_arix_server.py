@@ -46,10 +46,12 @@ def format_response(licenses: list[ArixLicence], field_names: list[str]):
         licence_element = etree.SubElement(result, "r")
         licence_element.set("identifier", licence.id)
         for field_name in field_names:
-            if (field_value := getattr(licence, field_name)) is not None:
+            if hasattr(licence, field_name):
                 field_element = etree.SubElement(licence_element, "f")
                 field_element.set("n", field_name)
-                field_element.text = field_value
+                field_element.text = getattr(licence, field_name)
+            else:
+                return "<result></result>"
     return etree.tostring(result)
 
 def parse_request(xml_string: str):
@@ -57,7 +59,7 @@ def parse_request(xml_string: str):
     match root.tag:
         case "search":
             if root.get("fields"):
-                return RequestType.Search, SearchRequest(root.get("fields").replace(" ", "").split(","))
+                return RequestType.Search, SearchRequest(root.get("fields").split(","))
             return RequestType.Search, SearchRequest([])
         case _:
             return RequestType.Other, None
