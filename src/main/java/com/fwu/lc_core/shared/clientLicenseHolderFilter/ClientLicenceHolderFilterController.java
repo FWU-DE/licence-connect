@@ -2,7 +2,6 @@ package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +9,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.EnumSet;
 
-import static com.fwu.lc_core.shared.TraceIdFromContextRetriever.withLoggingContext;
 
 @Slf4j
 @RestController
@@ -21,10 +19,8 @@ public class ClientLicenceHolderFilterController {
 
     @GetMapping("/admin/client-licence-holder-mapping/{clientName}")
     public Mono<ResponseEntity<EnumSet<AvailableLicenceHolders>>> getLicenceHolders(@PathVariable String clientName) {
-        return withLoggingContext(() -> {
-            log.info("Received request to get licence holders for client: " + clientName);
-            return Mono.just(ResponseEntity.ok(clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName)));
-        });
+        log.info("Received request to get licence holders for client: {}", clientName);
+        return Mono.just(ResponseEntity.ok(clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName)));
     }
 
     @PutMapping("/admin/client-licence-holder-mapping/{clientName}")
@@ -32,9 +28,9 @@ public class ClientLicenceHolderFilterController {
             @RequestBody ClientLicenceHolderMappingDto newMapping,
             @PathVariable String clientName
     ) {
-        log.info("Setting new available licence holders for client: " + clientName);
+        log.info("Setting new available licence holders for client: {}", clientName);
         clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders);
-        log.info("New allowed systems: " + newMapping.availableLicenceHolders.toString() + " for client: " + clientName);
+        log.info("New allowed systems: {} for client: {}", newMapping.availableLicenceHolders.toString(), clientName);
         return Mono.just(ResponseEntity.noContent().build());
     }
 }
