@@ -32,7 +32,9 @@ public enum Bundesland {
     DE_SN("DE-SN"),
     DE_ST("DE-ST"),
     DE_SH("DE-SH"),
-    DE_TH("DE-TH");
+    DE_TH("DE-TH"),
+    STK("STK");
+
 
     public final String value;
 
