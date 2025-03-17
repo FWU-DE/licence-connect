@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
 
@@ -22,18 +22,15 @@ import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 class BiloV2Tests {
 
     public static final String BILO_TEST_CLIENT_NAME = "bilo v2 test client id";
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
@@ -53,59 +50,82 @@ class BiloV2Tests {
     }
 
     @Test
-    void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(get("/v1/bilo/request/" + dummyUserId)).andExpect(status().isForbidden());
+    void requestWithoutApiKey() {
+        webTestClient
+                .get()
+                .uri("/v1/bilo/request/" + dummyUserId)
+                .exchange()
+                .expectStatus().isUnauthorized();
     }
 
     @Test
-    void requestWithWrongApiKey() throws Exception {
-        mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .header(API_KEY_HEADER, "wrong-api-key")
-        ).andExpect(status().isForbidden());
+    void requestWithWrongApiKey() {
+        webTestClient
+                .get()
+                .uri("/v1/bilo/request/" + dummyUserId)
+                .header(API_KEY_HEADER, "wrong-api-key")
+                .exchange()
+                .expectStatus().isUnauthorized();
     }
 
     @Test
-    void requestWithLowercaseApiKeyHeaderName() throws Exception {
-        mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header("x-api-key", correctApiKey)
-        ).andExpect(status().isOk());
+    void requestWithLowercaseApiKeyHeaderName() {
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId)
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME).build())
+                .header("x-api-key", correctApiKey)
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
-    void requestWithUppercaseApiKeyHeaderName() throws Exception {
-        mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isOk());
+    void requestWithUppercaseApiKeyHeaderName() {
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId)
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
-    void requestWithIncorrectInfo() throws Exception {
-        mockMvc.perform(
-                get("/v1/bilo/request").header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isNotFound());
+    void requestWithIncorrectInfo() {
+        webTestClient
+                .get()
+                .uri("/v1/bilo/request")
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
-    void requestWithCorrectInfoButWrongVerb() throws Exception {
-        mockMvc.perform(
-                post("/v1/bilo/request/" + dummyUserId).header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isMethodNotAllowed());
+    void requestWithCorrectInfoButWrongVerb() {
+        webTestClient
+                .post()
+                .uri("/v1/bilo/request/" + dummyUserId)
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isEqualTo(405);
     }
 
     @Test
-    void requestWithCorrectInfoButUnconfiguredClient() throws Exception {
+    void requestWithCorrectInfoButUnconfiguredClient() {
         String clientId = "unconfigured-client";
 
-        var responseBody = mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .param("clientName", clientId)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        var responseBody = webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId)
+                        .queryParam("clientName", clientId).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
 
         assertThat(responseBody).isEqualTo("[]");
     }
@@ -113,11 +133,16 @@ class BiloV2Tests {
 
     @Test
     void requestWithCorrectInfo() throws Exception {
-        var responseBody = mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        var responseBody = webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId)
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
 
         String cannedResponse = "{\"user\":{\"id\":\"" + dummyUserId + "\",\"first_name\":\"student\",\"last_name\":\"2\",\"user_alias\":null,\"roles\":[\"student\"],\"media\":[]},\"organizations\":[{\"id\":\"testfwu\",\"org_type\":\"school\",\"identifier\":null,\"authority\":null,\"name\":\"testfwu\",\"roles\":[\"student\"],\"media\":[],\"groups\":[{\"id\":\"1\",\"name\":\"1\",\"group_type\":\"class\",\"media\":[]}]}]}";
         ObjectMapper objectMapper = new ObjectMapper();
@@ -127,36 +152,45 @@ class BiloV2Tests {
     }
 
     @Test
-    void requestWithNonExistingUser() throws Exception {
-        mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId + "123")
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isNotFound());
+    void requestWithNonExistingUser() {
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId + "123")
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
-    void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) {
         String clientName = "unprivileged-client";
-        mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .param("clientName", clientName)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isOk());
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId)
+                        .queryParam("clientName", clientName).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk();
 
         assertThat(output.getOut()).contains("Client " + clientName + " is not allowed to access BILO_V2");
     }
 
     @Test
-    void licenceRequest_Logs_Result_Count(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         String expectedFirstLog = "Received licence request for client: " + BILO_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found licences for client: " + BILO_TEST_CLIENT_NAME;
 
-        mockMvc.perform(
-                get("/v1/bilo/request/" + dummyUserId)
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isOk());
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/" + dummyUserId)
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk();
 
         String logs = output.getOut();
         assertThat(logs).contains(expectedFirstLog);
@@ -167,15 +201,18 @@ class BiloV2Tests {
     }
 
     @Test
-    void licenceRequest_Logs_Empty(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Empty(CapturedOutput output) {
         String expectedClientLog = "Received licence request for client: " + BILO_TEST_CLIENT_NAME;
         String notExpectedResultsLog = "Found licences for client: " + BILO_TEST_CLIENT_NAME;
 
-        mockMvc.perform(
-                get("/v1/bilo/request/non-existing-user-id")
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .header(API_KEY_HEADER, correctApiKey)
-        ).andExpect(status().isNotFound());
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/bilo/request/non-existing-user-id")
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isNotFound();
 
         String logs = output.getOut();
         assertThat(logs).contains(expectedClientLog);
