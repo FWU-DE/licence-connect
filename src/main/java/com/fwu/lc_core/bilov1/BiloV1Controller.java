@@ -48,16 +48,15 @@ public class BiloV1Controller {
             @RequestParam @NotEmpty String userId,
             @RequestParam @NotEmpty String clientId,
             @RequestParam(required = false) String schulkennung,
-            @RequestParam @NotNull Bundesland bundesland,
-            @RequestParam @NotEmpty String clientName) {
-        log.info("Received licence request for client: {} with Bundesland: {}, Schulkennung: {}, UserId: {}", clientName, bundesland, schulkennung, userId);
-        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V1)) {
-            log.info("Client {} is not allowed to access BILO_V1", clientName);
+            @RequestParam @NotNull Bundesland bundesland) {
+        log.info("Received licence request for client: {} with Bundesland: {}, Schulkennung: {}, UserId: {}", clientId, bundesland, schulkennung, userId);
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientId).contains(AvailableLicenceHolders.BILO_V1)) {
+            log.info("Client {} is not allowed to access BILO_V1", clientId);
             return ResponseEntity.ok(null);
         }
         String bearerToken = fetchAuthToken();
         UcsLicenceeDto licence = fetchLicencees(userId, bearerToken);
-        log.info("Found {} licences for client: {}", licence.licenses.size(), clientName);
+        log.info("Found {} licences for client: {}", licence.licenses.size(), clientId);
         return ResponseEntity.ok(licence);
     }
 
