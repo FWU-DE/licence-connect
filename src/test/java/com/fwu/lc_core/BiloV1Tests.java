@@ -14,13 +14,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
 import java.util.stream.Stream;
@@ -29,19 +27,17 @@ import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 class BiloV1Tests {
 
     public static final String BILO_TEST_CLIENT_NAME = "bilo v1 test client id";
     public static final String CANNED_RESPONSE_FROM_OLD_API = "{\"id\":\"student.2\",\"first_name\":\"student\",\"last_name\":\"2\",\"licenses\":[\"WES-VIDT-2369-P85R-KOUD\"],\"context\":{\"92490b9dc18341906b557bbd4071e1c97db9f9b65d348fafd30988b85a2f6924\":{\"school_name\":\"testfwu\",\"classes\":[{\"name\":\"1\",\"id\":\"cda6b1ddfa321de5a456c69fd5cee2cde7eeeae9b9d9ed24eb84fd88a35cfecb\",\"licenses\":[\"WES-VIDT-0346-P85R-KOUD\",\"WES-VIDT-9775-P85R-VWYX\"]}],\"roles\":[\"student\"],\"licenses\":[\"WES-VIDT-7368-P85R-KOUD\"]}}}";
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @Value("${vidis.api-key.unprivileged}")
     private String correctApiKey;
@@ -58,41 +54,53 @@ class BiloV1Tests {
     }
 
     @Test
-    void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(get("/v1/ucs/request")).andExpect(status().isForbidden());
+    void requestWithoutApiKey() {
+        webTestClient.get().uri("/v1/ucs/request").exchange().expectStatus().isUnauthorized();
     }
 
     @Test
-    void requestWithWrongApiKey() throws Exception {
-        mockMvc.perform(
-                get("/v1/ucs/request").header(API_KEY_HEADER, "wrong-api-key")
-        ).andExpect(status().isForbidden());
+    void requestWithWrongApiKey() {
+        webTestClient
+                .get()
+                .uri("/v1/ucs/request")
+                .header(API_KEY_HEADER, "wrong-api-key")
+                .exchange()
+                .expectStatus().isUnauthorized();
     }
 
     @Test
-    void requestWithLowercaseApiKeyHeaderName() throws Exception {
+    void requestWithLowercaseApiKeyHeaderName() {
         var requestDto = createValidUcsRequestDto();
-        mockMvc.perform(
-                get("/v1/ucs/request")
-                        .header("x-api-key", correctApiKey)
-                        .param("clientName", BILO_TEST_CLIENT_NAME)
-                        .param("userId", requestDto.userId)
-                        .param("clientId", requestDto.clientName)
-                        .param("schulkennung", requestDto.schulkennung)
-                        .param("bundesland", requestDto.bundesland.toString())
-        ).andExpect(status().isOk());
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/ucs/request")
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME)
+                        .queryParam("userId", requestDto.userId)
+                        .queryParam("clientId", requestDto.clientName)
+                        .queryParam("schulkennung", requestDto.schulkennung)
+                        .queryParam("bundesland", requestDto.bundesland.toString()).build())
+                .header("x-api-key", correctApiKey)
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
-    void requestWithUppercaseApiKeyHeaderName() throws Exception {
+    void requestWithUppercaseApiKeyHeaderName() {
         var requestDto = createValidUcsRequestDto();
-        mockMvc.perform(createRequest(requestDto, BILO_TEST_CLIENT_NAME)).andExpect(status().isOk());
+        createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
     void requestWithCorrectInfo() throws Exception {
         var requestDto = createValidUcsRequestDto();
-        var responseBody = mockMvc.perform(createRequest(requestDto, BILO_TEST_CLIENT_NAME)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        var responseBody = createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode expected = objectMapper.readTree(CANNED_RESPONSE_FROM_OLD_API);
@@ -101,49 +109,56 @@ class BiloV1Tests {
     }
 
     @Test
-    void requestWithCorrectInfoButUnconfiguredClient() throws Exception {
+    void requestWithCorrectInfoButUnconfiguredClient() {
         var requestDto = createValidUcsRequestDto();
         String clientName = "unconfigured-client";
-        var responseBody = mockMvc.perform(createRequest(requestDto, clientName))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+        var responseBody = createRequest(requestDto, clientName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .returnResult().getResponseBody();
 
-        assertThat(responseBody).isEqualTo("");
+        assertThat(responseBody).isEqualTo(null);
     }
 
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
-    void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) throws Exception {
-        mockMvc.perform(createRequestFromStringInfo(userId, clientId, schulkennung, bundesland))
-                .andExpect(status().isBadRequest());
+    void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) {
+        createRequestFromStringInfo(userId, clientId, schulkennung, bundesland)
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
-    void requestWithIncorrectBundesland() throws Exception {
+    void requestWithIncorrectBundesland() {
         var requestDto = createValidUcsRequestDto();
         String invalidBundesland = "XX";
-        mockMvc.perform(
-                createRequestFromStringInfo(requestDto.userId, requestDto.clientName, requestDto.schulkennung, invalidBundesland)
-        ).andExpect(status().isBadRequest());
+        createRequestFromStringInfo(requestDto.userId, requestDto.clientName, requestDto.schulkennung, invalidBundesland)
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
-    void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) {
         var requestDto = createValidUcsRequestDto();
         clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.noneOf(AvailableLicenceHolders.class));
 
-        mockMvc.perform(createRequest(requestDto, BILO_TEST_CLIENT_NAME)).andExpect(status().is2xxSuccessful());
+        createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+                .exchange()
+                .expectStatus().is2xxSuccessful();
 
         assertThat(output.getOut()).contains("Client " + BILO_TEST_CLIENT_NAME + " is not allowed to access BILO_V1");
     }
 
     @Test
-    void licenceRequest_Logs_Result_Count(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = createValidUcsRequestDto();
         String expectedFirstLog = "Received licence request for client: " + BILO_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found 1 licences for client: " + BILO_TEST_CLIENT_NAME;
 
-        mockMvc.perform(createRequest(requestDto, BILO_TEST_CLIENT_NAME)).andExpect(status().is2xxSuccessful());
+        createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+                .exchange()
+                .expectStatus().is2xxSuccessful();
 
         String logs = output.getOut();
         assertThat(logs).contains(expectedFirstLog);
@@ -155,14 +170,17 @@ class BiloV1Tests {
         assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
     }
 
-    private RequestBuilder createRequest(UcsRequestDto requestDto, String clientName) {
-        return get("/v1/ucs/request")
-                .header(API_KEY_HEADER, correctApiKey)
-                .param("clientName", clientName)
-                .param("userId", requestDto.userId)
-                .param("clientId", requestDto.clientName)
-                .param("schulkennung", requestDto.schulkennung)
-                .param("bundesland", requestDto.bundesland.toString());
+    private WebTestClient.RequestHeadersSpec<?> createRequest(UcsRequestDto requestDto, String clientName) {
+        return webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/ucs/request")
+                        .queryParam("clientName", clientName)
+                        .queryParam("userId", requestDto.userId)
+                        .queryParam("clientId", requestDto.clientName)
+                        .queryParam("schulkennung", requestDto.schulkennung)
+                        .queryParam("bundesland", requestDto.bundesland.toString()).build())
+                .header(API_KEY_HEADER, correctApiKey);
     }
 
     private static Stream<Arguments> provideIncorrectInfo() {
@@ -176,14 +194,17 @@ class BiloV1Tests {
         );
     }
 
-    private MockHttpServletRequestBuilder createRequestFromStringInfo(String userId, String clientId, String schulkennung, String bundesland) {
-        return get("/v1/ucs/request")
-                .header(API_KEY_HEADER, correctApiKey)
-                .param("clientName", BILO_TEST_CLIENT_NAME)
-                .param("userId", userId)
-                .param("clientId", clientId)
-                .param("schulkennung", schulkennung)
-                .param("bundesland", bundesland);
+    private WebTestClient.RequestHeadersSpec<?> createRequestFromStringInfo(String userId, String clientId, String schulkennung, String bundesland) {
+        return webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/ucs/request")
+                        .queryParam("clientName", BILO_TEST_CLIENT_NAME)
+                        .queryParam("userId", userId)
+                        .queryParam("clientId", clientId)
+                        .queryParam("schulkennung", schulkennung)
+                        .queryParam("bundesland", bundesland).build())
+                .header(API_KEY_HEADER, correctApiKey);
     }
 
     private static UcsRequestDto createValidUcsRequestDto() {

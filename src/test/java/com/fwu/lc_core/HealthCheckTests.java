@@ -2,22 +2,23 @@ package com.fwu.lc_core;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 class HealthCheckTests {
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @Test
-    void requestWithoutApiKey() throws Exception {
-        mockMvc.perform(get("/v1/healthcheck")).andExpect(status().isOk());
+    void requestWithoutApiKey() {
+        webTestClient
+                .get()
+                .uri("/v1/healthcheck")
+                .exchange()
+                .expectStatus().isOk();
     }
 }

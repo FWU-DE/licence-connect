@@ -2,7 +2,6 @@ package com.fwu.lc_core.licences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fwu.lc_core.licences.collection.LicencesCollector;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
@@ -17,14 +16,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -38,7 +33,7 @@ import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @ExtendWith(OutputCaptureExtension.class)
 class LicencesControllerWithWorkingServerTests {
     private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
@@ -59,13 +54,18 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
-    void Unauthenticated_Request_Returns_Forbidden() throws Exception {
-        webTestClient.get().uri("/v1/licences/request").exchange().expectStatus().isForbidden();
+    void Unauthenticated_Request_Returns_Forbidden() {
+        webTestClient
+                .get()
+                .uri("/v1/licences/request")
+                .exchange()
+                .expectStatus().isUnauthorized();
     }
 
     @Test
     void Authenticated_Request_Without_Params_Returns_BadRequest() {
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri("/v1/licences/request")
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
@@ -73,35 +73,35 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
-    void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() throws Exception {
+    void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() {
         var requestDto = new RelaxedLicencesRequestDto(Bundesland.BY.value, null, null, null);
 
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
     }
 
     @Test
-    void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest() throws Exception {
+    void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest() {
         var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
 
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
@@ -109,21 +109,22 @@ class LicencesControllerWithWorkingServerTests {
 
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
-    void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) throws Exception {
+    void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", requestDto.bundesland().name())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<Licence>>() {})
+                .expectBody(new ParameterizedTypeReference<List<Licence>>() {
+                })
                 .value(licences -> {
                     assertThat(licences.stream().map(l -> l.licenceCode))
                             .containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
@@ -132,37 +133,37 @@ class LicencesControllerWithWorkingServerTests {
 
     @ParameterizedTest
     @MethodSource("provideInvalidInput")
-    void Authenticated_Request_WithInvalidBody_Returns_BadRequest(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
+    void Authenticated_Request_WithInvalidBody_Returns_BadRequest(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
 
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", requestDto.bundesland() != null ? requestDto.bundesland().name() : null)
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
     }
 
     @Test
-    void Authenticated_Request_WithInvalidClientName_Returns_emptyResponse() throws Exception {
+    void Authenticated_Request_WithInvalidClientName_Returns_emptyResponse() {
         var requestDto = new RelaxedLicencesRequestDto(Bundesland.BY.name(), null, null, null);
         String unregisteredClientName = "unregistered client name";
 
-        var result = webTestClient.get()
+        var result = webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", unregisteredClientName)
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
@@ -174,18 +175,18 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
-    void licenceRequest_Logs_Request(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Request(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, null, null, null);
 
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", requestDto.bundesland().name())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
@@ -196,20 +197,20 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
-    void licenceRequest_Logs_Result_Count(CapturedOutput output) throws Exception {
+    void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
         String expectedFirstLog = "Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found 6 licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
 
-        webTestClient.get()
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", requestDto.bundesland().name())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
+                        .queryParam("userId", requestDto.userId()).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
@@ -220,7 +221,6 @@ class LicencesControllerWithWorkingServerTests {
         assertThatFirstLogComesBeforeSecondLog(logs, expectedFirstLog, expectedSecondLog);
         assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
     }
-
 
 
     private static Stream<Arguments> provideValidInputAndOutput() {
