@@ -41,6 +41,7 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/*
+.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -56,6 +57,12 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+
+# data base files
+*.h2
+*.db
+db/*
+db
 
 # Runtime data
 pids

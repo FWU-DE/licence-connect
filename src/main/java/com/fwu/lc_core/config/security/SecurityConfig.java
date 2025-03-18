@@ -3,28 +3,34 @@ package com.fwu.lc_core.config.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Value("${vidis.api-key}")
-    private String vidisApiKey;
+    @Value("${vidis.api-key.unprivileged}")
+    private String unprivilegedApiKey;
+
+    @Value("${vidis.api-key.admin}")
+    private String adminApiKey;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new ApiKeyAuthenticationFilter(vidisApiKey), UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/healthcheck").permitAll()
-                        .anyRequest().authenticated()
-                );
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        ApiKeyAuthenticationWebFilter apiKeyAuthenticationWebFilter = new ApiKeyAuthenticationWebFilter(unprivilegedApiKey, adminApiKey);
+
+        http.
+                csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**", "/v1/healthcheck").permitAll()
+                        .pathMatchers("/admin/**").hasRole("ADMIN")
+                        .anyExchange().authenticated()
+                )
+                .addFilterAt(apiKeyAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+
         return http.build();
     }
 }

@@ -31,12 +31,20 @@ The application requires several environment variables to be set for proper conf
 - `BILO_V1_PASSWORD`: Password for the Bilo V1 admin user with which licenceconnect authenticates its requests to BildungsLogin V1.
 - `BILO_V2_CLIENT_ID`: Client ID with which licenceconnect authenticates its requests to BildungsLogin V2.
 - `BILO_V2_CLIENT_SECRET`: Client secret with which licenceconnect authenticates its requests to BildungsLogin V2.
-- `VIDIS_API_KEY`: API Key with which VIDIS can authenticate its requests to licenceconnect.
+- `VIDIS_API_KEY`: Unprivileged API Key with which VIDIS can authenticate its requests for licence retrieval.
+- `VIDIS_API_KEY_ADMIN`: Admin API Key with which VIDIS can authenticate its requests for adding, removing and retrieving allowed licence holding systems for clients based on the client name.
+- `H2_DB_USER`: Username for the H2 database.
+- `H2_DB_USER_PASSWORD`: Password for the H2 database.
+- `GF_AUTH_ANONYMOUS_ENABLED`: Allows access for unauthenticated users to the grafana dashboard if set to `true`, defaults to `false`
+- `GF_AUTH_ANONYMOUS_ORG_ROLE` Sets unauthenticated users as `Admin`, defaults to `Viewer`
+
+optional:
+- `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
 
 You need to have all the Environment Variables set before running any of the following commands which can be done either by setting them in the environment or by passing them as arguments to the maven command as shown below:
 
 ```sh
-BILO_V1_PASSWORD=<admin password> VIDIS_API_KEY=<vidis key> BILO_V2_CLIENT_ID=<bilo client id> BILO_V2_CLIENT_SECRET=<bilo secret>  <COMMAND>
+BILO_V1_PASSWORD=<admin password> VIDIS_API_KEY=<unprivileged key> VIDIS_API_KEY_ADMIN=<admin key> BILO_V2_CLIENT_ID=<bilo client id> BILO_V2_CLIENT_SECRET=<bilo secret> H2_DB_USER=<db user> H2_DB_USER_PASSWORD=<db password> <COMMAND>
 ```
 
 ### Building the Project
@@ -53,7 +61,6 @@ Several profiles allow for different configurations of the application. The foll
 - `auto-start-mocks`: Automatically starts the dockerized mock-servers
 - `local`: Configures the application to query against the local mock servers
 If the profile is set to `auto-start-mocks` when running the application (e.g. `mvn test -Dspring.profiles.active=auto-start-mocks`, the mock servers will be started automatically.
-
 
 ### Running the Application
 
@@ -81,10 +88,32 @@ To build the Docker image locally, use the following command:
 ./mvnw spring-boot:build-image -DskipTests
 ```
 
+Before running docker, make sure to change the ownership of the db folder to the user running the docker container. This is necessary because the docker container runs as a different user and needs write access to the db folder.
+```sh
+sudo chown -R 1002:1000 ${DB_FILE_PATH} # default is ./docker/db
+```
+
 To run the Docker image locally, use the following command:
 ```sh
-docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<api_key> -p 8080:8080 lc-core:latest
+docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<unprivileged_key> -e VIDIS_API_KEY_ADMIN=<admin_key> -e H2_DB_USER=<db user> -e H2_DB_USER_PASSWORD=<db password> -p 8080:8080 lc-core:latest
 ```
+or use the provided downup.sh script:
+```sh
+./downup.sh 
+```
+
+CAUTION: Docker in rootless mode does not seem to work with the spring-boot:build-image command.
+
+#### Logging
+
+When running in docker, it is possible to store logs in loki and display them with grafana.
+To configure grafana to use loki, enter the following link: http://localhost:3000/connections/add-new-connection
+choose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
+Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
+
+The Grafana container is only started for the `debug` docker service profile, i.e. when you start the docker compose project with either the `--profile=debug` argument,
+or supply the `COMPOSE_PROFILES=debug` variable either directly before the command or via the environment. On the deployment-VM, the Grafana container should not run,
+as instead an existing Grafana instance will use the Loki container as a data source.
 
 ### Deployment
 
