@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import reactor.test.StepVerifier;
 
@@ -30,21 +32,23 @@ public class ArixClientTests {
     private String baseUrlRejecting;
 
     @Test
-    public void RequestLicences_Bundesland_and_Standort_ReturnsBundesland_u_Standort() throws ParserConfigurationException, IOException, SAXException {
+    public void RequestLicenses_GivenCorrectBLandStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
         UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), "STR", null, null).block();
 
+        assertThat(licences.source).isEqualTo("ARIX");
+
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(licences.rawResult.getBytes()));
 
-        assertThat(document.getElementsByTagName("result").getLength()).isEqualTo(1);
+        Element rootElement = document.getDocumentElement();
+        assertThat(rootElement.getTagName()).isEqualTo("result");
 
-        //System.out.println(document);
-
-        //assertThat(licences.source).isEqualTo("ARIX");
-        //assertThat(licences.rawResult).isEqualTo("<result><r identifier=\"3\"><f n=\"nr\">BY_1_23ui4g23c</f></r><r identifier=\"4\"><f n=\"nr\">ORT1_LIZENZ_1</f></r></result>");
-
-
-
+        NodeList rNodes = rootElement.getElementsByTagName("r");
+        assertThat(rNodes.getLength()).isGreaterThan(0);
+        for (int i = 0; i < rNodes.getLength(); i++) {
+            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier")).isNotNull();
+            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier").getNodeValue()).isNotEmpty();
+        }
     }
 
     @Test
