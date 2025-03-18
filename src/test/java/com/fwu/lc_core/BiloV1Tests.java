@@ -75,9 +75,8 @@ class BiloV1Tests {
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/ucs/request")
-                        .queryParam("clientName", BILO_TEST_CLIENT_NAME)
                         .queryParam("userId", requestDto.userId)
-                        .queryParam("clientId", requestDto.clientName)
+                        .queryParam("clientId", requestDto.clientId)
                         .queryParam("schulkennung", requestDto.schulkennung)
                         .queryParam("bundesland", requestDto.bundesland.toString()).build())
                 .header("x-api-key", correctApiKey)
@@ -88,7 +87,7 @@ class BiloV1Tests {
     @Test
     void requestWithUppercaseApiKeyHeaderName() {
         var requestDto = createValidUcsRequestDto();
-        createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+        createRequest(requestDto)
                 .exchange()
                 .expectStatus().isOk();
     }
@@ -96,7 +95,7 @@ class BiloV1Tests {
     @Test
     void requestWithCorrectInfo() throws Exception {
         var requestDto = createValidUcsRequestDto();
-        var responseBody = createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+        var responseBody = createRequest(requestDto)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
@@ -110,9 +109,8 @@ class BiloV1Tests {
 
     @Test
     void requestWithCorrectInfoButUnconfiguredClient() {
-        var requestDto = createValidUcsRequestDto();
-        String clientName = "unconfigured-client";
-        var responseBody = createRequest(requestDto, clientName)
+        var requestDto = createValidUcsRequestDto("unconfigured-client");
+        var responseBody = createRequest(requestDto)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class)
@@ -133,7 +131,7 @@ class BiloV1Tests {
     void requestWithIncorrectBundesland() {
         var requestDto = createValidUcsRequestDto();
         String invalidBundesland = "XX";
-        createRequestFromStringInfo(requestDto.userId, requestDto.clientName, requestDto.schulkennung, invalidBundesland)
+        createRequestFromStringInfo(requestDto.userId, requestDto.clientId, requestDto.schulkennung, invalidBundesland)
                 .exchange()
                 .expectStatus().isBadRequest();
     }
@@ -143,7 +141,7 @@ class BiloV1Tests {
         var requestDto = createValidUcsRequestDto();
         clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.noneOf(AvailableLicenceHolders.class));
 
-        createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+        createRequest(requestDto)
                 .exchange()
                 .expectStatus().is2xxSuccessful();
 
@@ -156,7 +154,7 @@ class BiloV1Tests {
         String expectedFirstLog = "Received licence request for client: " + BILO_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found 1 licences for client: " + BILO_TEST_CLIENT_NAME;
 
-        createRequest(requestDto, BILO_TEST_CLIENT_NAME)
+        createRequest(requestDto)
                 .exchange()
                 .expectStatus().is2xxSuccessful();
 
@@ -170,14 +168,13 @@ class BiloV1Tests {
         assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
     }
 
-    private WebTestClient.RequestHeadersSpec<?> createRequest(UcsRequestDto requestDto, String clientName) {
+    private WebTestClient.RequestHeadersSpec<?> createRequest(UcsRequestDto requestDto) {
         return webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/ucs/request")
-                        .queryParam("clientName", clientName)
                         .queryParam("userId", requestDto.userId)
-                        .queryParam("clientId", requestDto.clientName)
+                        .queryParam("clientId", requestDto.clientId)
                         .queryParam("schulkennung", requestDto.schulkennung)
                         .queryParam("bundesland", requestDto.bundesland.toString()).build())
                 .header(API_KEY_HEADER, correctApiKey);
@@ -208,18 +205,22 @@ class BiloV1Tests {
     }
 
     private static UcsRequestDto createValidUcsRequestDto() {
-        return new UcsRequestDto("student.2", "test", null, Bundesland.MV);
+        return createValidUcsRequestDto(null);
+    }
+
+    private static UcsRequestDto createValidUcsRequestDto(String clientId) {
+        return new UcsRequestDto("student.2", clientId == null ? BILO_TEST_CLIENT_NAME : clientId, null, Bundesland.MV);
     }
 
     private static class UcsRequestDto {
         public final String userId;
-        public final String clientName;
+        public final String clientId;
         public final String schulkennung;
         public final Bundesland bundesland;
 
-        public UcsRequestDto(String userId, String clientName, String schulkennung, Bundesland bundesland) {
+        public UcsRequestDto(String userId, String clientId, String schulkennung, Bundesland bundesland) {
             this.userId = userId;
-            this.clientName = clientName;
+            this.clientId = clientId;
             this.schulkennung = schulkennung;
             this.bundesland = bundesland;
         }
