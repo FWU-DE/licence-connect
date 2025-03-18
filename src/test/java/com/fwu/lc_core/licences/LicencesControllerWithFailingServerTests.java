@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.system.CapturedOutput;
@@ -25,7 +25,7 @@ import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @ExtendWith(OutputCaptureExtension.class)
 @Import(LicencesControllerWithFailingServerTests.CustomTestConfig.class)
 class LicencesControllerWithFailingServerTests {
@@ -63,14 +63,14 @@ class LicencesControllerWithFailingServerTests {
     }
 
     @Test
-    void licenceRequest_With_Error_Logs_Error(CapturedOutput output) throws Exception {
-        webTestClient.get()
+    void licenceRequest_With_Error_Logs_Error(CapturedOutput output) {
+        webTestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
                         .queryParam("bundesland", "BY")
-                        .queryParam("standortnummer", "INVALID")
-                        .build())
+                        .queryParam("standortnummer", "INVALID").build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
