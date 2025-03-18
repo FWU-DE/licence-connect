@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.EnumSet;
 
@@ -24,13 +23,13 @@ public class ClientLicenceHolderFilterController {
     }
 
     @PutMapping("/admin/client-licence-holder-mapping/{clientName}")
-    public Mono<ResponseEntity<Object>> updateLicenceHolder(
+    public ResponseEntity<Object> updateLicenceHolder(
             @RequestBody ClientLicenceHolderMappingDto newMapping,
             @PathVariable String clientName
     ) {
         log.info("Setting new available licence holders for client: {}", clientName);
         clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders);
         log.info("New allowed systems: {} for client: {}", newMapping.availableLicenceHolders.toString(), clientName);
-        return Mono.just(ResponseEntity.noContent().build());
+        return ResponseEntity.noContent().build();
     }
 }

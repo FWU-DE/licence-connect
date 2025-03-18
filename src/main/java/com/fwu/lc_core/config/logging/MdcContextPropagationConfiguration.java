@@ -15,18 +15,15 @@ import static org.hibernate.internal.util.collections.CollectionHelper.isEmpty;
 
 @Configuration
 @ConditionalOnClass({ContextRegistry.class, ContextSnapshotFactory.class})
-@ConditionalOnProperty(value = "management.tracing.baggage.correlation.fields", matchIfMissing = true)
+@ConditionalOnProperty(value = "logging.context.fields", matchIfMissing = true)
 public class MdcContextPropagationConfiguration {
 
-    public MdcContextPropagationConfiguration(@Value("${management.tracing.baggage.correlation.fields}")
-                                              List<String> fields) {
-        if (!isEmpty(fields)) {
-            fields.forEach(claim -> ContextRegistry.getInstance()
-                    .registerThreadLocalAccessor(claim,
-                            () -> MDC.get(claim),
-                            value -> MDC.put(claim, value),
-                            () -> MDC.remove(claim)));
-        }
+    public MdcContextPropagationConfiguration(@Value("${logging.context.fields}") List<String> fields) {
+        fields.forEach(claim -> ContextRegistry.getInstance()
+                .registerThreadLocalAccessor(claim,
+                        () -> MDC.get(claim),
+                        value -> MDC.put(claim, value),
+                        () -> MDC.remove(claim)));
         Hooks.enableAutomaticContextPropagation();
     }
 }

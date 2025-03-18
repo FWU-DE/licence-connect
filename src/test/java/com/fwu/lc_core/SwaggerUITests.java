@@ -30,4 +30,14 @@ class SwaggerUITests {
                 .exchange()
                 .expectStatus().is2xxSuccessful();
     }
+
+    @Test
+    void swaggerUIShortHandWorks() {
+        webTestClient
+                .get()
+                .uri("/swagger")
+                .exchange()
+                .expectStatus().isPermanentRedirect()
+                .expectHeader().valueEquals("Location", "/swagger-ui/index.html");;
+    }
 }
