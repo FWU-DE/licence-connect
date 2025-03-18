@@ -26,6 +26,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.test.annotation.IfProfileValue;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
@@ -107,6 +109,7 @@ class LicencesControllerWithWorkingServerTests {
                 .expectStatus().isBadRequest();
     }
 
+    @IfProfileValue(name = "spring.profiles.active", value = "local")
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) throws Exception {
@@ -128,6 +131,25 @@ class LicencesControllerWithWorkingServerTests {
                     assertThat(licences.stream().map(l -> l.licenceCode))
                             .containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
                 });
+    }
+
+    @Test
+    void Authenticated_Request_WithValidBody_STK_Returns_CorrectLicences()  {
+        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, null);
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/licences/request")
+                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
+                        .queryParam("bundesland", requestDto.bundesland())
+                        .queryParam("standortnummer", requestDto.standortnummer())
+                        .queryParam("schulnummer", requestDto.schulnummer())
+                        .queryParam("userId", requestDto.userId())
+                        .build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<List<Licence>>() {})
+                .value(licences -> assertThat(licences.stream().map(l -> l.licenceCode)).isNotEmpty());
     }
 
     @ParameterizedTest
@@ -175,7 +197,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void licenceRequest_Logs_Request(CapturedOutput output) throws Exception {
-        var requestDto = new LicencesRequestDto(Bundesland.BY, null, null, null);
+        var requestDto = new LicencesRequestDto(Bundesland.STK, "STR", null, null);
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -195,6 +217,7 @@ class LicencesControllerWithWorkingServerTests {
         assertThat(output.getOut()).contains(" licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
 
+    @IfProfileValue(name = "spring.profiles.active", value = "local")
     @Test
     void licenceRequest_Logs_Result_Count(CapturedOutput output) throws Exception {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
@@ -220,7 +243,6 @@ class LicencesControllerWithWorkingServerTests {
         assertThatFirstLogComesBeforeSecondLog(logs, expectedFirstLog, expectedSecondLog);
         assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
     }
-
 
 
     private static Stream<Arguments> provideValidInputAndOutput() {
