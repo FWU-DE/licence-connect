@@ -2,27 +2,42 @@ package com.fwu.lc_core;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 class SwaggerUITests {
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @Test
-    void apiDocsArePubliclyAvailable() throws Exception {
-        mockMvc.perform(get("/v3/api-docs")).andExpect(status().is2xxSuccessful());
+    void apiDocsArePubliclyAvailable() {
+        webTestClient
+                .get()
+                .uri("/v3/api-docs")
+                .exchange()
+                .expectStatus().is2xxSuccessful();
     }
 
     @Test
-    void swaggerUIIsPubliclyAvailable() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().is2xxSuccessful());
+    void swaggerUIIsPubliclyAvailable() {
+        webTestClient
+                .get()
+                .uri("/swagger-ui/index.html")
+                .exchange()
+                .expectStatus().is2xxSuccessful();
+    }
+
+    @Test
+    void swaggerUIShortHandWorks() {
+        webTestClient
+                .get()
+                .uri("/swagger")
+                .exchange()
+                .expectStatus().isPermanentRedirect()
+                .expectHeader().valueEquals("Location", "/swagger-ui/index.html");;
     }
 }

@@ -20,11 +20,7 @@ public class ArixClient {
     }
 
     public Mono<UnparsedLicences> getLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        try {
-            return Mono.fromCallable(() -> getLicencesBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
-        } catch (Exception e) {
-            return Mono.error(e);
-        }
+        return Mono.fromCallable(() -> getLicencesBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
     private UnparsedLicences getLicencesBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
