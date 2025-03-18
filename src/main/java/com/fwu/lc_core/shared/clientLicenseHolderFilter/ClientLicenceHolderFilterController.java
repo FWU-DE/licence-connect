@@ -18,9 +18,9 @@ public class ClientLicenceHolderFilterController {
     private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
     @GetMapping("/admin/client-licence-holder-mapping/{clientName}")
-    public Mono<ResponseEntity<EnumSet<AvailableLicenceHolders>>> getLicenceHolders(@PathVariable String clientName) {
+    public ResponseEntity<EnumSet<AvailableLicenceHolders>> getLicenceHolders(@PathVariable String clientName) {
         log.info("Received request to get licence holders for client: {}", clientName);
-        return Mono.just(ResponseEntity.ok(clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName)));
+        return ResponseEntity.ok(clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName));
     }
 
     @PutMapping("/admin/client-licence-holder-mapping/{clientName}")

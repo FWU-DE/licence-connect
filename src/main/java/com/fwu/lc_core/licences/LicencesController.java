@@ -3,24 +3,19 @@ package com.fwu.lc_core.licences;
 import com.fwu.lc_core.licences.collection.LicencesCollector;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
-import jakarta.validation.Valid;
+import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import java.util.List;
 
 @Slf4j
 @RestController

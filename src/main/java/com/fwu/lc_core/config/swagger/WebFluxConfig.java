@@ -1,13 +1,14 @@
 package com.fwu.lc_core.config.swagger;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import java.net.URI;
+
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect;
-
-import java.net.URI;
 
 @Configuration
 public class WebFluxConfig {

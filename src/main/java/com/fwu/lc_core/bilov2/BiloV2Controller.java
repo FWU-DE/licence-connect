@@ -10,10 +10,12 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -40,14 +42,14 @@ public class BiloV2Controller {
 
     @Validated
     @GetMapping("/v1/bilo/request/{userId}")
-    public Mono<ResponseEntity<String>> request(@PathVariable String userId, @RequestParam String clientName) {
+    public ResponseEntity<String> request(@PathVariable String userId, @RequestParam String clientName) {
         log.info("Received licence request for client: {} and userId: {}", clientName, userId);
         if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2)) {
             log.warn("Client {} is not allowed to access BILO_V2", clientName);
-            return Mono.just(ResponseEntity.ok("[]"));
+            return ResponseEntity.ok("[]");
         }
         String bearerToken = fetchAuthToken();
-        return Mono.just(fetchLicenses(userId, bearerToken, clientName));
+        return fetchLicenses(userId, bearerToken, clientName);
     }
 
     private String fetchAuthToken() {
