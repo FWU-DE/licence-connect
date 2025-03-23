@@ -1,4 +1,10 @@
 <configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>app=licenceConnect,host=${LICENCECONNECT_HOST},traceID=%X{traceId:-NONE},level=%level %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="Loki" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
             <url>${LOKI_URL}/loki/api/v1/push</url>
@@ -15,12 +21,6 @@
                 <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
             </message>
         </format>
-    </appender>
-
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>app=licenceConnect,host=${LICENCECONNECT_HOST},traceID=%X{traceId:-NONE},level=%level %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
-        </encoder>
     </appender>
 
     <root level="INFO">
