@@ -42,5 +42,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     volumes:
+      # With this volume, we can persist the data in local development even if the container is removed.
+      # This is useful because it removes the need to re-add the Loki datasource every time you start the container.
       - ./grafana_data:/var/lib/grafana
 
