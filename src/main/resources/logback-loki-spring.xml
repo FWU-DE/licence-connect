@@ -9,7 +9,7 @@
         </http>
         <format>
             <label>
-                <pattern>app=licenceConnect,host=${LICENCECONNECT_HOST}},traceID=%X{traceId:-NONE},level=%level </pattern>
+                <pattern>app=licenceConnect,host=${LICENCECONNECT_HOST},traceID=%X{traceId:-NONE},level=%level </pattern>
             </label>
             <message>
                 <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
