@@ -47,7 +47,9 @@ public class LicencesParser {
     }
 
     public static String getIdentifierOfrNode(Node rNode) throws Exception {
-        if(rNode.getAttributes().getNamedItem("identifier") == null) throw new Exception("UnparsedLicences with source ARIX and rawResult containing <r> Element without identifier.");
-        return rNode.getAttributes().getNamedItem("identifier").getNodeValue();
+        var identifier = rNode.getAttributes().getNamedItem("identifier")
+        if (identifier == null) 
+            throw new Exception("UnparsedLicences with source ARIX and rawResult containing <r> Element without identifier.");
+        return identifier.getNodeValue();
     }
 }
