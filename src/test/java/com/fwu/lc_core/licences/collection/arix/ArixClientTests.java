@@ -1,9 +1,7 @@
 package com.fwu.lc_core.licences.collection.arix;
 
-import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
-import org.assertj.core.api.AbstractBigDecimalAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,9 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class ArixClientTests {
-    @Value("${mocks.arix.accepting.url}")
+    @Value("${arix.accepting.url}")
     private String baseUrlAccepting;
-    @Value("${mocks.arix.rejecting.url}")
+    @Value("${arix.rejecting.url}")
     private String baseUrlRejecting;
 
     @Test
