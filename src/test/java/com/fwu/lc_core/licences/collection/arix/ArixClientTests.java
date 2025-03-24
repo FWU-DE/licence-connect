@@ -32,23 +32,21 @@ public class ArixClientTests {
     private String baseUrlRejecting;
 
     @Test
+    public void RequestLicenses_GivenCorrectBL_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+        ArixClient arixClient = new ArixClient(baseUrlAccepting);
+        UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), null, null, null).block();
+
+        assertThat(licences.source).isEqualTo("ARIX");
+        assertValidityOfValidArixResponseBody(licences);
+    }
+
+    @Test
     public void RequestLicenses_GivenCorrectBLandStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
         UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), "STR", null, null).block();
 
         assertThat(licences.source).isEqualTo("ARIX");
-
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(licences.rawResult.getBytes()));
-
-        Element rootElement = document.getDocumentElement();
-        assertThat(rootElement.getTagName()).isEqualTo("result");
-
-        NodeList rNodes = rootElement.getElementsByTagName("r");
-        assertThat(rNodes.getLength()).isGreaterThan(0);
-        for (int i = 0; i < rNodes.getLength(); i++) {
-            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier")).isNotNull();
-            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier").getNodeValue()).isNotEmpty();
-        }
+        assertValidityOfValidArixResponseBody(licences);
     }
 
     @ParameterizedTest
@@ -77,5 +75,19 @@ public class ArixClientTests {
                 Arguments.of("BY", null, "Schule", null),
                 Arguments.of(null, null, null, null)
         );
+    }
+
+    private static void assertValidityOfValidArixResponseBody(UnparsedLicences licences) throws SAXException, IOException, ParserConfigurationException {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(licences.rawResult.getBytes()));
+
+        Element rootElement = document.getDocumentElement();
+        assertThat(rootElement.getTagName()).isEqualTo("result");
+
+        NodeList rNodes = rootElement.getElementsByTagName("r");
+        assertThat(rNodes.getLength()).isGreaterThan(0);
+        for (int i = 0; i < rNodes.getLength(); i++) {
+            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier")).isNotNull();
+            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier").getNodeValue()).isNotEmpty();
+        }
     }
 }
