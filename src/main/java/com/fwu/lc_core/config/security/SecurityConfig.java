@@ -1,5 +1,6 @@
 package com.fwu.lc_core.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,15 +13,11 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Value("${vidis.api-key.unprivileged}")
-    private String unprivilegedApiKey;
-
-    @Value("${vidis.api-key.admin}")
-    private String adminApiKey;
+    @Autowired
+    ApiKeyAuthenticationWebFilter apiKeyAuthenticationWebFilter;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        ApiKeyAuthenticationWebFilter apiKeyAuthenticationWebFilter = new ApiKeyAuthenticationWebFilter(unprivilegedApiKey, adminApiKey);
 
         http.
                 csrf(ServerHttpSecurity.CsrfSpec::disable)
