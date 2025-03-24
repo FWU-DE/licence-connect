@@ -32,7 +32,7 @@ public class ArixClientTests {
     private String baseUrlRejecting;
 
     @Test
-    public void RequestLicenses_GivenCorrectBL_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+    public void RequestLicences_GivenCorrectBL_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
         UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), null, null, null).block();
 
@@ -41,7 +41,7 @@ public class ArixClientTests {
     }
 
     @Test
-    public void RequestLicenses_GivenCorrectBLandStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+    public void RequestLicences_GivenCorrectBLandStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
         UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), "STR", null, null).block();
 
