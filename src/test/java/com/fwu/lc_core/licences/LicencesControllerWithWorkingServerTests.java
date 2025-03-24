@@ -21,8 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
@@ -109,9 +108,9 @@ class LicencesControllerWithWorkingServerTests {
                 .expectStatus().isBadRequest();
     }
 
-    @IfProfileValue(name = "spring.profiles.active", value = "local")
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
+    @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
         webTestClient
@@ -218,7 +217,7 @@ class LicencesControllerWithWorkingServerTests {
         assertThat(output.getOut()).contains(" licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
 
-    @IfProfileValue(name = "spring.profiles.active", value = "local")
+    @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     @Test
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
