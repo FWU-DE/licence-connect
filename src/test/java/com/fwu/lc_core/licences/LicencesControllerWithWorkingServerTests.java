@@ -198,7 +198,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void licenceRequest_Logs_Request(CapturedOutput output) {
-        var requestDto = new LicencesRequestDto(Bundesland.STK, "STR", null, null);
+        var requestDto = new LicencesRequestDto(Bundesland.STK, null, null, null);
 
         webTestClient
                 .get()
