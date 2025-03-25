@@ -37,7 +37,7 @@ public class LicencesParser {
             List<String> extractedStrings = new ArrayList<>();
             for (int i = 0; i < rNodes.getLength(); i++) {
                 var rNode = rNodes.item(i);
-                extractedStrings.add(getNrOfrNode(rNode));
+                extractedStrings.add(getIdentifierOfrNode(rNode));
             }
             return extractedStrings.stream().map(Licence::new);
 
@@ -46,26 +46,10 @@ public class LicencesParser {
         }
     }
 
-    public static String getNrOfrNode(Node rNode) throws Exception {
-        var fElementWithNr = getChildByAttributeValue(rNode, "n", "nr");
-        if (fElementWithNr == null)
-            throw new Exception("UnparsedLicences with source ARIX and rawResult containing a <r> Element without a <f n=\"nr\"> Element.");
-
-        var textNodeWithNr = fElementWithNr.getFirstChild();
-        if (textNodeWithNr == null || textNodeWithNr.getNodeType() != Node.TEXT_NODE)
-            throw new Exception("UnparsedLicences with source ARIX and rawResult containing a <f n=\"nr\"> Element without text.");
-
-        return textNodeWithNr.getNodeValue();
-    }
-
-    public static Node getChildByAttributeValue(Node node, String attributeName, String attributeValue) {
-        var childNodes = node.getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            var child = childNodes.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE && child.getAttributes().getNamedItem(attributeName).getNodeValue().equals(attributeValue)) {
-                return child;
-            }
-        }
-        return null;
+    public static String getIdentifierOfrNode(Node rNode) throws Exception {
+        var identifier = rNode.getAttributes().getNamedItem("identifier");
+        if (identifier == null) 
+            throw new Exception("UnparsedLicences with source ARIX and rawResult containing <r> Element without identifier.");
+        return identifier.getNodeValue();
     }
 }
