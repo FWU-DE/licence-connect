@@ -46,7 +46,7 @@ class LicencesControllerWithFailingServerTests {
         @Autowired
         private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
-        @Value("${mocks.arix.rejecting.url}")
+        @Value("${arix.rejecting.url}")
         String arixUrlRejecting;
 
         @Bean
