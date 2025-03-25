@@ -14,7 +14,7 @@ public class LicencesCollector {
 
     private static ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
-    public LicencesCollector(ClientLicenseHolderFilterService clientLicenseHolderFilterService, @Value("${mocks.arix.accepting.url}") String arixUrl) {
+    public LicencesCollector(ClientLicenseHolderFilterService clientLicenseHolderFilterService, @Value("${arix.accepting.url}") String arixUrl) {
         LicencesCollector.clientLicenseHolderFilterService = clientLicenseHolderFilterService;
         LicencesCollector.arixUrl = arixUrl;
     }

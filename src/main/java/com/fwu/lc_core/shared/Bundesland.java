@@ -32,7 +32,10 @@ public enum Bundesland {
     DE_SN("DE-SN"),
     DE_ST("DE-ST"),
     DE_SH("DE-SH"),
-    DE_TH("DE-TH");
+    DE_TH("DE-TH"),
+    //TODO: ONCE WE CONNECT TO PRODUCTION ARIX API, MAKE STK ONLY AVAILABLE IN TEST CODE OR REMOVE IT COMPLETELY
+    STK("STK");
+
 
     public final String value;
 
