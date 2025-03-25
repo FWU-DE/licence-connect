@@ -5,6 +5,7 @@ import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class LicencesController {
 
     @GetMapping("/v1/licences/request")
     private Mono<ResponseEntity<List<Licence>>> request(
-            @Valid @ValidLicencesRequest LicencesRequestDto requestDto,
+            @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
 
