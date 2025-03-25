@@ -7,6 +7,7 @@ import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilte
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @RestController
 public class BiloV1Controller {
-    private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
     @Value("${bilo.v1.base-url}")
     private String baseUrl;
@@ -38,9 +38,8 @@ public class BiloV1Controller {
     @Value("${bilo.v1.licence.endpoint}")
     private String licenceEndpoint;
 
-    public BiloV1Controller(ClientLicenseHolderFilterService clientLicenseHolderFilterService) {
-        this.clientLicenseHolderFilterService = clientLicenseHolderFilterService;
-    }
+    @Autowired
+    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
     @Validated
     @GetMapping("/v1/ucs/request")
