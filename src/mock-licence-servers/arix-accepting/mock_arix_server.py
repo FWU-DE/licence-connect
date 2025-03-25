@@ -4,7 +4,7 @@ from enum import Enum
 from dataclasses import dataclass
 
 from arix_example_licences import get_example_licences
-from arix_licence import ArixLicence
+from arix_licence import ArixLicence, STANDARD_FIELD_NAMES
 
 app = Flask(__name__)
 
@@ -37,23 +37,30 @@ def endpoint(land = None, standortnummer = None, schulnummer = None, userid = No
         case RequestType.Other:
             abort(501)
 
+
+
 def format_response(licenses: list[ArixLicence], field_names: list[str]):
+    field_names = list(set(field_names + STANDARD_FIELD_NAMES))
     result = etree.Element("result")
     for licence in licenses:
         licence_element = etree.SubElement(result, "r")
         licence_element.set("identifier", licence.id)
         for field_name in field_names:
-            if (field_value := getattr(licence, field_name)) is not None:
+            if hasattr(licence, field_name):
                 field_element = etree.SubElement(licence_element, "f")
                 field_element.set("n", field_name)
-                field_element.text = field_value
+                field_element.text = getattr(licence, field_name)
+            else:
+                return "<result></result>"
     return etree.tostring(result)
 
 def parse_request(xml_string: str):
     root = etree.fromstring(xml_string)
     match root.tag:
         case "search":
-            return RequestType.Search, SearchRequest(root.get("fields").replace(" ", "").split(","))
+            if root.get("fields"):
+                return RequestType.Search, SearchRequest(root.get("fields").split(","))
+            return RequestType.Search, SearchRequest([])
         case _:
             return RequestType.Other, None
 
