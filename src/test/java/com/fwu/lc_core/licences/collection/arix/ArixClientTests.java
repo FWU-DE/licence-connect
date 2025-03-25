@@ -1,5 +1,6 @@
 package com.fwu.lc_core.licences.collection.arix;
 
+import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,44 +8,43 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import reactor.test.StepVerifier;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class ArixClientTests {
-    @Value("${mocks.arix.accepting.url}")
+    @Value("${arix.accepting.url}")
     private String baseUrlAccepting;
-    @Value("${mocks.arix.rejecting.url}")
+    @Value("${arix.rejecting.url}")
     private String baseUrlRejecting;
 
     @Test
-    public void RequestLicences_BundeslandOnly_ReturnsLicencesWhichAreIssuedToEverybodyOfTheBundesland() {
-        var arixClient = new ArixClient(baseUrlAccepting);
-        var licences = arixClient.getLicences(Bundesland.valueOf("BY"), null, null, null).block();
+    public void RequestLicences_GivenCorrectBL_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+        ArixClient arixClient = new ArixClient(baseUrlAccepting);
+        UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), null, null, null).block();
 
         assertThat(licences.source).isEqualTo("ARIX");
-        assertThat(licences.rawResult).isEqualTo("<result><r identifier=\"3\"><f n=\"nr\">BY_1_23ui4g23c</f></r></result>");
+        assertValidityOfValidArixResponseBody(licences);
     }
 
     @Test
-    public void RequestLicences_Bundesland_and_Standort_ReturnsBundesland_u_Standort() {
-        var arixClient = new ArixClient(baseUrlAccepting);
-        var licences = arixClient.getLicences(Bundesland.valueOf("BY"), "ORT1", null, null).block();
+    public void RequestLicences_GivenCorrectBLandStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+        ArixClient arixClient = new ArixClient(baseUrlAccepting);
+        UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), "STR", null, null).block();
 
         assertThat(licences.source).isEqualTo("ARIX");
-        assertThat(licences.rawResult).isEqualTo("<result><r identifier=\"3\"><f n=\"nr\">BY_1_23ui4g23c</f></r><r identifier=\"4\"><f n=\"nr\">ORT1_LIZENZ_1</f></r></result>");
-    }
-
-    @Test
-    public void RequestLicences_Bundesland_and_Standort_and_Schulnummer_ReturnsBundesland_u_Standort_u_Schulnummer() {
-        var arixClient = new ArixClient(baseUrlAccepting);
-        var licences = arixClient.getLicences(Bundesland.valueOf("BY"), "ORT1", "f3453b", null).block();
-
-        assertThat(licences.source).isEqualTo("ARIX");
-        assertThat(licences.rawResult).isEqualTo("<result><r identifier=\"3\"><f n=\"nr\">BY_1_23ui4g23c</f></r><r identifier=\"4\"><f n=\"nr\">ORT1_LIZENZ_1</f></r><r identifier=\"7\"><f n=\"nr\">F3453_LIZENZ_1</f></r><r identifier=\"8\"><f n=\"nr\">F3453_LIZENZ_2</f></r></result>");
+        assertValidityOfValidArixResponseBody(licences);
     }
 
     @ParameterizedTest
@@ -73,5 +73,19 @@ public class ArixClientTests {
                 Arguments.of("BY", null, "Schule", null),
                 Arguments.of(null, null, null, null)
         );
+    }
+
+    private static void assertValidityOfValidArixResponseBody(UnparsedLicences licences) throws SAXException, IOException, ParserConfigurationException {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(licences.rawResult.getBytes()));
+
+        Element rootElement = document.getDocumentElement();
+        assertThat(rootElement.getTagName()).isEqualTo("result");
+
+        NodeList rNodes = rootElement.getElementsByTagName("r");
+        assertThat(rNodes.getLength()).isGreaterThan(0);
+        for (int i = 0; i < rNodes.getLength(); i++) {
+            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier")).isNotNull();
+            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier").getNodeValue()).isNotEmpty();
+        }
     }
 }

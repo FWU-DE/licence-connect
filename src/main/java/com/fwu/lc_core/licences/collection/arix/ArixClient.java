@@ -38,7 +38,7 @@ public class ArixClient {
         String responseBody = webClient.post()
                 .uri(uri)
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .body(BodyInserters.fromFormData("xmlstatement", "<search fields='nr, titel'></search>"))
+                .body(BodyInserters.fromFormData("xmlstatement", "<search></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
 
         if (responseBody == null || !responseBody.startsWith("<result"))

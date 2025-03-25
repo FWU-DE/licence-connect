@@ -18,7 +18,7 @@ public class LicencesCollector {
 
     private final String arixUrl;
 
-    public LicencesCollector(@Value("${mocks.arix.accepting.url}") String arixUrl) {
+    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl) {
         this.arixUrl = arixUrl;
     }
 
