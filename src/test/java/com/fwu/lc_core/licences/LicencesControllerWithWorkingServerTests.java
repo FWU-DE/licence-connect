@@ -2,6 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.config.ClassNameRetriever;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -47,6 +49,10 @@ class LicencesControllerWithWorkingServerTests {
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
     @Autowired
     private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
+    @Autowired
+    ClassNameRetriever classNameRetriever;
+    @Autowired
+    ApplicationContext applicationContext;
 
     @BeforeEach
     void setUp() {
@@ -88,6 +94,28 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
+    }
+
+    @Test
+    void RequestWhichReturnsTrace(){
+        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var test = classNameRetriever.getAllClassNames(applicationContext);
+
+        var result = webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/licences/request")
+                        .queryParam("clientName", "cat")
+                        .queryParam("bundesland", requestDto.bundesland())
+                        .queryParam("standortnummer", requestDto.standortnummer())
+                        .queryParam("userId", requestDto.userId()).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody().blockFirst();
+
+        assertThat(result).doesNotContain(test);
     }
 
     @Test
