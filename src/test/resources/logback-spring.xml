@@ -1,0 +1,14 @@
+<configuration>
+    <!-- Replace the Loki appender with a simple console out -->
+    <appender name="Loki" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- This matches the configuration of the loki appender in main/resources/logback-spring.xml -->
+            <pattern>app=licenceConnect,host=${LICENCECONNECT_HOST},traceID=%X{traceId:-NONE},level=%level %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger configuration -->
+    <root level="INFO">
+        <appender-ref ref="Loki"/>
+    </root>
+</configuration>
