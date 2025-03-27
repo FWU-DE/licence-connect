@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.fwu</groupId>
     <artifactId>lc_core</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <name>lc_core</name>
     <description>Licence Connect Core Application</description>
     <url/>
