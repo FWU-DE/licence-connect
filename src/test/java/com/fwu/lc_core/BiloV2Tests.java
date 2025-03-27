@@ -16,6 +16,7 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.Duration;
 import java.util.EnumSet;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
@@ -47,6 +48,9 @@ class BiloV2Tests {
     void setUp() {
         clientLicenceHolderMappingRepository.deleteAll();
         clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.BILO_V2));
+        webTestClient = webTestClient.mutate()
+                .responseTimeout(Duration.ofSeconds(30))
+                .build();
     }
 
     @Test

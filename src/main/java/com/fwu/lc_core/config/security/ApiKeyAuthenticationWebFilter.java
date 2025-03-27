@@ -21,7 +21,7 @@ public class ApiKeyAuthenticationWebFilter implements WebFilter {
     @Value("${vidis.api-key.unprivileged}")
     private String unprivilegedApiKey;
 
-    @Value("${vidis.api-key.admin}")
+    @Value("${admin.api-key}")
     private String adminApiKey;
 
     @Override
