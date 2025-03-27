@@ -20,16 +20,17 @@ services:
     env_file: ".env"
     volumes:
       - ${DB_FILE_PATH:-./db}:/workspace/data
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/data/database.h2;DB_CLOSE_ON_EXIT=FALSE
 
   loki:
+    profiles: [debug]
     image: grafana/loki:latest
     container_name: lc-loki
-    ports:
-      - "3100:3100"
+    expose:
+      - "3100"
 
   grafana:
     profiles: [debug]
@@ -40,4 +41,8 @@ services:
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      # With this volume, we can persist the data in local development even if the container is removed.
+      # This is useful because it removes the need to re-add the Loki datasource every time you start the container.
+      - ./grafana_data:/var/lib/grafana
 
