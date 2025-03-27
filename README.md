@@ -22,30 +22,14 @@ Licence Connect Core provides a way of accessing licences in a unified way.
 
 - Java 21
 - Maven 3.x
-- Docker (optional, for containerized deployment)
+- Docker
 
 ### Environment Variables
 
-The application requires several environment variables to be set for proper configuration. These variables are used to populate the `application.properties` file.
-
-- `BILO_V1_PASSWORD`: Password for the Bilo V1 admin user with which licenceconnect authenticates its requests to BildungsLogin V1.
-- `BILO_V2_CLIENT_ID`: Client ID with which licenceconnect authenticates its requests to BildungsLogin V2.
-- `BILO_V2_CLIENT_SECRET`: Client secret with which licenceconnect authenticates its requests to BildungsLogin V2.
-- `VIDIS_API_KEY`: Unprivileged API Key with which VIDIS can authenticate its requests for licence retrieval.
-- `VIDIS_API_KEY_ADMIN`: Admin API Key with which VIDIS can authenticate its requests for adding, removing and retrieving allowed licence holding systems for clients based on the client name.
-- `H2_DB_USER`: Username for the H2 database.
-- `H2_DB_USER_PASSWORD`: Password for the H2 database.
-- `GF_AUTH_ANONYMOUS_ENABLED`: Allows access for unauthenticated users to the grafana dashboard if set to `true`, defaults to `false`
-- `GF_AUTH_ANONYMOUS_ORG_ROLE` Sets unauthenticated users as `Admin`, defaults to `Viewer`
-
-optional:
-- `DB_FILE_PATH`: Path to the H2 database file. Default is `./docker/db`. Make sure to set the right permissions (see Docker section).
-
-You need to have all the Environment Variables set before running any of the following commands which can be done either by setting them in the environment or by passing them as arguments to the maven command as shown below:
-
-```sh
-BILO_V1_PASSWORD=<admin password> VIDIS_API_KEY=<unprivileged key> VIDIS_API_KEY_ADMIN=<admin key> BILO_V2_CLIENT_ID=<bilo client id> BILO_V2_CLIENT_SECRET=<bilo secret> H2_DB_USER=<db user> H2_DB_USER_PASSWORD=<db password> <COMMAND>
-```
+The application requires several environment variables to be set for proper configuration.
+Inside the `docker` folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
+This file should be used as a template for the actual .env file.
+All environment variables must be set before running any local mvn commands or trying to run the app without docker.
 
 ### Building the Project
 
@@ -95,7 +79,7 @@ sudo chown -R 1002:1000 ${DB_FILE_PATH} # default is ./docker/db
 
 To run the Docker image locally, use the following command:
 ```sh
-docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<unprivileged_key> -e VIDIS_API_KEY_ADMIN=<admin_key> -e H2_DB_USER=<db user> -e H2_DB_USER_PASSWORD=<db password> -p 8080:8080 lc-core:latest
+docker run -e BILO_V1_PASSWORD=<password> -e BILO_V2_CLIENT_ID=<client_id> -e BILO_V2_CLIENT_SECRET=<client_secret> -e VIDIS_API_KEY=<unprivileged_key> -e API_KEY_ADMIN=<admin_key> -e H2_DB_USER=<db user> -e H2_DB_USER_PASSWORD=<db password> -p 8080:8080 lc-core:latest
 ```
 or use the provided downup.sh script:
 ```sh
