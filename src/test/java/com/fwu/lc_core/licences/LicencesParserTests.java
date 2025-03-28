@@ -34,10 +34,8 @@ public class LicencesParserTests {
                 Arguments.of("ARIX", "<result><FALSCH></result>"),                                                                  // invalid xml: no closing tag
                 Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r><nonclosingtag></result>"), // invalid xml: no closing tag
                 Arguments.of("ARIX", ""),                                                                                           // invalid xml: no root element
-                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr2\">ABCD_EFGH_IJKL</f></r></result>"),               // invalid rawResult: no f with n="nr"
-                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><x><f n=\"nr\">ABCD_EFGH_IJKL</f></x></r></result>"),         // invalid rawResult: f with n="nr" not direct child of r
+                Arguments.of("ARIX", "<result><r><f n=\"nr2\">ABCD_EFGH_IJKL</f></r></result>"),                                    // invalid rawResult: no identifier
                 Arguments.of("ARIX", "<x><result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r></result></x>"),         // invalid rawResult: result not root element
-                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\"><x>ABCD_EFGH_IJKL</x></f></r></result>"),         // invalid rawResult: f with n="nr" not containing text as first child
                 Arguments.of("ARIX", null)                                                                                          // invalid rawResult: null
         );
     }
@@ -60,10 +58,11 @@ public class LicencesParserTests {
     private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
                 Arguments.of("ARIX", "<result></result>", List.of()),
-                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f></r></result>", List.of("ABCD_EFGH_IJKL")),
-                Arguments.of("ARIX", "<result><r identifier=\"abcde\"><f n=\"nr\">lizenzcode1</f></r><r identifier=\"abcde\"><f n=\"nr\">lizenzcode2</f></r></result>", List.of("lizenzcode1", "lizenzcode2")),
-                Arguments.of("ARIX", "<result><zusaetzlichertag/><r identifier=\"abcde\"><f n=\"nr\">ABCD_EFGH_IJKL</f><f n=\"zusaetzliches feld\">info</f><zusatz>abc</zusatz></r></result>", List.of("ABCD_EFGH_IJKL")),
-                Arguments.of("ARIX", "   <result   >   <r identifier   =  \"abcde\">      \n\n      <f      n=\"nr\">ABCD EFGH IJKL</f>\n       </r></result>", List.of("ABCD EFGH IJKL"))
+                Arguments.of("ARIX", "<result><r identifier=\"ABCD_EFGH_IJKL\"><f n=\"nr\">abcde</f></r></result>", List.of("ABCD_EFGH_IJKL")),
+                Arguments.of("ARIX", "<result><r identifier=\"ABCD_EFGH_IJKL\"></r></result>", List.of("ABCD_EFGH_IJKL")),
+                Arguments.of("ARIX", "<result><r identifier=\"lizenzcode1\"><f n=\"nr\">abcde</f></r><r identifier=\"lizenzcode2\"><f n=\"nr\">abcde</f></r></result>", List.of("lizenzcode1", "lizenzcode2")),
+                Arguments.of("ARIX", "<result><zusaetzlichertag/><r identifier=\"ABCD_EFGH_IJKL\"><f n=\"nr\">abcde</f><f n=\"zusaetzliches feld\">info</f><zusatz>abc</zusatz></r></result>", List.of("ABCD_EFGH_IJKL")),
+                Arguments.of("ARIX", "   <result   >   <r identifier   =  \"ABCD EFGH IJKL\">      \n\n      <f      n=\"nr\">abcde</f>\n       </r></result>", List.of("ABCD EFGH IJKL"))
         );
     }
 }

@@ -5,6 +5,8 @@ import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,13 +22,16 @@ import java.util.List;
 @Slf4j
 @RestController
 public class LicencesController {
+
+    @Autowired
+    LicencesCollector licencesCollector;
+
     @GetMapping("/v1/licences/request")
     private Mono<ResponseEntity<List<Licence>>> request(
-            @Valid @ValidLicencesRequest LicencesRequestDto requestDto,
+            @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
-
-        Mono<List<Licence>> licences = LicencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
+        Mono<List<Licence>> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
         return licences
                 .map(licenceList -> {
                     log.info("Found {} licences for client: {}", licenceList.size(), clientName);

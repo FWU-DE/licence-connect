@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,7 +23,9 @@ import java.util.Optional;
 @Slf4j
 @RestController
 public class BiloV2Controller {
-    private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+    @Autowired
+    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+
     @Value("${bilo.v2.auth.tokenUrl}")
     private String tokenUrl;
 
@@ -34,11 +37,6 @@ public class BiloV2Controller {
 
     @Value("${bilo.v2.auth.licenceUrl}")
     private String licenceUrl;
-
-    public BiloV2Controller(ClientLicenseHolderFilterService clientLicenseHolderFilterService) {
-        this.clientLicenseHolderFilterService = clientLicenseHolderFilterService;
-    }
-
 
     @Validated
     @GetMapping("/v1/bilo/request/{userId}")

@@ -46,13 +46,13 @@ class LicencesControllerWithFailingServerTests {
         @Autowired
         private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
-        @Value("${mocks.arix.rejecting.url}")
+        @Value("${arix.rejecting.url}")
         String arixUrlRejecting;
 
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
-            return new LicencesCollector(clientLicenseHolderFilterService, arixUrlRejecting);
+            return new LicencesCollector(arixUrlRejecting);
         }
     }
 
