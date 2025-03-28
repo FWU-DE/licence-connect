@@ -2,6 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.config.ClassNameRetriever;
 import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
@@ -20,7 +21,10 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
@@ -46,6 +50,10 @@ class LicencesControllerWithWorkingServerTests {
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
     @Autowired
     private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
+    @Autowired
+    ClassNameRetriever classNameRetriever;
+    @Autowired
+    ApplicationContext applicationContext;
 
     @BeforeEach
     void setUp() {
@@ -90,6 +98,28 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
+    void RequestWhichReturnsErrorDoesNotReturnTrace() {
+        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var test = classNameRetriever.getAllClassNames(applicationContext);
+
+        var result = webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/licences/request")
+                        .queryParam("clientName", "cat")
+                        .queryParam("bundesland", requestDto.bundesland())
+                        .queryParam("standortnummer", requestDto.standortnummer())
+                        .queryParam("userId", requestDto.userId()).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody().blockFirst();
+
+        assertThat(result).doesNotContain(test);
+    }
+
+    @Test
     void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest() {
         var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
 
@@ -109,6 +139,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
+    @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
         webTestClient
@@ -129,6 +160,26 @@ class LicencesControllerWithWorkingServerTests {
                     assertThat(licences.stream().map(l -> l.licenceCode))
                             .containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
                 });
+    }
+
+    @Test
+    void Authenticated_Request_WithValidBody_STK_Returns_CorrectLicences() {
+        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, null);
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/licences/request")
+                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
+                        .queryParam("bundesland", requestDto.bundesland())
+                        .queryParam("standortnummer", requestDto.standortnummer())
+                        .queryParam("schulnummer", requestDto.schulnummer())
+                        .queryParam("userId", requestDto.userId())
+                        .build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<List<Licence>>() {
+                })
+                .value(licences -> assertThat(licences.stream().map(l -> l.licenceCode)).isNotEmpty());
     }
 
     @ParameterizedTest
@@ -176,7 +227,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void licenceRequest_Logs_Request(CapturedOutput output) {
-        var requestDto = new LicencesRequestDto(Bundesland.BY, null, null, null);
+        var requestDto = new LicencesRequestDto(Bundesland.STK, null, null, null);
 
         webTestClient
                 .get()
@@ -196,6 +247,7 @@ class LicencesControllerWithWorkingServerTests {
         assertThat(output.getOut()).contains(" licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
 
+    @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     @Test
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
@@ -233,14 +285,6 @@ class LicencesControllerWithWorkingServerTests {
         );
     }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private record RelaxedLicencesRequestDto(
-            @JsonProperty() String bundesland,
-            @JsonProperty() String standortnummer,
-            @JsonProperty() String schulnummer,
-            @JsonProperty() String userId) {
-    }
-
     private static Stream<Arguments> provideInvalidInput() {
         return Stream.of(
                 Arguments.of(null, null, null, null),
@@ -253,4 +297,66 @@ class LicencesControllerWithWorkingServerTests {
                 Arguments.of(Bundesland.BY, "ORT1", null, "student.2")
         );
     }
+}
+
+@SpringBootTest
+@AutoConfigureWebTestClient
+@TestPropertySource(properties = {
+        "server.error.include-message=always",
+        "server.error.include-binding-errors=always",
+        "server.error.include-stacktrace=always",
+        "server.error.include-exception=true"
+})
+@ExtendWith(OutputCaptureExtension.class)
+class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
+    private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Value("${vidis.api-key.unprivileged}")
+    private String correctApiKey;
+    @Autowired
+    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+    @Autowired
+    private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
+    @Autowired
+    ClassNameRetriever classNameRetriever;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    @BeforeEach
+    void setUp() {
+        clientLicenceHolderMappingRepository.deleteAll();
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
+    }
+
+    @Test
+    void RequestWhichReturnsTrace() {
+        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var allExistingBeanNames = classNameRetriever.getAllClassNames(applicationContext);
+
+        var result = webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/licences/request")
+                        .queryParam("clientName", "cat")
+                        .queryParam("bundesland", requestDto.bundesland())
+                        .queryParam("standortnummer", requestDto.standortnummer())
+                        .queryParam("userId", requestDto.userId()).build())
+                .header(API_KEY_HEADER, correctApiKey)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .returnResult(String.class)
+                .getResponseBody().blockFirst();
+
+        assertThat(result).containsAnyOf(allExistingBeanNames.toArray(new String[0]));
+    }
+}
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+record RelaxedLicencesRequestDto(
+        @JsonProperty() String bundesland,
+        @JsonProperty() String standortnummer,
+        @JsonProperty() String schulnummer,
+        @JsonProperty() String userId) {
 }

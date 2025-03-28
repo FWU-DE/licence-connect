@@ -1,9 +1,11 @@
 package com.fwu.lc_core.config.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -13,18 +15,14 @@ import java.util.Collection;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
+@Component
 public class ApiKeyAuthenticationWebFilter implements WebFilter {
 
-    private final String unprivilegedApiKey;
-    private final String adminApiKey;
+    @Value("${vidis.api-key.unprivileged}")
+    private String unprivilegedApiKey;
 
-    public ApiKeyAuthenticationWebFilter(
-            String unprivilegedApiKey,
-            String adminApiKey
-    ) {
-        this.unprivilegedApiKey = unprivilegedApiKey;
-        this.adminApiKey = adminApiKey;
-    }
+    @Value("${admin.api-key}")
+    private String adminApiKey;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
