@@ -2,6 +2,7 @@ services:
   nginx:
     image: nginx:latest
     container_name: lc-nginx
+    restart: unless-stopped
     volumes:
       - ./nginx/config/default.conf:/etc/nginx/conf.d/default.conf
     ports:
@@ -17,6 +18,7 @@ services:
   licence-connect:
     image: ${LC_IMAGE}
     container_name: licence-connect
+    restart: unless-stopped
     env_file: ".env"
     volumes:
       - ${DB_FILE_PATH:-./db}:/workspace/data
