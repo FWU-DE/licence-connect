@@ -60,7 +60,7 @@ public class LicencesParserArixTests {
             verifier = verifier.assertNext(licence -> {
                 assertThat(licence.context).isEqualTo("http://www.w3.org/ns/odrl.jsonld");
                 assertThat(licence.type).isEqualTo("Set");
-                assertThat(licence.uid).isEqualTo("https://w3c.github.io/odrl/bp/examples/2");
+                assertThat(licence.uid).isEqualTo(expectedAssigner + "." + expectedTarget);
                 assertThat(licence.permission).hasSize(1);
                 var permission = licence.permission.getFirst();
                 assertThat(permission.target).isEqualTo(expectedTarget);
