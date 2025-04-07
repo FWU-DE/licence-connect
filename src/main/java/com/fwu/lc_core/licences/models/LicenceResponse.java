@@ -17,20 +17,18 @@ public class LicenceResponse {
     public String uid = "https://w3c.github.io/odrl/bp/examples/2";
     public List<Permission> permission;
 
-    public LicenceResponse(String target, String assignee, String assigner, String action) {
-        this.permission = Collections.singletonList(new Permission(target, assignee, assigner, action));
+    public LicenceResponse(String target, LicenceHolder assigner, OdrlAction action) {
+        this.permission = Collections.singletonList(new Permission(target, assigner, action));
     }
 
     @NoArgsConstructor
     public static class Permission {
         public String target;
-        public String assignee;
-        public String assigner;
-        public String action;
+        public LicenceHolder assigner;
+        public OdrlAction action;
         
-        public Permission(String target, String assignee, String assigner, String action) {
+        public Permission(String target, LicenceHolder assigner, OdrlAction action) {
             this.target = target;
-            this.assignee = assignee;
             this.assigner = assigner;
             this.action = action;
         }

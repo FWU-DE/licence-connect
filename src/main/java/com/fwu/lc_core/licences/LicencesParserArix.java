@@ -1,6 +1,8 @@
 package com.fwu.lc_core.licences;
 
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.LicenceResponse;
+import com.fwu.lc_core.licences.models.OdrlAction;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +28,7 @@ public class LicencesParserArix extends LicencesParser {
     }
 
     private static LicenceResponse createLicenceFromXmlRNode(Node e) throws Exception {
-        return new LicenceResponse(extractLicenceCodeFrom(e), "<VIDIS-ID>", "<ARIX>", "play");
+        return new LicenceResponse(extractLicenceCodeFrom(e), LicenceHolder.ARIX, OdrlAction.Use);
     }
 
     private static Element extractXmlRootElementFromRawResult(UnparsedLicences unparsedLicences) throws Exception {

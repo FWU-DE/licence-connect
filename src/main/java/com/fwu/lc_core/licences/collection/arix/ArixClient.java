@@ -1,5 +1,6 @@
 package com.fwu.lc_core.licences.collection.arix;
 
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -43,6 +44,6 @@ public class ArixClient {
 
         if (responseBody == null || !responseBody.startsWith("<result"))
             throw new RuntimeException(responseBody);
-        return new UnparsedLicences("ARIX", responseBody);
+        return new UnparsedLicences(LicenceHolder.ARIX, responseBody);
     }
 }
