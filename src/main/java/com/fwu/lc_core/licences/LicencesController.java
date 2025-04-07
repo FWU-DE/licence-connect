@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.collection.LicencesCollector;
-import com.fwu.lc_core.licences.models.Licence;
+import com.fwu.lc_core.licences.models.LicenceResponse;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +27,11 @@ public class LicencesController {
     LicencesCollector licencesCollector;
 
     @GetMapping("/v1/licences/request")
-    private Mono<ResponseEntity<List<Licence>>> request(
+    private Mono<ResponseEntity<List<LicenceResponse>>> request(
             @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
-        Mono<List<Licence>> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
+        Mono<List<LicenceResponse>> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
         return licences
                 .map(licenceList -> {
                     log.info("Found {} licences for client: {}", licenceList.size(), clientName);

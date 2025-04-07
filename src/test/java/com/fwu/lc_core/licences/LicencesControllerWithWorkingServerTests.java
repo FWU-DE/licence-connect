@@ -3,7 +3,7 @@ package com.fwu.lc_core.licences;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
-import com.fwu.lc_core.licences.models.Licence;
+import com.fwu.lc_core.licences.models.LicenceResponse;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
@@ -31,6 +31,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.fwu.lc_core.licences.TestHelper.extractLicenceCodesFrom;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
@@ -154,12 +155,11 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<Licence>>() {
+                .expectBody(new ParameterizedTypeReference<List<LicenceResponse>>() {
                 })
-                .value(licences -> {
-                    assertThat(licences.stream().map(l -> l.licenceCode))
-                            .containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
-                });
+                .value(licences -> assertThat(
+                        extractLicenceCodesFrom(licences)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes)
+                );
     }
 
     @Test
@@ -177,9 +177,11 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<Licence>>() {
+                .expectBody(new ParameterizedTypeReference<List<LicenceResponse>>() {
                 })
-                .value(licences -> assertThat(licences.stream().map(l -> l.licenceCode)).isNotEmpty());
+                .value(licences -> assertThat(
+                        extractLicenceCodesFrom(licences)).isNotEmpty()
+                );
     }
 
     @ParameterizedTest
