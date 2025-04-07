@@ -9,10 +9,8 @@ import java.util.List;
 public class LicenceResponse {
     @JsonProperty("@context")
     public String context = "http://www.w3.org/ns/odrl.jsonld";
-    
     @JsonProperty("@type")
     public String type = "Set";
-    
     public final String uid;
     public List<Permission> permission;
 

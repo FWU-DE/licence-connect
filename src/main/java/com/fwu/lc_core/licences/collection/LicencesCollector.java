@@ -12,10 +12,8 @@ import reactor.core.publisher.Flux;
 
 @Component
 public class LicencesCollector {
-
     @Autowired
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-
     private final String arixUrl;
 
     public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl) {

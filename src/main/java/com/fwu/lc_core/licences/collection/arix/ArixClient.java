@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 public class ArixClient {
     private final String apiUrl;
-
     public ArixClient(String apiUrl) {
         this.apiUrl = apiUrl;
     }
@@ -41,7 +40,6 @@ public class ArixClient {
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromFormData("xmlstatement", "<search></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
-
         if (responseBody == null || !responseBody.startsWith("<result"))
             throw new RuntimeException(responseBody);
         return new UnparsedLicences(LicenceHolder.ARIX, responseBody);

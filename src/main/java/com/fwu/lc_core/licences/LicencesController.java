@@ -60,8 +60,6 @@ class LicencesRequestValidator implements ConstraintValidator<ValidLicencesReque
 @Retention(RetentionPolicy.RUNTIME)
 @interface ValidLicencesRequest {
     String message() default "Invalid request parameters";
-
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
 }
