@@ -17,7 +17,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,14 +26,14 @@ public class LicencesController {
     LicencesCollector licencesCollector;
 
     @GetMapping("/v1/licences/request")
-    private Mono<ResponseEntity<List<LicenceResponse>>> request(
+    private Mono<ResponseEntity<LicenceResponse>> request(
             @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
-        Mono<List<LicenceResponse>> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse).collectList();
+        Mono<LicenceResponse> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse);
         return licences
                 .map(licenceList -> {
-                    log.info("Found {} licences for client: {}", licenceList.size(), clientName);
+                    log.info("Found {} licences for client: {}", licenceList.permission.size(), clientName);
                     return ResponseEntity.ok(licenceList);
                 })
                 .onErrorResume(e -> {

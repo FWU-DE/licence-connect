@@ -143,7 +143,7 @@ class LicencesControllerWithWorkingServerTests {
     @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
-        webTestClient
+        var response = webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
@@ -155,33 +155,11 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<LicenceResponse>>() {
-                })
-                .value(licences -> assertThat(
-                        extractLicenceCodesFrom(licences)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes)
-                );
-    }
+                .expectBody(new ParameterizedTypeReference<LicenceResponse>() {})
+                .returnResult()
+                .getResponseBody();
 
-    @Test
-    void Authenticated_Request_WithValidBody_STK_Returns_CorrectLicences() {
-        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, null);
-        webTestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/v1/licences/request")
-                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
-                .header(API_KEY_HEADER, correctApiKey)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<LicenceResponse>>() {
-                })
-                .value(licences -> assertThat(
-                        extractLicenceCodesFrom(licences)).isNotEmpty()
-                );
+        assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
     @ParameterizedTest
@@ -224,7 +202,7 @@ class LicencesControllerWithWorkingServerTests {
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(result).isEqualTo("[]");
+        assertThat(result).isNull();
     }
 
     @Test

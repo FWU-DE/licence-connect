@@ -3,14 +3,14 @@ package com.fwu.lc_core.licences;
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.LicenceResponse;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class LicencesParser {
-    public static Flux<LicenceResponse> parse(UnparsedLicences unparsedLicences) {
+    public static Mono<LicenceResponse> parse(UnparsedLicences unparsedLicences) {
         if (LicenceHolder.ARIX.equals(unparsedLicences.source)) {
-            return Flux.defer(() -> LicencesParserArix.parse(unparsedLicences));
+            return Mono.defer(() -> LicencesParserArix.parse(unparsedLicences));
         } else {
-            return Flux.error(new Exception("Exception in LicenceParser: Unknown source: " + unparsedLicences.source));
+            return Mono.error(new Exception("Exception in LicenceParser: Unknown source: " + unparsedLicences.source));
         }
     }
 }

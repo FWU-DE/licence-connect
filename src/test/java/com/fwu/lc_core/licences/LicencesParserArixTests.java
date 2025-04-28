@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LicencesParserArixTests {
 
     // This should vary in reality but Arix does not specify any action at all.
-    private static final OdrlAction expectedAction = OdrlAction.Use;
-    private static final LicenceHolder expectedAssigner = LicenceHolder.ARIX;
+    private static final OdrlAction EXPECTED_ACTION = OdrlAction.Use;
+    private static final LicenceHolder EXPECTED_ASSIGNER = LicenceHolder.ARIX;
 
 
     @ParameterizedTest
@@ -38,10 +38,10 @@ public class LicencesParserArixTests {
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
     public void Parser_OnValidInput_ReturnsCorrectOutput(String rawResult, List<String> expectedLicenceCodes) {
-        var unparsedLicences = new UnparsedLicences(expectedAssigner, rawResult);
+        var unparsedLicences = new UnparsedLicences(EXPECTED_ASSIGNER, rawResult);
         var licencesFlux = LicencesParser.parse(unparsedLicences);
 
-        var licences = licencesFlux.collectList().block();
+        var licences = licencesFlux.block();
 
         assertThat(licences).isNotNull();
         var licenceCodes = extractLicenceCodesFrom(licences);
@@ -51,24 +51,25 @@ public class LicencesParserArixTests {
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
     public void Parse_ValidInput_ReturnsCorrectLicenceFormat(String rawResult, List<String> expectedLicenceCodes) {
-        var unparsedLicences = new UnparsedLicences(expectedAssigner, rawResult);
-        var licencesFlux = LicencesParser.parse(unparsedLicences);
+        var unparsedLicences = new UnparsedLicences(EXPECTED_ASSIGNER, rawResult);
 
-        StepVerifier.Step<LicenceResponse> verifier = StepVerifier.create(licencesFlux);
+        LicenceResponse licence = LicencesParser.parse(unparsedLicences).block();
 
-        for (final String expectedTarget : expectedLicenceCodes) {
-            verifier = verifier.assertNext(licence -> {
-                assertThat(licence.context).isEqualTo("http://www.w3.org/ns/odrl.jsonld");
-                assertThat(licence.type).isEqualTo("Set");
-                assertThat(licence.uid).isEqualTo(expectedAssigner + "." + expectedTarget);
-                assertThat(licence.permission).hasSize(1);
-                var permission = licence.permission.getFirst();
-                assertThat(permission.target).isEqualTo(expectedTarget);
-                assertThat(permission.assigner).isEqualTo(expectedAssigner);
-                assertThat(permission.action).isEqualTo(expectedAction);
-            });
+        assertThat(licence).isNotNull();
+        assertThat(licence.permission.size()).isEqualTo(expectedLicenceCodes.size());
+        if (licence.permission.isEmpty()) {
+            return;
         }
-        verifier.verifyComplete();
+        assertThat(licence.context).isEqualTo("http://www.w3.org/ns/odrl.jsonld");
+        assertThat(licence.type).isEqualTo("Set");
+        assertThat(licence.uid).isEqualTo(EXPECTED_ASSIGNER.getValue());
+        for (final String expectedTarget : expectedLicenceCodes) {
+            var permission = licence.permission.stream().filter(p -> p.target.equals(expectedTarget)).findFirst().orElse(null);
+            assertThat(permission).isNotNull();
+            assertThat(permission.target).isEqualTo(expectedTarget);
+            assertThat(permission.assigner).isEqualTo(EXPECTED_ASSIGNER);
+            assertThat(permission.action).isEqualTo(EXPECTED_ACTION);
+        }
     }
 
     private static Stream<Arguments> provideValidInputAndOutput() {
