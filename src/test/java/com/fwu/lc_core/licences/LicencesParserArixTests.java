@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.LicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLlicenceResponse;
 import com.fwu.lc_core.licences.models.OdrlAction;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class LicencesParserArixTests {
-
-    // This should vary in reality but Arix does not specify any action at all.
     private static final OdrlAction EXPECTED_ACTION = OdrlAction.Use;
     private static final LicenceHolder EXPECTED_ASSIGNER = LicenceHolder.ARIX;
 
@@ -53,23 +51,35 @@ public class LicencesParserArixTests {
     public void Parse_ValidInput_ReturnsCorrectLicenceFormat(String rawResult, List<String> expectedLicenceCodes) {
         var unparsedLicences = new UnparsedLicences(EXPECTED_ASSIGNER, rawResult);
 
-        LicenceResponse licence = LicencesParser.parse(unparsedLicences).block();
+        ODRLlicenceResponse licence = LicencesParser.parse(unparsedLicences).block();
 
+        assertThatCorrectLicenceResponseCreated(expectedLicenceCodes, licence);
+    }
+
+    private static void assertThatCorrectLicenceResponseCreated(List<String> expectedLicenceCodes, ODRLlicenceResponse licence) {
         assertThat(licence).isNotNull();
         assertThat(licence.permission.size()).isEqualTo(expectedLicenceCodes.size());
+        assertLicenceResponseMetaData(licence);
         if (licence.permission.isEmpty()) {
             return;
         }
+        for (final String expectedTarget : expectedLicenceCodes) {
+            var permission = licence.permission.stream().filter(p -> p.target.equals(expectedTarget)).findFirst().orElse(null);
+            assertThatTargetsAllowUseIssuedByArixAndMatchTarget(expectedTarget, permission);
+        }
+    }
+
+    private static void assertThatTargetsAllowUseIssuedByArixAndMatchTarget(String expectedTarget, ODRLlicenceResponse.Permission permission) {
+        assertThat(permission).isNotNull();
+        assertThat(permission.target).isEqualTo(expectedTarget);
+        assertThat(permission.assigner).isEqualTo(EXPECTED_ASSIGNER);
+        assertThat(permission.action).isEqualTo(EXPECTED_ACTION);
+    }
+
+    private static void assertLicenceResponseMetaData(ODRLlicenceResponse licence) {
         assertThat(licence.context).isEqualTo("http://www.w3.org/ns/odrl.jsonld");
         assertThat(licence.type).isEqualTo("Set");
         assertThat(licence.uid).isEqualTo(EXPECTED_ASSIGNER.getValue());
-        for (final String expectedTarget : expectedLicenceCodes) {
-            var permission = licence.permission.stream().filter(p -> p.target.equals(expectedTarget)).findFirst().orElse(null);
-            assertThat(permission).isNotNull();
-            assertThat(permission.target).isEqualTo(expectedTarget);
-            assertThat(permission.assigner).isEqualTo(EXPECTED_ASSIGNER);
-            assertThat(permission.action).isEqualTo(EXPECTED_ACTION);
-        }
     }
 
     private static Stream<Arguments> provideValidInputAndOutput() {

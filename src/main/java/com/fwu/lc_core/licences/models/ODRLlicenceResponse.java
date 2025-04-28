@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @NoArgsConstructor
-public class LicenceResponse {
+public class ODRLlicenceResponse {
     @JsonProperty("@context")
     public String context = "http://www.w3.org/ns/odrl.jsonld";
     @JsonProperty("@type")
@@ -15,7 +15,7 @@ public class LicenceResponse {
     public List<Permission> permission;
 
 
-    public LicenceResponse(List<String> target, LicenceHolder assigner, OdrlAction action) {
+    public ODRLlicenceResponse(List<String> target, LicenceHolder assigner, OdrlAction action) {
         this.permission = target.stream()
                 .map(t -> new Permission(t, assigner, action))
                 .toList();

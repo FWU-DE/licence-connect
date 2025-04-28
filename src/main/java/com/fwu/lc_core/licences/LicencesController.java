@@ -1,8 +1,8 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.collection.LicencesCollector;
-import com.fwu.lc_core.licences.models.LicenceResponse;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
+import com.fwu.lc_core.licences.models.ODRLlicenceResponse;
 import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -26,11 +26,11 @@ public class LicencesController {
     LicencesCollector licencesCollector;
 
     @GetMapping("/v1/licences/request")
-    private Mono<ResponseEntity<LicenceResponse>> request(
+    private Mono<ResponseEntity<ODRLlicenceResponse>> request(
             @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
-        Mono<LicenceResponse> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse);
+        Mono<ODRLlicenceResponse> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse);
         return licences
                 .map(licenceList -> {
                     log.info("Found {} licences for client: {}", licenceList.permission.size(), clientName);

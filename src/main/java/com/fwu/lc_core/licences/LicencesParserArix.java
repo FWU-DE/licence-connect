@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.LicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLlicenceResponse;
 import com.fwu.lc_core.licences.models.OdrlAction;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.w3c.dom.Element;
@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class LicencesParserArix extends LicencesParser {
-    public static Mono<LicenceResponse> parse(UnparsedLicences unparsedLicences) {
+public class LicencesParserArix {
+    public static Mono<ODRLlicenceResponse> parse(UnparsedLicences unparsedLicences) {
         try {
             var rootElement = extractXmlRootElementFromRawResult(unparsedLicences);
             List<String> licenceCodes = new ArrayList<>();
             for (Node e : extractXmlNodesWithNameR(rootElement))
                 licenceCodes.add(extractLicenceCodeFrom(e));
-            return Mono.just(new LicenceResponse(licenceCodes, LicenceHolder.ARIX, OdrlAction.Use));
+            return Mono.just(new ODRLlicenceResponse(licenceCodes, LicenceHolder.ARIX, OdrlAction.Use));
         } catch (Exception e) {
             return Mono.error(new Exception("Exception in LicenceParser: " + e.getMessage()));
         }
@@ -30,7 +30,7 @@ public class LicencesParserArix extends LicencesParser {
     private static Element extractXmlRootElementFromRawResult(UnparsedLicences unparsedLicences) throws Exception {
         var document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(unparsedLicences.rawResult.getBytes()));
         var rootElement = document.getDocumentElement();
-        checkThatContainsResult(rootElement);
+        checkThatXmlContainsResult(rootElement);
         return rootElement;
     }
 
@@ -42,12 +42,12 @@ public class LicencesParserArix extends LicencesParser {
         return nodes;
     }
 
-    private static void checkThatContainsResult(Element rootElement) throws Exception {
+    private static void checkThatXmlContainsResult(Element rootElement) throws Exception {
         if (!Objects.equals(rootElement.getTagName(), "result"))
             throw new Exception("UnparsedLicences with source ARIX and rawResult not containing a <result> Element as root.");
     }
 
-    public static String extractLicenceCodeFrom(Node rNode) throws Exception {
+    private static String extractLicenceCodeFrom(Node rNode) throws Exception {
         var identifier = rNode.getAttributes().getNamedItem("identifier");
         if (identifier == null)
             throw new Exception("UnparsedLicences with source ARIX and rawResult containing <r> Element without identifier.");
