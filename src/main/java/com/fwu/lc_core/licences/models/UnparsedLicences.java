@@ -4,6 +4,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class UnparsedLicences {
-    public String source;
+    public LicenceHolder source;
     public String rawResult;
 }
