@@ -1,5 +1,6 @@
 package com.fwu.lc_core.licences.collection.arix;
 
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,8 @@ public class ArixClientTests {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
         UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), null, null, null).block();
 
-        assertThat(licences.source).isEqualTo("ARIX");
+        assert licences != null;
+        assertThat(licences.source).isEqualTo(LicenceHolder.ARIX);
         assertValidityOfValidArixResponseBody(licences);
     }
 
@@ -43,7 +45,8 @@ public class ArixClientTests {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
         UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), "STR", null, null).block();
 
-        assertThat(licences.source).isEqualTo("ARIX");
+        assert licences != null;
+        assertThat(licences.source).isEqualTo(LicenceHolder.ARIX);
         assertValidityOfValidArixResponseBody(licences);
     }
 
