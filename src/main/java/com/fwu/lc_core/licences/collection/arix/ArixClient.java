@@ -1,5 +1,6 @@
 package com.fwu.lc_core.licences.collection.arix;
 
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -14,7 +15,6 @@ import java.util.stream.Stream;
 
 public class ArixClient {
     private final String apiUrl;
-
     public ArixClient(String apiUrl) {
         this.apiUrl = apiUrl;
     }
@@ -40,9 +40,8 @@ public class ArixClient {
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromFormData("xmlstatement", "<search></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
-
         if (responseBody == null || !responseBody.startsWith("<result"))
             throw new RuntimeException(responseBody);
-        return new UnparsedLicences("ARIX", responseBody);
+        return new UnparsedLicences(LicenceHolder.ARIX, responseBody);
     }
 }
