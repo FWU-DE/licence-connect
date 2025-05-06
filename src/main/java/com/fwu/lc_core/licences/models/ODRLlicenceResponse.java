@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 public class ODRLlicenceResponse {
@@ -19,7 +20,7 @@ public class ODRLlicenceResponse {
         this.permission = target.stream()
                 .map(t -> new Permission(t, assigner, action))
                 .toList();
-        this.uid = assigner.getValue();
+        this.uid = "urn:uuid:" + UUID.randomUUID().toString();
     }
 
     @NoArgsConstructor
