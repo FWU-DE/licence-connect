@@ -9,12 +9,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.test.StepVerifier;
+import java.util.UUID;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 import static com.fwu.lc_core.licences.TestHelper.extractLicenceCodesFrom;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 
 @SpringBootTest
@@ -39,10 +41,12 @@ public class LicencesParserArixTests {
         var unparsedLicences = new UnparsedLicences(EXPECTED_ASSIGNER, rawResult);
         var licencesFlux = LicencesParser.parse(unparsedLicences);
 
-        var licences = licencesFlux.block();
+        ODRLlicenceResponse odrlLicenceResponse = licencesFlux.block();
 
-        assertThat(licences).isNotNull();
-        var licenceCodes = extractLicenceCodesFrom(licences);
+        assertThat(odrlLicenceResponse).isNotNull();
+        assertLicenceResponseMetaData(odrlLicenceResponse);
+
+        List<String> licenceCodes = extractLicenceCodesFrom(odrlLicenceResponse);
         assertThat(licenceCodes).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
@@ -79,8 +83,13 @@ public class LicencesParserArixTests {
     private static void assertLicenceResponseMetaData(ODRLlicenceResponse licence) {
         assertThat(licence.context).isEqualTo("http://www.w3.org/ns/odrl.jsonld");
         assertThat(licence.type).isEqualTo("Set");
-        assertThat(licence.uid).isEqualTo(EXPECTED_ASSIGNER.getValue());
+        assertThatUrnIsValid(licence.uid);
     }
+
+    private static void assertThatUrnIsValid(String uid) {
+        assertThatCode(() -> UUID.fromString(uid.replace("urn:uuid:", ""))).doesNotThrowAnyException();
+    }
+
 
     private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
