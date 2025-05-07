@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
-import com.fwu.lc_core.licences.models.ODRLlicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
@@ -155,7 +155,7 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<ODRLlicenceResponse>() {})
+                .expectBody(new ParameterizedTypeReference<ODRLLicenceResponse>() {})
                 .returnResult()
                 .getResponseBody();
 
