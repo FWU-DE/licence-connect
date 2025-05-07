@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
-public class ODRLlicenceResponse {
+public class ODRLLicenceResponse {
     @JsonProperty("@context")
     public String context = "http://www.w3.org/ns/odrl.jsonld";
     @JsonProperty("@type")
@@ -16,7 +16,7 @@ public class ODRLlicenceResponse {
     public List<Permission> permission;
 
 
-    public ODRLlicenceResponse(List<String> target, LicenceHolder assigner, OdrlAction action) {
+    public ODRLLicenceResponse(List<String> target, LicenceHolder assigner, OdrlAction action) {
         this.permission = target.stream()
                 .map(t -> new Permission(t, assigner, action))
                 .toList();
