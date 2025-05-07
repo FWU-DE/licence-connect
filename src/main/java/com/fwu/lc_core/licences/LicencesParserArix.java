@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLlicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.licences.models.OdrlAction;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.w3c.dom.Element;
@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class LicencesParserArix {
-    public static Mono<ODRLlicenceResponse> parse(UnparsedLicences unparsedLicences) {
+    public static Mono<ODRLLicenceResponse> parse(UnparsedLicences unparsedLicences) {
         try {
             var rootElement = extractXmlRootElementFromRawResult(unparsedLicences);
             List<String> licenceCodes = new ArrayList<>();
             for (Node e : extractXmlNodesWithNameR(rootElement))
                 licenceCodes.add(extractLicenceCodeFrom(e));
-            return Mono.just(new ODRLlicenceResponse(licenceCodes, LicenceHolder.ARIX, OdrlAction.Use));
+            return Mono.just(new ODRLLicenceResponse(licenceCodes, LicenceHolder.ARIX, OdrlAction.Use));
         } catch (Exception e) {
             return Mono.error(new Exception("Exception in LicenceParser: " + e.getMessage()));
         }

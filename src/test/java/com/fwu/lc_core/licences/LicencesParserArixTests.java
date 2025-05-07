@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLlicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.licences.models.OdrlAction;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +41,7 @@ public class LicencesParserArixTests {
         var unparsedLicences = new UnparsedLicences(EXPECTED_ASSIGNER, rawResult);
         var licencesFlux = LicencesParser.parse(unparsedLicences);
 
-        ODRLlicenceResponse odrlLicenceResponse = licencesFlux.block();
+        ODRLLicenceResponse odrlLicenceResponse = licencesFlux.block();
 
         assertThat(odrlLicenceResponse).isNotNull();
         assertLicenceResponseMetaData(odrlLicenceResponse);
@@ -55,12 +55,12 @@ public class LicencesParserArixTests {
     public void Parse_ValidInput_ReturnsCorrectLicenceFormat(String rawResult, List<String> expectedLicenceCodes) {
         var unparsedLicences = new UnparsedLicences(EXPECTED_ASSIGNER, rawResult);
 
-        ODRLlicenceResponse licence = LicencesParser.parse(unparsedLicences).block();
+        ODRLLicenceResponse licence = LicencesParser.parse(unparsedLicences).block();
 
         assertThatCorrectLicenceResponseCreated(expectedLicenceCodes, licence);
     }
 
-    private static void assertThatCorrectLicenceResponseCreated(List<String> expectedLicenceCodes, ODRLlicenceResponse licence) {
+    private static void assertThatCorrectLicenceResponseCreated(List<String> expectedLicenceCodes, ODRLLicenceResponse licence) {
         assertThat(licence).isNotNull();
         assertThat(licence.permission.size()).isEqualTo(expectedLicenceCodes.size());
         assertLicenceResponseMetaData(licence);
@@ -73,14 +73,14 @@ public class LicencesParserArixTests {
         }
     }
 
-    private static void assertThatTargetsAllowUseIssuedByArixAndMatchTarget(String expectedTarget, ODRLlicenceResponse.Permission permission) {
+    private static void assertThatTargetsAllowUseIssuedByArixAndMatchTarget(String expectedTarget, ODRLLicenceResponse.Permission permission) {
         assertThat(permission).isNotNull();
         assertThat(permission.target).isEqualTo(expectedTarget);
         assertThat(permission.assigner).isEqualTo(EXPECTED_ASSIGNER);
         assertThat(permission.action).isEqualTo(EXPECTED_ACTION);
     }
 
-    private static void assertLicenceResponseMetaData(ODRLlicenceResponse licence) {
+    private static void assertLicenceResponseMetaData(ODRLLicenceResponse licence) {
         assertThat(licence.context).isEqualTo("http://www.w3.org/ns/odrl.jsonld");
         assertThat(licence.type).isEqualTo("Set");
         assertThatUrnIsValid(licence.uid);
