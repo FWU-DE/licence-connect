@@ -35,7 +35,7 @@ Each medium has an identifier and additional fields (nr, licence, titel etc.) th
 As LC focuses on the transmission of licences and not additional meta information, we aim for a minimal set of data required for licensing.
 In order to provide a generic API, LC will map them to a standard.
 
-For this, the [ODRL standard](https://www.w3.org/TR/odrl-model/) has been selected as it's used by [schulconnex](https://schulconnex.de/).
+For this, the [ODRL standard](https://www.w3.org/TR/odrl-model/) has been selected as documented in ADR-5.
 
 An example for a set policy taken from the ODRL spec looks like this:
 
