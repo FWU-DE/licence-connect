@@ -134,3 +134,9 @@ Please be aware that neither is a complete Arix server but rather only provides 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.
+
+## BiLo Information
+
+The BiLo endpoints reference licence endpoints from "Bildungslogin".
+The public documentation is available under the following github repository:
+https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/LICENSE.txt
