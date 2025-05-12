@@ -28,6 +28,7 @@ Artifact | Where to Find | Purpose
 Readme   | Top-level folder in Licence Connect repository (here) | Basic information on the project, instructions for dev setup
 Glossary | doc/glossary.md in Licence Connect repository | Explanation and translation of relevant terms (technical or domain)
 Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, currently ADRs and a c4 model
+BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-docs, <br/> Deployed: https://fwu-de.github.io/bmi-docs/ | Public consumer documentation of licence connect with focus on purpose, features and APIs
 
 ## Setup
 
