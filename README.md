@@ -1,12 +1,9 @@
 # Licence Connect Core Application
-## Introduction and Goals
-
-Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
-
-Licence Connect Core provides a way of accessing licences in a unified way.
 
 ## Table of Contents
 
+- [Introduction and Goals](#introduction-and-goals)
+- [Documentation](#documentation)
 - [Setup](#setup)
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
@@ -15,6 +12,22 @@ Licence Connect Core provides a way of accessing licences in a unified way.
   - [Running Tests](#running-tests)
   - [Docker Deployment](#docker-deployment)
 - [License](#license)
+
+## Introduction and Goals
+
+Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
+
+Licence Connect Core provides a way of accessing licences in a unified way.
+
+## Documentation
+
+The documentation on Licence Connect consists of the following artifacts:
+
+Artifact | Where to Find | Purpose
+-------- | -------- | --------
+Readme   | Top-level folder in Licence Connect repository (here) | Basic information on the project, instructions for dev setup
+Glossary | doc/glossary.md in Licence Connect repository | Explanation and translation of relevant terms (technical or domain)
+Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, currently ADRs and a c4 model
 
 ## Setup
 
