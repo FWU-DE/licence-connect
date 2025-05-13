@@ -47,11 +47,21 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 
 ### Running the Application
 
-To run the application, use the following command:
+#### Command Line
+
+To run the application from the command line, use the following command:
 
 ```sh
+# Missing: Use docker/.env file
 ./mvnw spring-boot:run
 ```
+
+#### IntelliJ IDEA
+
+When using IntellIJ, a run configuration called `LcCoreApplication` should be available.
+Running that already uses the correct dev profile and `.env` file.
+
+#### SwaggerUI
 
 On local development, the swagger UI can be accessed at `http://localhost:8080/swagger-ui/index.html`
 
