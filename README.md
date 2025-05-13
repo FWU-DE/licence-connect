@@ -8,6 +8,7 @@
   - [Prerequisites](#prerequisites)
   - [Environment Variables](#environment-variables)
   - [Building the Project](#building-the-project)
+  - [Active Profiles](#active-profiles)
   - [Running the Application](#running-the-application)
   - [Running Tests](#running-tests)
   - [Docker Deployment](#docker-deployment)
