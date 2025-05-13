@@ -1,0 +1,4 @@
+{
+  "asciidoc.extensions.enableKroki": true,
+  "java.compile.nullAnalysis.mode": "automatic"
+}
