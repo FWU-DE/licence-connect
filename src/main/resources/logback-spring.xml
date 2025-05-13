@@ -7,7 +7,7 @@
 
     <appender name="Loki" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
-            <url>${LOKI_URL}/loki/api/v1/push</url>
+            <url>${LOKI_BASE_URL}/loki/api/v1/push</url>
             <auth>
                 <username>${LOKI_HTTP_BASIC_USERNAME}</username>
                 <password>${LOKI_HTTP_BASIC_PASSWORD}</password>
@@ -22,9 +22,15 @@
             </message>
         </format>
     </appender>
-
-    <root level="INFO">
-        <appender-ref ref="Console"/>
-        <appender-ref ref="Loki"/>
-    </root>
+    <springProfile name="!dev">
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="Loki"/>
+        </root>
+    </springProfile>
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+        </root>
+    </springProfile>
 </configuration>
