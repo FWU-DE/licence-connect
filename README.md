@@ -21,8 +21,7 @@ Licence Connect Core provides a way of accessing licences in a unified way.
 ### Prerequisites
 
 - Java 21
-- Maven 3.x
-- Docker
+- Docker & Docker Compose
 
 ### Environment Variables
 
@@ -36,7 +35,7 @@ All environment variables must be set before running any local mvn commands or t
 To build the project, run the following command:
 
 ```sh
-mvn clean install
+./mvnw clean install
 ```
 
 ### Active Profiles
@@ -51,7 +50,7 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 To run the application, use the following command:
 
 ```sh
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 On local development, the swagger UI can be accessed at `http://localhost:8080/swagger-ui/index.html`
@@ -61,7 +60,7 @@ On local development, the swagger UI can be accessed at `http://localhost:8080/s
 To run the tests, use the following command:
 
 ```sh
-mvn test
+./mvnw test
 ```
 
 ### Docker
