@@ -67,9 +67,13 @@ On local development, the swagger UI can be accessed at `http://localhost:8080/s
 
 ### Running Tests
 
-To run the tests, use the following command:
+To run the tests use the following commands:
 
 ```sh
+# Start mock licence servers
+docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+
+# Run tests
 ./mvnw test
 ```
 
