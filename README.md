@@ -1,4 +1,5 @@
 # Licence Connect Core Application
+
 ## Introduction and Goals
 
 Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
@@ -52,8 +53,8 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 To run the application from the command line, use the following command:
 
 ```sh
-# Missing: Use docker/.env file
-./mvnw spring-boot:run
+# Missing: Use ./docker/.env file
+./mvnw spring-boot:run -Dspring.profiles.active=dev 
 ```
 
 #### IntelliJ IDEA
@@ -76,6 +77,7 @@ To run the tests using the [mock licence servers](#mock-licence-servers) run:
 To run the tests against external systems run:
 
 ```sh
+# Missing: Use ./docker/.env file
 ./mvnw test
 ```
 
