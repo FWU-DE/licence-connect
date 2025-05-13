@@ -17,7 +17,7 @@ then
   fi
 fi
 
-export LC_IMAGE=lc_core:0.1.0
+export LC_IMAGE=lc_core:0.2.1
 
 docker compose --profile debug -f ./docker/docker-compose.yaml down
 ./mvnw clean spring-boot:build-image -DskipTests
