@@ -67,13 +67,15 @@ On local development, the swagger UI can be accessed at `http://localhost:8080/s
 
 ### Running Tests
 
-To run the tests use the following commands:
+To run the tests using the [mock licence servers](#mock-licence-servers) run:
 
 ```sh
-# Start mock licence servers
-docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+./mvnw test -Dspring.profiles.active=auto-start-mocks,local
+```
 
-# Run tests
+To run the tests against external systems run:
+
+```sh
 ./mvnw test
 ```
 
@@ -134,7 +136,12 @@ Currently, this includes:
 - Bildungslogin V1
 - Bildungslogin V2
 
-All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
+All licence servers can be individually started in a docker container. 
+All licence servers can be started simultaneously by running 
+
+```sh
+docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+```
 
 ### Arix
 
