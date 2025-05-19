@@ -11,9 +11,9 @@ services:
       - licence-connect
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck" ]
-      interval: 1s
-      timeout: 5s
-      retries: 100
+      interval: 5s
+      timeout: 10s
+      retries: 50
 
   licence-connect:
     image: ${LC_IMAGE}
