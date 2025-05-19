@@ -153,10 +153,8 @@ This project is licensed under the Apache License 2.0 - see the `LICENSE` file f
 ## Bildungslogin Information
 
 The BiLo endpoints reference licence endpoints from "Bildungslogin".
-The public API documentation is available under the following github repository:
-https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/LICENSE.txt
+The github of the Bildungslogin public API can be found under https://github.com/BILDUNGSLOGIN/public_api_docs and is licensed with https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/LICENSE.txt.
 
-In the licence connect public API, ...
-
-- ... the bilo-v-1-controller references https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/bilo-licenseretrieval_v1.json
-- ... the bilo-v-2-controller references https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/bilo-licenseretrieval_v2.json
+In the Licence Connect public API
+- the bilo-v-1-controller references https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/bilo-licenseretrieval_v1.json
+- the bilo-v-2-controller references https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/bilo-licenseretrieval_v2.json
