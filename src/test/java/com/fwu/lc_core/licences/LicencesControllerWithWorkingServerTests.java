@@ -11,6 +11,7 @@ import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappi
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -140,7 +141,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
-    @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
+    @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
         var response = webTestClient
@@ -227,8 +228,8 @@ class LicencesControllerWithWorkingServerTests {
         assertThat(output.getOut()).contains(" licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
 
-    @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     @Test
+    @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
         String expectedFirstLog = "Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
