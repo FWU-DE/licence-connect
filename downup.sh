@@ -17,7 +17,8 @@ then
   fi
 fi
 
-export LC_IMAGE=lc_core:0.1.0
+# FIXME: The version for the tag should be retrieved from from pom.xml with grep/sed
+export LC_IMAGE=lc_core:0.2.2
 
 docker compose --profile debug -f ./docker/docker-compose.yaml down
 ./mvnw clean spring-boot:build-image -DskipTests

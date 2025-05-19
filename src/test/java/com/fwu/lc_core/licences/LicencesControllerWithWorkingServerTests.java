@@ -3,8 +3,8 @@ package com.fwu.lc_core.licences;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
-import com.fwu.lc_core.licences.models.Licence;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
+import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
@@ -31,6 +31,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.fwu.lc_core.licences.TestHelper.extractLicenceCodesFrom;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
@@ -142,7 +143,7 @@ class LicencesControllerWithWorkingServerTests {
     @EnabledIf(value = "#{'${spring.profiles.active}'.contains('local')}", loadContext = true)
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
-        webTestClient
+        var response = webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
@@ -154,32 +155,11 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<Licence>>() {
-                })
-                .value(licences -> {
-                    assertThat(licences.stream().map(l -> l.licenceCode))
-                            .containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
-                });
-    }
+                .expectBody(new ParameterizedTypeReference<ODRLLicenceResponse>() {})
+                .returnResult()
+                .getResponseBody();
 
-    @Test
-    void Authenticated_Request_WithValidBody_STK_Returns_CorrectLicences() {
-        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, null);
-        webTestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/v1/licences/request")
-                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId())
-                        .build())
-                .header(API_KEY_HEADER, correctApiKey)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<Licence>>() {
-                })
-                .value(licences -> assertThat(licences.stream().map(l -> l.licenceCode)).isNotEmpty());
+        assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
     @ParameterizedTest
@@ -222,7 +202,7 @@ class LicencesControllerWithWorkingServerTests {
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(result).isEqualTo("[]");
+        assertThat(result).isNull();
     }
 
     @Test

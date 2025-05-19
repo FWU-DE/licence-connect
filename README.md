@@ -1,28 +1,42 @@
 # Licence Connect Core Application
+
+## Table of Contents
+
+- [Introduction and Goals](#introduction-and-goals)
+- [Documentation](#documentation)
+- [Setup](#setup)
+  - [Prerequisites](#prerequisites)
+  - [Environment Variables](#environment-variables)
+  - [Building the Project](#building-the-project)
+  - [Active Profiles](#active-profiles)
+  - [Running the Application](#running-the-application)
+  - [Running Tests](#running-tests)
+  - [Docker Deployment](#docker-deployment)
+- [License](#license)
+
 ## Introduction and Goals
 
 Licence Connect enables schools, school boards, and federal German states to manage educational resources by buying them, assigning them, and making them available to users at schools.
 
 Licence Connect Core provides a way of accessing licences in a unified way.
 
-## Table of Contents
+## Documentation
 
-- [Setup](#setup)
-  - [Prerequisites](#prerequisites)
-  - [Environment Variables](#environment-variables)
-  - [Building the Project](#building-the-project)
-  - [Running the Application](#running-the-application)
-  - [Running Tests](#running-tests)
-  - [Docker Deployment](#docker-deployment)
-- [License](#license)
+The documentation on Licence Connect consists of the following artifacts:
+
+Artifact | Where to Find | Purpose
+-------- | -------- | --------
+Readme   | Top-level folder in Licence Connect repository (here) | Basic information on the project, instructions for dev setup
+Glossary | doc/glossary.md in Licence Connect repository | Explanation and translation of relevant terms (technical or domain)
+Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, currently ADRs and a c4 model
+BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-docs, <br/> Deployed: https://fwu-de.github.io/bmi-docs/ | Public consumer documentation of licence connect with focus on purpose, features and APIs
 
 ## Setup
 
 ### Prerequisites
 
 - Java 21
-- Maven 3.x
-- Docker
+- Docker & Docker Compose
 
 ### Environment Variables
 
@@ -36,7 +50,7 @@ All environment variables must be set before running any local mvn commands or t
 To build the project, run the following command:
 
 ```sh
-mvn clean install
+./mvnw clean install
 ```
 
 ### Active Profiles
@@ -48,20 +62,35 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 
 ### Running the Application
 
-To run the application, use the following command:
+#### Command Line
+
+To run the application from the command line, use the following command:
 
 ```sh
-mvn spring-boot:run
+(set -a && source ./docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
 ```
+
+#### IntelliJ IDEA
+
+When using IntellIJ, a run configuration called `LcCoreApplication` should be available.
+Running that already uses the correct dev profile and `.env` file.
+
+#### SwaggerUI
 
 On local development, the swagger UI can be accessed at `http://localhost:8080/swagger-ui/index.html`
 
 ### Running Tests
 
-To run the tests, use the following command:
+To run the tests using the [mock licence servers](#mock-licence-servers) run:
 
 ```sh
-mvn test
+./mvnw test -Dspring.profiles.active=auto-start-mocks,local
+```
+
+To run the tests against external systems run:
+
+```sh
+(set -a && source ./docker/.env && set +a && ./mvnw test)
 ```
 
 ### Docker
@@ -121,7 +150,12 @@ Currently, this includes:
 - Bildungslogin V1
 - Bildungslogin V2
 
-All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
+All licence servers can be individually started in a docker container. 
+All licence servers can be started simultaneously by running 
+
+```sh
+docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+```
 
 ### Arix
 
@@ -134,3 +168,12 @@ Please be aware that neither is a complete Arix server but rather only provides 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.
+
+## Bildungslogin Information
+
+The BiLo endpoints reference licence endpoints from "Bildungslogin".
+The github of the Bildungslogin public API can be found under https://github.com/BILDUNGSLOGIN/public_api_docs and is licensed with https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/LICENSE.txt.
+
+In the Licence Connect public API
+- the bilo-v-1-controller references https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/bilo-licenseretrieval_v1.json
+- the bilo-v-2-controller references https://github.com/BILDUNGSLOGIN/public_api_docs/blob/main/bilo-licenseretrieval_v2.json

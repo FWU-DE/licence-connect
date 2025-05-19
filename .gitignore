@@ -1,7 +1,6 @@
-.mvn/
-
 node_modules/
-**.venv/
+venv
+.venv
 
 # compiled output
 licence-connect/dist
@@ -31,7 +30,7 @@ lerna-debug.log*
 /.nyc_output
 
 # IDEs and editors
-/.idea
+.idea
 .project
 .classpath
 .c9/
