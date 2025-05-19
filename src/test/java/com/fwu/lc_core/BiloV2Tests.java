@@ -7,6 +7,7 @@ import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappi
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
 @AutoConfigureWebTestClient
-@ActiveProfiles("local")
+@EnabledIfSystemProperty(named="spring.profiles.active", matches = "local")
 class BiloV2Tests {
 
     public static final String BILO_TEST_CLIENT_NAME = "bilo v2 test client id";
