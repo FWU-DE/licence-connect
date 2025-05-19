@@ -36,8 +36,7 @@ BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-d
 ### Prerequisites
 
 - Java 21
-- Maven 3.x
-- Docker
+- Docker & Docker Compose
 
 ### Environment Variables
 
@@ -51,7 +50,7 @@ All environment variables must be set before running any local mvn commands or t
 To build the project, run the following command:
 
 ```sh
-mvn clean install
+./mvnw clean install
 ```
 
 ### Active Profiles
@@ -63,20 +62,35 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 
 ### Running the Application
 
-To run the application, use the following command:
+#### Command Line
+
+To run the application from the command line, use the following command:
 
 ```sh
-mvn spring-boot:run
+(set -a && source ./docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
 ```
+
+#### IntelliJ IDEA
+
+When using IntellIJ, a run configuration called `LcCoreApplication` should be available.
+Running that already uses the correct dev profile and `.env` file.
+
+#### SwaggerUI
 
 On local development, the swagger UI can be accessed at `http://localhost:8080/swagger-ui/index.html`
 
 ### Running Tests
 
-To run the tests, use the following command:
+To run the tests using the [mock licence servers](#mock-licence-servers) run:
 
 ```sh
-mvn test
+./mvnw test -Dspring.profiles.active=auto-start-mocks,local
+```
+
+To run the tests against external systems run:
+
+```sh
+(set -a && source ./docker/.env && set +a && ./mvnw test)
 ```
 
 ### Docker
@@ -136,7 +150,12 @@ Currently, this includes:
 - Bildungslogin V1
 - Bildungslogin V2
 
-All licence servers can be individually started in a docker container. All licence servers can be started simultaneously by running `docker-compose up` in `src/mock-licence-servers`.
+All licence servers can be individually started in a docker container. 
+All licence servers can be started simultaneously by running 
+
+```sh
+docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+```
 
 ### Arix
 
