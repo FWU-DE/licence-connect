@@ -30,7 +30,14 @@ Readme   | Top-level folder in Licence Connect repository (here) | Basic informa
 Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, following the arc42 template
 BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-docs, <br/> Deployed: https://fwu-de.github.io/bmi-docs/ | Public consumer documentation of licence connect with focus on purpose, features and APIs
 
-## Setup
+## API Setup
+
+This chapter describes the setup of the licence connect core api located in `api/`.
+Run the following commands in that directory, e.g. by running:
+
+```sh
+cd api
+```
 
 ### Prerequisites
 
@@ -151,7 +158,7 @@ The architectural documentation and it's diagrams can be rendered using either:
 
 ## Mock Licence Servers
 
-To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
+To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `mock-licence-servers`.
 Currently, this includes:
 - Arix
 - Bildungslogin V1
@@ -161,7 +168,7 @@ All licence servers can be individually started in a docker container.
 All licence servers can be started simultaneously by running 
 
 ```sh
-docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+docker compose -f mock-licence-servers/docker-compose.yml up -d
 ```
 
 ### Arix
