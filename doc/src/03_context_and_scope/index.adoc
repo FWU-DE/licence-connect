@@ -1,7 +1,13 @@
-﻿@startuml C4_Elements
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-context-and-scope]]
+== Context and Scope
+
+[plantuml]
+----
+@startuml
 !include <C4/C4_Container>
 SHOW_PERSON_OUTLINE()
-
 
 Person_Ext(student, "Schüler und Lehrer", "")
 
@@ -25,3 +31,4 @@ Rel_R(lc, lh, "Lizenzen anfragen","")
 Rel_L(lh, lc, "Lizenzen bereitstellen", "")
 
 @enduml
+----
