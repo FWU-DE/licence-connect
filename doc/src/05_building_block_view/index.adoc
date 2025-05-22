@@ -1,4 +1,14 @@
-﻿@startuml C4_Elements
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-building-block-view]]
+
+== Building Block View
+
+=== Whitebox Overall System
+
+[plantuml]
+----
+@startuml C4_Elements
 !include <C4/C4_Component>
 !include <office/Servers/application_server>
 SHOW_PERSON_OUTLINE()
@@ -56,3 +66,4 @@ Rel_R(lc_bilo_v1, bilo_v1, "Lizenzen anfragen","")
 Rel_R(lc_bilo_v2, bilo_v2, "Lizenzen anfragen","")
 
 @enduml
+----

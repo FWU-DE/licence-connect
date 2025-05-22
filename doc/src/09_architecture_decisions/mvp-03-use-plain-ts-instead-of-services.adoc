@@ -1,12 +1,12 @@
-# ADR MVP3: Use Use Case for Clean Architecture instead of injectable Services
+=== ADR MVP3: Use Use Case for Clean Architecture instead of injectable Services
 
 Date: 2024-07-15
 
-## Status
+==== Status
 
 Superseeded by [ADR 1: Primary framework for the "Licence Connect" product](../0001-framework-product.md)
 
-## Context
+==== Context
 
 In our efforts to maintain a scalable and maintainable codebase, we are considering the implementation of Clean
 Architecture principles.
@@ -19,12 +19,12 @@ Therefore a decision is needed, whether we want to use use cases or injectable s
 Choosing clean architecture or a framework first approach leads to different consequences when it comes to
 maintainability and extendability.
 
-## Considered Options
+==== Considered Options
 
 - **Option 1: Use NestJS services for use cases and use a framework first approach**
 - **Option 2: Implement Clean Architecture by using plain TypeScript classes for use cases**
 
-### Option 1: Continue using NestJS services for use cases
+===== Option 1: Continue using NestJS services for use cases
 
 Handling use cases directly within NestJS services, which provides tight integration with the NestJS framework.
 
@@ -40,7 +40,7 @@ Handling use cases directly within NestJS services, which provides tight integra
 - Deviates from Clean Architecture principles, possibly leading to a codebase that is harder to test, maintain, and
   extend.
 
-### Option 2: Implement Clean Architecture by using plain TypeScript classes for use cases
+===== Option 2: Implement Clean Architecture by using plain TypeScript classes for use cases
 
 Adopt a strict Clean Architecture approach by implementing our use cases into plain TypeScript classes, independent of
 the NestJS framework.
@@ -55,13 +55,13 @@ the NestJS framework.
 
 - Requires new developers to become familiar with new patterns and potentially adapt their workflow.
 
-## Decision
+==== Decision
 
 We have decided to go with **Option 2: Implement Clean Architecture by using plain TypeScript classes for use cases**.
 This decision aligns with our goals of keeping our core business logic decoupled from the framework and infrastructure,
 ensuring that our application remains flexible, maintainable, and extensible as it evolves.
 
-## Consequences
+==== Consequences
 
 The decision to adhere to Clean Architecture principles through the use of plain TypeScript classes for use cases will
 require developer that are familiar with NestJs to accept the slightly different approach and learn the patterns of

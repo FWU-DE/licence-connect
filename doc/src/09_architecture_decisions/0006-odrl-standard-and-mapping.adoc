@@ -1,12 +1,12 @@
-# ADR 2: Mapping ARIX Response to ODRL
+=== ADR 6: Mapping ARIX Response to ODRL
 
 Date: 2025-05-05
 
-## Status
+==== Status
 
 Accepted
 
-## Context
+==== Context
 
 Licence servers provide licences in individual formats.
 The currently connected licence holding system ARIX responds in the following format:
@@ -51,12 +51,12 @@ An example for a set policy taken from the ODRL spec looks like this:
 }
 ```
 
-## Considered Options
+==== Considered Options
 
 > **Note**
 As opposed to other ADRs, this one will not describe different options but will simply describe the mapping used in this case.
 
-### Mapping ARIX -> ODRL
+===== Mapping ARIX -> ODRL
 
 In the ODRL standard the list of licensed media translates to a [policy](https://www.w3.org/TR/odrl-model/#policy-set). 
 We map all licences transmitted by ARIX to a single policy.
@@ -100,11 +100,11 @@ This attribute can be used in the future so that consumers of LC know how to use
 
 The `action` is `use` for now, as there is no requirement for a more fine-grained description for now.
 
-## Decision
+==== Decision
 
 We do the mapping as proposed.
 
-## Consequences
+==== Consequences
 
 - the current response from ARIX needs to be mapped to ODRL
 - the ODRL standard may not prove to be the perfect format to transmit secret information (e.g. licence codes)
