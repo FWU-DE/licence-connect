@@ -1,24 +1,12 @@
-// header file for arc42-template,
-// including all help texts
-//
-// ====================================
-
-// configure EN settings for asciidoc
-// asciidoc settings for EN (English)
-// ==================================
-:toc-title: table of contents
-
-// enable table-of-contents
-:toc:
-
-// where are images located?
-:imagesdir: ./images
-
 = Licence Connect Core Architectural Documentation
 :revnumber: 0
 :revdate: {docdate}
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Table of Contents
+:toc:
+
+// where are images located?
+:imagesdir: ./images
 
 // horizontal line
 ***
