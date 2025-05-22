@@ -1,21 +1,21 @@
-# ADR 4: Selection of ARIX as Primary Licence Provider
+=== ADR 4: Selection of ARIX as Primary Licence Provider
 
 Date: 2025-03-20
 
-## Status
+==== Status
 
 Accepted
 
-## Context
+==== Context
 
 For the Licence Connect platform, we need to integrate with at least one licence holder system to demonstrate core functionality.
 The licence holder system serves as the source of truth for available licences and needs to be reliable, well-documented, and compatible with our architecture.
 
 We need to select an initial licence provider that can be integrated quickly while providing a foundation for adding more providers in the future.
 
-## Considered Options
+==== Considered Options
 
-### ARIX
+===== ARIX
 
 **Pros**:
 - Already successfully used in other FWU products, providing proven integration patterns
@@ -29,7 +29,7 @@ We need to select an initial licence provider that can be integrated quickly whi
 - XML-based response format requires more parsing effort
 - Requires Landkreis (district) information for licence retrieval, which is not available from VIDIS
 
-### Opal
+===== Opal
 
 **Pros**:
 - Open source alternative
@@ -41,7 +41,7 @@ We need to select an initial licence provider that can be integrated quickly whi
 - Limited documentation and support
 - Would require significant effort to make production-ready
 
-### Mkis
+===== Mkis
 
 **Pros**:
 - Modern architecture
@@ -52,7 +52,7 @@ We need to select an initial licence provider that can be integrated quickly whi
 - Lacks stable API
 - Integration timeline uncertain
 
-### Sesame
+===== Sesame
 
 **Pros**:
 - Alternative solution with different approach
@@ -61,7 +61,7 @@ We need to select an initial licence provider that can be integrated quickly whi
 **Cons**:
 - Determined unsuitable by client after evaluation
 
-## Decision
+==== Decision
 
 We choose ARIX as the primary licence provider for the following reasons:
 1. Integration efficiency due to existing experience and documentation
@@ -69,7 +69,7 @@ We choose ARIX as the primary licence provider for the following reasons:
 3. Despite not being a classical licence holder with licence codes, its API is stable and well-understood
 4. The alternatives evaluated did not meet our requirements for production readiness or client approval
 
-## Consequences
+==== Consequences
 
 - Implementation will focus on ARIX integration first
 - We will need to handle URL-based licensing rather than code-based licensing

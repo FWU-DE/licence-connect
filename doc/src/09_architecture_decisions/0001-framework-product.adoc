@@ -1,22 +1,20 @@
-# ADR 1: Primary framework for the "Licence Connect" product
+=== ADR 1: Primary framework for the "Licence Connect" product
 
 Date: 2025-02-05
 
-## Status
+==== Status
 
 Accepted
 
 Supersedes [ADR MVP1: Primary framework for the "Licence Connect" MVP](mvp/mvp-01-framework-mvp.md)
 
 Supersedes [ADR MVP3: Use Use Case for Clean Architecture instead of injectable Services](mvp/mvp-03-use-plain-ts-instead-of-services.md)
-
-## Context
+==== Context
 
 After careful consideration of the pros and cons of continuing with NestJS versus switching to SpringBoot, the development team has decided to propose a switch to SpringBoot. This decision is based on the team's expertise and the long-term benefits of using a more mature technology.
+==== Considered Options
 
-## Considered Options
-
-### NestJS (Framework of the MVP)
+===== NestJS (Framework of the MVP)
 
 **Pros**:
 
@@ -31,7 +29,7 @@ After careful consideration of the pros and cons of continuing with NestJS versu
   - Less available knowledge/questions/answers/solutions online
   - Fewer packages/tools/utils available
 
-### SpringBoot
+===== SpringBoot
 
 **Pros**:
 
@@ -41,8 +39,7 @@ After careful consideration of the pros and cons of continuing with NestJS versu
 
 **Cons**:
 - Changing stack would take slightly more time than refactoring.
-
-## Decision
+==== Decision
 
 We switch to SpringBoot due to the following reasons:
 1. More experience within the team, leading to higher output (this was also a reason in the first project).
@@ -50,7 +47,6 @@ We switch to SpringBoot due to the following reasons:
 3. Better integration into the FWU tech stack.
 4. Turning a mvp into a product requires refactoring anyway, stack switching is not adding significant work load. 
 The switch has been proposed to FWU and has been accepted.
-
-## Consequences
+==== Consequences
 
 - The project will be rewritten using SpringBoot.

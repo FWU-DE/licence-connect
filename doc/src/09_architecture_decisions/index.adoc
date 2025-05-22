@@ -1,0 +1,22 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-design-decisions]]
+== Architecture Decisions
+
+include::mvp-01-framework-mvp.adoc[]
+
+include::mvp-02-authentication.adoc[]
+
+include::mvp-03-use-plain-ts-instead-of-services.adoc[]
+
+include::0001-framework-product.adoc[]
+
+include::0002-retrieval-clients-threading-behavior.adoc[]
+
+include::0003-endpoint-design.adoc[]
+
+include::0004-licenceholder.adoc[]
+
+include::0005-format-of-licences-responses.adoc[]
+
+include::0006-odrl-standard-and-mapping.adoc[]

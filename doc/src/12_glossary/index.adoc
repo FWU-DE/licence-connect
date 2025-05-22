@@ -1,0 +1,21 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-glossary]]
+== Glossary
+
+ifdef::arc42help[]
+
+endif::arc42help[]
+
+[cols="e,e,2e" options="header"]
+|===
+|German Term |English Term |Definition
+
+|Licence Connect (LC)
+|Licence Connect (LC)
+|The system under development
+
+|Lizenzhaltendes System
+|licence holder
+|A system managing licences, to be consumed by LC
+|===
