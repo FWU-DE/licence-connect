@@ -73,7 +73,7 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 To run the application from the command line, use the following command:
 
 ```sh
-(set -a && source ./docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
+(set -a && source ../docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
 ```
 
 #### IntelliJ IDEA
@@ -96,7 +96,7 @@ To run the tests using the [mock licence servers](#mock-licence-servers) run:
 To run the tests against external systems run:
 
 ```sh
-(set -a && source ./docker/.env && set +a && ./mvnw test)
+(set -a && source ../docker/.env && set +a && ./mvnw test)
 ```
 
 ### Docker
