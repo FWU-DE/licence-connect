@@ -27,8 +27,7 @@ The documentation on Licence Connect consists of the following artifacts:
 Artifact | Where to Find | Purpose
 -------- | -------- | --------
 Readme   | Top-level folder in Licence Connect repository (here) | Basic information on the project, instructions for dev setup
-Glossary | doc/glossary.md in Licence Connect repository | Explanation and translation of relevant terms (technical or domain)
-Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, currently ADRs and a c4 model
+Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, following the arc42 template
 BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-docs, <br/> Deployed: https://fwu-de.github.io/bmi-docs/ | Public consumer documentation of licence connect with focus on purpose, features and APIs
 
 ## Setup
@@ -122,7 +121,7 @@ CAUTION: Docker in rootless mode does not seem to work with the spring-boot:buil
 When running in docker, it is possible to store logs in loki and display them with grafana.
 To configure grafana to use loki, enter the following link: http://localhost:3000/connections/add-new-connection
 choose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
-Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
+Then, you can query the logs in the explore tab like so: <img src="doc/images/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
 
 The Grafana container is only started for the `debug` docker service profile, i.e. when you start the docker compose project with either the `--profile=debug` argument,
 or supply the `COMPOSE_PROFILES=debug` variable either directly before the command or via the environment. On the deployment-VM, the Grafana container should not run,
