@@ -141,6 +141,14 @@ The exact deployment process can be seen inside `.gitlab-ci.yml`, but essentiall
 
 On the server, instead of providing the environment variables directly to the docker compose command, there is an `.env` file located in the app folder in which all required environment variables must be set.
 
+### Rendering the Architectural Documentation
+
+The architectural documentation and it's diagrams can be rendered using either:
+
+* VSCode with the [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) extension and kroki enabled 
+(this is also recommended in the repo settings)
+* IntelliJ (Kroki needs to be enabled manually)
+
 ## Mock Licence Servers
 
 To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
