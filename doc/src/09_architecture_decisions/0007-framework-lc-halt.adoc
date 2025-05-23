@@ -4,7 +4,7 @@ Date: 2025-05-23
 
 ==== Status
 
-Draft
+Accepted
 
 ==== Context
 
@@ -55,6 +55,10 @@ The authentication at the API can be done with API keys.
 
 ==== Decision
 
+As the project is going to be rather small, all options seem equally viable. 
+Due to the setup simplicity and verbosity and it's built-in SwaggerUI, we decide to go with: **FastAPI**
 
 ==== Consequences
 
+* We need to setup FastAPI for LC Halt
+* We may want to switch the mock services from Flask to FastAPI in the future to reduce the number of used frameworks in the project
