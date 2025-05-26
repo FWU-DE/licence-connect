@@ -14,7 +14,7 @@ variables:
   # it would be uppercased (API), which docker does not accept for image names.
   API_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:latest
 
-  LC_HALT_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/lc_halt:latest
+  LC_HALT_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/lc-halt:latest
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
