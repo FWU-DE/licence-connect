@@ -1,9 +1,13 @@
 from typing import Annotated
 from pydantic import BaseModel
 from fastapi import FastAPI, Query
-from fastapi.openapi.utils import get_openapi
 
-app = FastAPI()
+app = FastAPI(
+    title="LC Halt",
+    version="0.1.0",
+    summary="LC Halt ist a licence holding system.",
+    description="Using this API, media can be assigned to users, schools or federal states. Other services can then access this information and act accordingly.",
+)
 
 
 class LicencedMedium(BaseModel):
@@ -45,20 +49,3 @@ async def read_assigned_licences(
     return LicenceResponse(
         userId=userId, bundesland=bundesland, schulnummer=schulnummer, licencedMedia=[]
     )
-
-
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    openapi_schema = get_openapi(
-        title="LC Halt",
-        version="0.1.0",
-        summary="LC Halt ist a licence holding system.",
-        description="Using this API, media can be assigned to users, schools or federal states. Other services can then access this information and act accordingly.",
-        routes=app.routes,
-    )
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-
-app.openapi = custom_openapi
