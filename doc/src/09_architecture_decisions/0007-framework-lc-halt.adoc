@@ -56,7 +56,7 @@ The authentication at the API can be done with API keys.
 ==== Decision
 
 As the project is going to be rather small, all options seem equally viable. 
-Due to the simplicity of the setup, the verbosity, and its built-in SwaggerUI, we decide to go with: **FastAPI**
+Due to the simplicity of the setup, the low verbosity, and its built-in SwaggerUI, we decide to go with: **FastAPI**
 
 ==== Consequences
 
