@@ -1,4 +1,4 @@
-﻿from flask import Flask, jsonify, request, abort, Response
+from flask import Flask, jsonify, request, abort, Response
 from lxml import etree
 from enum import Enum
 from dataclasses import dataclass
@@ -8,23 +8,27 @@ from arix_licence import ArixLicence, STANDARD_FIELD_NAMES
 
 app = Flask(__name__)
 
+
 class RequestType(Enum):
     Search = 1
     Other = 2
+
 
 @dataclass
 class SearchRequest:
     fields: list[str]
 
-@app.route('/healthcheck', methods=['GET'])
+
+@app.route("/healthcheck", methods=["GET"])
 def healthcheck():
     return jsonify({"status": "ok"}), 200
 
-@app.route('/<land>/<standortnummer>/<schulnummer>/<userid>', methods=['POST'])
-@app.route('/<land>/<standortnummer>/<schulnummer>', methods=['POST'])
-@app.route('/<land>/<standortnummer>', methods=['POST'])
-@app.route('/<land>', methods=['POST'])
-def endpoint(land = None, standortnummer = None, schulnummer = None, userid = None):
+
+@app.route("/<land>/<standortnummer>/<schulnummer>/<userid>", methods=["POST"])
+@app.route("/<land>/<standortnummer>/<schulnummer>", methods=["POST"])
+@app.route("/<land>/<standortnummer>", methods=["POST"])
+@app.route("/<land>", methods=["POST"])
+def endpoint(land=None, standortnummer=None, schulnummer=None, userid=None):
     xml_statement = request.form.get("xmlstatement")
     if xml_statement is None:
         abort(400)
@@ -33,10 +37,9 @@ def endpoint(land = None, standortnummer = None, schulnummer = None, userid = No
         case RequestType.Search:
             licences = get_example_licences(land, standortnummer, schulnummer, userid)
             answer_xml = format_response(licences, parsed_request.fields)
-            return Response(answer_xml, mimetype='text/xml')
+            return Response(answer_xml, mimetype="text/xml")
         case RequestType.Other:
             abort(501)
-
 
 
 def format_response(licenses: list[ArixLicence], field_names: list[str]):
@@ -54,6 +57,7 @@ def format_response(licenses: list[ArixLicence], field_names: list[str]):
                 return "<result></result>"
     return etree.tostring(result)
 
+
 def parse_request(xml_string: str):
     root = etree.fromstring(xml_string)
     match root.tag:
@@ -65,5 +69,5 @@ def parse_request(xml_string: str):
             return RequestType.Other, None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True, port=1234, host="0.0.0.0")

@@ -21,21 +21,20 @@ LC Halt is built using [FastAPI](https://fastapi.tiangolo.com).
 
 **Prerequisites:**
 - docker & docker compose
-- Python 3 and venv
+- [uv](https://github.com/astral-sh/uv)
+- Python 3
 
 Activate the virtual environment and install requirements:
 
 ```sh
-python -m venv .venv
-source .venv/bin/activate
-
-pip install -r requirements.txt
+uv venv
+uv pip install -r requirements.txt
 ```
 
 Run LC Halt:
 
 ```sh
-fastapi dev main.py
+uv run fastapi dev main.py
 ```
 
 ## Run LC Halt

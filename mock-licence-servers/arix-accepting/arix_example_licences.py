@@ -1,4 +1,4 @@
-﻿from typing import Optional
+from typing import Optional
 
 from arix_licence import ArixLicence
 
@@ -20,26 +20,39 @@ USER_1_LICENCE_2 = ArixLicence(id="20394_LIZENZ_2", licence="2099-01-01")
 USER_2_LICENCE_1 = ArixLicence(id="UIOC_QWUE_QASD_REIJ", licence="2099-01-01")
 USER_2_LICENCE_2 = ArixLicence(id="HPOA_SJKC_EJKA_WHOO", licence="2099-01-01")
 
-land_licences={
+land_licences = {
     "NW": [NW_LICENCE_1, NW_LICENCE_2],
     "BY": [BY_LICENCE_1],
-    "STK": [STK_LICENCE_1]
+    "STK": [STK_LICENCE_1],
 }
-standort_licences={
+standort_licences = {
     "ORT1": [ORT1_LICENCE_1],
     "ORT2": [ORT2_LICENCE_1, ORT2_LICENCE_2],
-    "STR": [STR_LICENCE_1, STR_LICENCE_2]
+    "STR": [STR_LICENCE_1, STR_LICENCE_2],
 }
-schul_licences={
+schul_licences = {
     "f3453b": [SCHOOL_1_LICENCE_1, SCHOOL_1_LICENCE_2],
     "0mß5234cv": [SCHOOL_2_LICENCE_1, SCHOOL_2_LICENCE_2],
 }
-user_licences={
+user_licences = {
     "20394": [USER_1_LICENCE_1, USER_1_LICENCE_2],
     "student.2": [USER_2_LICENCE_1, USER_2_LICENCE_2],
 }
+
+
 def get(l, k):
     return l[k] if k in l.keys() else []
 
-def get_example_licences(land: Optional[str], standortnummer: Optional[str], schulnummer: Optional[str], userid: Optional[str]):
-    return get(land_licences, land) + get(standort_licences, standortnummer) + get(schul_licences, schulnummer) + get(user_licences, userid)
+
+def get_example_licences(
+    land: Optional[str],
+    standortnummer: Optional[str],
+    schulnummer: Optional[str],
+    userid: Optional[str],
+):
+    return (
+        get(land_licences, land)
+        + get(standort_licences, standortnummer)
+        + get(schul_licences, schulnummer)
+        + get(user_licences, userid)
+    )
