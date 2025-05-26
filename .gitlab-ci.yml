@@ -12,7 +12,9 @@ variables:
 
   # `api` is intentionally inserted literally here. If we used $CI_PROJECT_NAME,
   # it would be uppercased (API), which docker does not accept for image names.
-  RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:latest
+  API_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/api:latest
+
+  LC_HALT_RELEASE_IMAGE: $CI_REGISTRY/$CI_PROJECT_NAMESPACE/lc_halt:latest
 
   NETZHAUT_DOCKER_HOST: 172.17.0.1
 
@@ -45,27 +47,6 @@ build_api:
     paths:
       - target/
     expire_in: 30 min
-
-build_lc_halt:
-  tags:
-    - docker
-  image: python:3.13
-  stage: build
-  rules:
-    # Run the job for a push to a branch that has an existing MR
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    # Do not run the job for a branch that already has an existing MR, it will be run by the rule before.
-    # This prevents duplicate runs for branches that have open MRs
-    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
-      when: never
-    # If we got here, there isn't an MR and we have simply pushed to a branch
-    # Run the job for this push
-    - if: $CI_COMMIT_BRANCH
-    # Never run job for a pushed tag
-    - if: $CI_COMMIT_TAG
-      when: never
-  script:
-    - echo "hallo"
 
 test_api:
   tags:
@@ -114,7 +95,29 @@ dockerize_api:
       -Ddocker.registry.password=$CI_JOB_TOKEN
       -Ddocker.registry.url=$CI_REGISTRY
       -Dspring-boot.build-image.publish=true
-      -Dspring-boot.build-image.imageName=$RELEASE_IMAGE
+      -Dspring-boot.build-image.imageName=$API_RELEASE_IMAGE
+
+dockerize_lc_halt:
+  tags:
+    - docker
+  image: docker:latest
+  stage: docker
+  # TODO: Adjust rules
+  rules:
+    # Run the job for a push to a branch that has an existing MR
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Do not run the job for a branch that already has an existing MR, it will be run by the rule before.
+    # This prevents duplicate runs for branches that have open MRs
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # If we got here, there isn't an MR and we have simply pushed to a branch
+    # Run the job for this push
+    - if: $CI_COMMIT_BRANCH
+    # Never run job for a pushed tag
+    - if: $CI_COMMIT_TAG
+      when: never
+  script:
+    - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
 
 deploy_api:
   stage: deploy
@@ -136,14 +139,14 @@ deploy_api:
     # log into the private registry on the VM
     - $SSH_EVAL "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
     # pull the latest licenceconnect image on the VM
-    - $SSH_EVAL "docker pull $RELEASE_IMAGE"
+    - $SSH_EVAL "docker pull $API_RELEASE_IMAGE"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
-    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose down"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$API_RELEASE_IMAGE docker compose down"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - $SCP_EVAL docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # Copy the (potentially) new version of the nginx directory (and its contents) into the directory on the VM
     - $SCP_EVAL -r docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
-    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$RELEASE_IMAGE docker compose up -d --wait"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$API_RELEASE_IMAGE docker compose up -d --wait"
     # delete all dangling docker images on the VM
     - $SSH_EVAL "docker image prune -f"
