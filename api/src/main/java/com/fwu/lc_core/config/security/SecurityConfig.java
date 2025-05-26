@@ -1,5 +1,6 @@
 package com.fwu.lc_core.config.security;
 
+import com.fwu.lc_core.config.logging.LoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,9 @@ public class SecurityConfig {
 
     @Autowired
     ApiKeyAuthenticationWebFilter apiKeyAuthenticationWebFilter;
+
+    @Autowired
+    LoggingFilter loggingFilter;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -38,6 +42,7 @@ public class SecurityConfig {
                                 return Mono.empty();
                         })
                 )
+                .addFilterAt(loggingFilter, SecurityWebFiltersOrder.FIRST)
                 .addFilterAt(apiKeyAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
         return http.build();
