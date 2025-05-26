@@ -3,7 +3,7 @@
 WORKDIR /app
 
 COPY ./mock-licence-servers/bilo-v2/requirements.txt ./
-COPY ./test/resources/application.properties ./
+COPY ../api/src/test/resources/application.properties ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./mock-licence-servers/bilo-v2/ .
