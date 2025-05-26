@@ -24,6 +24,12 @@ public class LoggingFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        // Since the healthcheck endpoint is called every few seconds in production,
+        // we skip logging requests to it to reduce logging noise.
+        if (exchange.getRequest().getPath().value().equals("/v1/healthcheck")) {
+            return chain.filter(exchange);
+        }
+
         var request = exchange.getRequest();
 
         var headers = request.getHeaders();
