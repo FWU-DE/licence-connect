@@ -41,8 +41,13 @@ cd api
 
 ### Prerequisites
 
-- Java 21
-- Docker & Docker Compose
+Prerequisite | Purpose | Notes
+------------ | ------- | -----
+bun | dev scripts | 
+Java 21      | LC Core Development |
+Docker & Docker Compose | Running dependencies, building for production | 
+Python 3 | Development of LC Halt & mock licence servers |
+virtualenv | Development of LC Halt & mock licence servers | 
 
 ### Environment Variables
 
