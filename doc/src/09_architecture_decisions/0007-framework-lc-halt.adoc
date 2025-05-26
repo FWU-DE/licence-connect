@@ -10,11 +10,11 @@ Accepted
 
 As a reference for a licence holding system, we will develop 'LC Halt' as a small prototype.
 Potentially, it may get extended to support more types of licences.
-It may be of use as a reference to other licence holding systems how the interface to licence connect core can be designed.
+It can be used by other licence holding systems as a reference for how the interface to licence connect core should optimally be designed.
 
 LC Halt should provide an API to manage licences for states, schools or specific users.
 On request, it will hand out the respective licences.
-It should provide a SwaggerUI and OpenAPI spec and persist the configured licences also after restarting the application.
+It should provide a SwaggerUI and OpenAPI spec and persist the configured licences across application restarts and server reboots.
 The authentication at the API can be done with API keys.
 
 ==== Considered Options
@@ -56,7 +56,7 @@ The authentication at the API can be done with API keys.
 ==== Decision
 
 As the project is going to be rather small, all options seem equally viable. 
-Due to the setup simplicity and verbosity and it's built-in SwaggerUI, we decide to go with: **FastAPI**
+Due to the simplicity of the setup, the verbosity, and its built-in SwaggerUI, we decide to go with: **FastAPI**
 
 ==== Consequences
 
