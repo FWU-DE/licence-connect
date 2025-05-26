@@ -27,21 +27,32 @@ The documentation on Licence Connect consists of the following artifacts:
 Artifact | Where to Find | Purpose
 -------- | -------- | --------
 Readme   | Top-level folder in Licence Connect repository (here) | Basic information on the project, instructions for dev setup
-Glossary | doc/glossary.md in Licence Connect repository | Explanation and translation of relevant terms (technical or domain)
-Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, currently ADRs and a c4 model
+Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, following the arc42 template
 BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-docs, <br/> Deployed: https://fwu-de.github.io/bmi-docs/ | Public consumer documentation of licence connect with focus on purpose, features and APIs
 
-## Setup
+## API Setup
+
+This chapter describes the setup of the licence connect core api located in `api/`.
+Run the following commands in that directory, e.g. by running:
+
+```sh
+cd api
+```
 
 ### Prerequisites
 
-- Java 21
-- Docker & Docker Compose
+Prerequisite | Purpose | Notes
+------------ | ------- | -----
+bun | dev scripts | 
+Java 21      | LC Core Development |
+Docker & Docker Compose | Running dependencies, building for production | 
+Python 3 | Development of LC Halt & mock licence servers |
+virtualenv | Development of LC Halt & mock licence servers | 
 
 ### Environment Variables
 
 The application requires several environment variables to be set for proper configuration.
-Inside the `docker` folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
+Inside the root folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
 This file should be used as a template for the actual .env file.
 All environment variables must be set before running any local mvn commands or trying to run the app without docker.
 
@@ -67,7 +78,7 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 To run the application from the command line, use the following command:
 
 ```sh
-(set -a && source ./docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
+(set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
 ```
 
 #### IntelliJ IDEA
@@ -90,7 +101,7 @@ To run the tests using the [mock licence servers](#mock-licence-servers) run:
 To run the tests against external systems run:
 
 ```sh
-(set -a && source ./docker/.env && set +a && ./mvnw test)
+(set -a && source ../.env && set +a && ./mvnw test)
 ```
 
 ### Docker
@@ -122,7 +133,7 @@ CAUTION: Docker in rootless mode does not seem to work with the spring-boot:buil
 When running in docker, it is possible to store logs in loki and display them with grafana.
 To configure grafana to use loki, enter the following link: http://localhost:3000/connections/add-new-connection
 choose loki as the data source and enter the following URL into the field connection->url: http://loki:3100
-Then, you can query the logs in the explore tab like so: <img src="doc/readme-blob/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
+Then, you can query the logs in the explore tab like so: <img src="doc/images/grafana_query.jpg" alt="grafana query for loki in the 'explore' tab" width="500"/>
 
 The Grafana container is only started for the `debug` docker service profile, i.e. when you start the docker compose project with either the `--profile=debug` argument,
 or supply the `COMPOSE_PROFILES=debug` variable either directly before the command or via the environment. On the deployment-VM, the Grafana container should not run,
@@ -142,9 +153,17 @@ The exact deployment process can be seen inside `.gitlab-ci.yml`, but essentiall
 
 On the server, instead of providing the environment variables directly to the docker compose command, there is an `.env` file located in the app folder in which all required environment variables must be set.
 
+### Rendering the Architectural Documentation
+
+The architectural documentation and it's diagrams can be rendered using either:
+
+* VSCode with the [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) extension and kroki enabled 
+(this is also recommended in the repo settings)
+* IntelliJ (Kroki needs to be enabled manually)
+
 ## Mock Licence Servers
 
-To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
+To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `mock-licence-servers`.
 Currently, this includes:
 - Arix
 - Bildungslogin V1
@@ -154,7 +173,7 @@ All licence servers can be individually started in a docker container.
 All licence servers can be started simultaneously by running 
 
 ```sh
-docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+docker compose -f mock-licence-servers/docker-compose.yml up -d
 ```
 
 ### Arix

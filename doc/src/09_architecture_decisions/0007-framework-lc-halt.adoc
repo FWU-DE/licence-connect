@@ -1,0 +1,64 @@
+=== ADR 7: Framework for LC Halt
+
+Date: 2025-05-23
+
+==== Status
+
+Accepted
+
+==== Context
+
+As a reference for a licence holding system, we will develop 'LC Halt' as a small prototype.
+Potentially, it may get extended to support more types of licences.
+It can be used by other licence holding systems as a reference for how the interface to licence connect core should optimally be designed.
+
+LC Halt should provide an API to manage licences for states, schools or specific users.
+On request, it will hand out the respective licences.
+It should provide a SwaggerUI and OpenAPI spec and persist the configured licences across application restarts and server reboots.
+The authentication at the API can be done with API keys.
+
+==== Considered Options
+
+|===
+||Spring Boot|NestJS|Flask|FastAPI
+
+|Experience in the team / Fit to existing code base
+|Very good fit
+|Has previously been discontinued, see <<adr01>>
+|Has already been used for the mock licence services
+|Similar to flask
+
+|Easy setup
+|Yes
+|Yes
+|Yes
+|Yes
+
+|Automatic OpenAPI spec generation
+|Yes
+|Yes
+|Yes, with plugin
+|Yes
+
+|Easy integration of common databases
+|Yes
+|Yes
+|Yes
+|Yes
+
+|Verbosity
+|A lot of boilerplate required
+|Some boilerplate required
+|Only a few files needed
+|Only a few files needed
+|===
+
+==== Decision
+
+As the project is going to be rather small, all options seem equally viable. 
+Due to the simplicity of the setup, the low verbosity, and its built-in SwaggerUI, we decide to go with: **FastAPI**
+
+==== Consequences
+
+* We need to setup FastAPI for LC Halt
+* We may want to switch the mock services from Flask to FastAPI in the future to reduce the number of used frameworks in the project
