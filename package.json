@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "run:core": "cd api && (set -a && source ../docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)",
+    "run:core": "cd api && (set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)",
     "run:mock-licence-servers": "docker compose -f mock-licence-servers/docker-compose.yml up -d",
     "test:mocked": "./mvnw test -Dspring.profiles.active=auto-start-mocks,local",
-    "test": "cd api && (set -a && source ../docker/.env && set +a && ./mvnw test)"
+    "test": "cd api && (set -a && source ../.env && set +a && ./mvnw test)"
   }
 }

@@ -52,7 +52,7 @@ virtualenv | Development of LC Halt & mock licence servers |
 ### Environment Variables
 
 The application requires several environment variables to be set for proper configuration.
-Inside the `docker` folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
+Inside the root folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
 This file should be used as a template for the actual .env file.
 All environment variables must be set before running any local mvn commands or trying to run the app without docker.
 
@@ -78,7 +78,7 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 To run the application from the command line, use the following command:
 
 ```sh
-(set -a && source ../docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
+(set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
 ```
 
 #### IntelliJ IDEA
@@ -101,7 +101,7 @@ To run the tests using the [mock licence servers](#mock-licence-servers) run:
 To run the tests against external systems run:
 
 ```sh
-(set -a && source ../docker/.env && set +a && ./mvnw test)
+(set -a && source ../.env && set +a && ./mvnw test)
 ```
 
 ### Docker
