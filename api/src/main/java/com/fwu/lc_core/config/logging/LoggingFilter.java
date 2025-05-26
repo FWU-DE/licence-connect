@@ -20,21 +20,23 @@ public class LoggingFilter implements WebFilter {
     @Value("${admin.api-key}")
     private String adminApiKey;
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);  // Logger instance for logging.
+    private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         var request = exchange.getRequest();
 
         var headers = request.getHeaders();
-        var apiKey = headers.get(API_KEY_HEADER).toString();
+        var apiKey = headers.getFirst(API_KEY_HEADER);
         headers.remove(API_KEY_HEADER);
 
         var auth = "None";
-        if (apiKey.equals(unprivilegedApiKey)) {
-            auth = "Unprivileged";
-        } else if (apiKey.equals(adminApiKey)) {
-            auth = "Admin";
+        if (apiKey != null) {
+            if (apiKey.equals(this.unprivilegedApiKey)) {
+                auth = "Unprivileged";
+            } else if (apiKey.equals(adminApiKey)) {
+                auth = "Admin";
+            }
         }
 
         logger.info("Request: Id={} Method={}, Path={}, Auth='{}', Headers={}",
