@@ -1,0 +1,12 @@
+{
+  "name": "lc-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "run:core": "cd api && (set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)",
+    "run:mock-licence-servers": "docker compose -f mock-licence-servers/docker-compose.yml up -d",
+    "test:mocked": "cd api && ./mvnw test -Dspring.profiles.active=auto-start-mocks,local",
+    "test": "cd api && (set -a && source ../.env && set +a && ./mvnw test)"
+  }
+}

@@ -19,7 +19,7 @@ services:
     image: ${LC_IMAGE}
     container_name: licence-connect
     restart: unless-stopped
-    env_file: ".env"
+    env_file: "../.env"
     volumes:
       - ${DB_FILE_PATH:-./db}:/workspace/data
     expose:

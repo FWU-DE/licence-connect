@@ -30,17 +30,29 @@ Readme   | Top-level folder in Licence Connect repository (here) | Basic informa
 Architectural Documentation | doc folder in Licence Connect repository | Architectural documentation containing relevant knowledge for decisions and active development, following the arc42 template
 BMI (Bildungsmedieninfrastruktur) Docs | Source: https://github.com/FWU-DE/bmi-docs, <br/> Deployed: https://fwu-de.github.io/bmi-docs/ | Public consumer documentation of licence connect with focus on purpose, features and APIs
 
-## Setup
+## API Setup
+
+This chapter describes the setup of the licence connect core api located in `api/`.
+Run the following commands in that directory, e.g. by running:
+
+```sh
+cd api
+```
 
 ### Prerequisites
 
-- Java 21
-- Docker & Docker Compose
+Prerequisite | Purpose | Notes
+------------ | ------- | -----
+bun | dev scripts | 
+Java 21      | LC Core Development |
+Docker & Docker Compose | Running dependencies, building for production | 
+Python 3 | Development of LC Halt & mock licence servers |
+virtualenv | Development of LC Halt & mock licence servers | 
 
 ### Environment Variables
 
 The application requires several environment variables to be set for proper configuration.
-Inside the `docker` folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
+Inside the root folder, there is an `.env.example` file containing all possible (required and optional) variables as well as some explanatory comments.
 This file should be used as a template for the actual .env file.
 All environment variables must be set before running any local mvn commands or trying to run the app without docker.
 
@@ -66,7 +78,7 @@ If the profile is set to `auto-start-mocks` when running the application (e.g. `
 To run the application from the command line, use the following command:
 
 ```sh
-(set -a && source ./docker/.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
+(set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)
 ```
 
 #### IntelliJ IDEA
@@ -89,7 +101,7 @@ To run the tests using the [mock licence servers](#mock-licence-servers) run:
 To run the tests against external systems run:
 
 ```sh
-(set -a && source ./docker/.env && set +a && ./mvnw test)
+(set -a && source ../.env && set +a && ./mvnw test)
 ```
 
 ### Docker
@@ -151,7 +163,7 @@ The architectural documentation and it's diagrams can be rendered using either:
 
 ## Mock Licence Servers
 
-To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `src/mock-licence-servers`.
+To allow easy local testing and testing without being dependent on the availability of external systems, we provide a mock for every licence server we support in `mock-licence-servers`.
 Currently, this includes:
 - Arix
 - Bildungslogin V1
@@ -161,7 +173,7 @@ All licence servers can be individually started in a docker container.
 All licence servers can be started simultaneously by running 
 
 ```sh
-docker compose -f src/mock-licence-servers/docker-compose.yml up -d
+docker compose -f mock-licence-servers/docker-compose.yml up -d
 ```
 
 ### Arix
