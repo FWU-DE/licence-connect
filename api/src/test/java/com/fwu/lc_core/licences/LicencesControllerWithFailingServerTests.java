@@ -52,7 +52,7 @@ class LicencesControllerWithFailingServerTests {
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
-            return new LicencesCollector(arixUrlRejecting);
+            return new LicencesCollector(arixUrlRejecting, "");
         }
     }
 

@@ -8,23 +8,44 @@ import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilte
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.EnumSet;
 
 @Component
 public class LicencesCollector {
     @Autowired
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-    private final String arixUrl;
 
-    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl) {
+    private final String arixUrl;
+    private final String lcHaltUrl;
+
+    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl, @Value("${lc-halt-url}") String lcHaltUrl) {
         this.arixUrl = arixUrl;
+        this.lcHaltUrl = lcHaltUrl;
     }
 
-    public Mono<UnparsedLicences> getUnparsedLicences(LicencesRequestDto params, String clientName) {
-        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.ARIX))
+    public Flux<UnparsedLicences> getUnparsedLicences(LicencesRequestDto params, String clientName) {
+        var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
+        var arixLicences = getUnparsedArixLicences(params, allowedLicenceHolders);
+        var lcHaltLicences = getUnparsedLCHaltLicences(params, allowedLicenceHolders);
+        return Flux.merge(arixLicences, lcHaltLicences);
+    }
+
+    private Mono<UnparsedLicences> getUnparsedArixLicences(LicencesRequestDto params, EnumSet<AvailableLicenceHolders> availableLicenceHolders) {
+        if (!availableLicenceHolders.contains(AvailableLicenceHolders.ARIX))
             return Mono.empty();
+
         var arixClient = new ArixClient(arixUrl);
         return arixClient.getLicences(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
+    }
+
+    private Mono<UnparsedLicences> getUnparsedLCHaltLicences(LicencesRequestDto params, EnumSet<AvailableLicenceHolders> availableLicenceHolders) {
+        if (!availableLicenceHolders.contains(AvailableLicenceHolders.LC_HALT))
+            return Mono.empty();
+
+        return Mono.empty();
     }
 }
 
