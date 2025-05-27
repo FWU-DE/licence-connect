@@ -1,6 +1,5 @@
 package com.fwu.lc_core.licences.collection;
 
-import com.fwu.lc_core.licences.collection.arix.ArixClient;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;

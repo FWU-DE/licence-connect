@@ -1,5 +1,6 @@
-package com.fwu.lc_core.licences.collection.arix;
+package com.fwu.lc_core.licences;
 
+import com.fwu.lc_core.licences.collection.ArixClient;
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;

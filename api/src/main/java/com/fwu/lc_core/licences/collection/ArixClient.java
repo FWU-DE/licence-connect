@@ -1,4 +1,4 @@
-package com.fwu.lc_core.licences.collection.arix;
+package com.fwu.lc_core.licences.collection;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
