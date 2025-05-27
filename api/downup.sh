@@ -17,10 +17,9 @@ then
   fi
 fi
 
-# FIXME: The version for the tag should be retrieved from from pom.xml with grep/sed
-export LC_IMAGE=lc_core:0.2.3
+export LC_IMAGE=lc_core:$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
 
-docker compose --profile debug -f ./docker/docker-compose.yaml down
+docker compose --profile debug -f ../docker/docker-compose.yaml down
 ./mvnw clean spring-boot:build-image -DskipTests
-docker compose --profile debug -f ./docker/docker-compose.yaml up --detach --wait
+docker compose --profile debug -f ../docker/docker-compose.yaml up --detach --wait
 echo -e $(curl -X GET http://localhost:80/v1/healthcheck)
