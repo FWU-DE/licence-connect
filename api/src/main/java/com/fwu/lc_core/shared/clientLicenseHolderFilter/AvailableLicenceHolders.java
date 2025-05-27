@@ -4,4 +4,5 @@ public enum AvailableLicenceHolders {
     ARIX,
     BILO_V1,
     BILO_V2,
+    LC_HALT,
 }
