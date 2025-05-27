@@ -44,7 +44,8 @@ public class LicencesCollector {
         if (!availableLicenceHolders.contains(AvailableLicenceHolders.LC_HALT))
             return Mono.empty();
 
-        return Mono.empty();
+        var lcHaltClient = new LCHaltClient(lcHaltUrl);
+        return lcHaltClient.getLicences(params.userId(), params.bundesland(), params.schulnummer());
     }
 }
 
