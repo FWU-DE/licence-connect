@@ -17,7 +17,7 @@ then
   fi
 fi
 
-export LC_IMAGE=lc_core:$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+export LC_IMAGE=lc_core:$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
 
 docker compose --profile debug -f ../docker/docker-compose.yaml down
 ./mvnw clean spring-boot:build-image -DskipTests
