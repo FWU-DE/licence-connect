@@ -3,7 +3,6 @@ package com.fwu.lc_core.licences.collection;
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
-import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
