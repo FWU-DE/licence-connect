@@ -3,15 +3,11 @@ from pydantic import BaseModel
 from fastapi import Depends, FastAPI, Query, Request, Security, HTTPException, status
 from fastapi.security import APIKeyHeader
 import logging
-import signal
 import sys
 import os
 
 
 logger = logging.getLogger(__name__)
-
-log_level = os.getenv("LC_HALT_LOG_LEVEL", "INFO")
-logger.setLevel(log_level)
 
 stream_handler = logging.StreamHandler(sys.stdout)
 log_formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -19,39 +15,35 @@ stream_handler.setFormatter(log_formatter)
 logger.addHandler(stream_handler)
 
 logger.info("API is starting up")
+
+log_level = os.getenv("LC_HALT_LOG_LEVEL", "INFO")
 logger.info(f"Log level set to {log_level}")
+logger.setLevel(log_level)
 
-client_api_key = os.getenv("LC_HALT_CLIENT_API_KEY")
-if client_api_key is None:
-    logger.error("LC_HALT_CLIENT_API_KEY not configured! Shutting down...")
-    os.kill(os.getpid(), signal.SIGTERM)
 
-admin_api_key = os.getenv("LC_HALT_ADMIN_API_KEY")
-if admin_api_key is None:
-    logger.error("LC_HALT_ADMIN_API_KEY not configured! Shutting down...")
-    os.kill(os.getpid(), signal.SIGTERM)
+client_api_key_env_variable_name = "LC_HALT_CLIENT_API_KEY"
+admin_api_key_env_variable_name = "LC_HALT_ADMIN_API_KEY"
+
+required_env_variables = [
+    client_api_key_env_variable_name,
+    admin_api_key_env_variable_name,
+]
+for var in required_env_variables:
+    if not os.getenv(var):
+        logger.error(f"{var} not configured or empty! Shutting down...")
+        exit(1)
+
+client_api_key = os.getenv(client_api_key_env_variable_name)
+admin_api_key = os.getenv(admin_api_key_env_variable_name)
 
 req_api_key = APIKeyHeader(name="x-api-key", auto_error=False)
 
 
 async def handle_api_key(req: Request, key: str = Security(req_api_key)):
-    if key is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="You need to provide an x-api-key header",
-        )
-    logger.info(admin_api_key)
+    if key not in [client_api_key, admin_api_key]:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    if key == admin_api_key:
-        return key
-
-    if req.url.path.startswith("/admin/"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to access this route",
-        )
-
-    if key != client_api_key:
+    if req.url.path.startswith("/admin/") and key != admin_api_key:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to access this route",
@@ -85,7 +77,7 @@ class LicenceResponse(BaseModel):
     licencedMedia: list[LicencedMedium]
 
 
-@app.get("/licenced-media/")
+@app.get("/licenced-media")
 async def read_assigned_licences(
     userId: Annotated[
         str,
