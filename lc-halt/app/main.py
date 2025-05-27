@@ -10,8 +10,8 @@ import os
 
 logger = logging.getLogger(__name__)
 
-logLevel = os.getenv("LC_HALT_LOG_LEVEL", "INFO")
-logger.setLevel(logLevel)
+log_level = os.getenv("LC_HALT_LOG_LEVEL", "INFO")
+logger.setLevel(log_level)
 
 stream_handler = logging.StreamHandler(sys.stdout)
 log_formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -19,12 +19,16 @@ stream_handler.setFormatter(log_formatter)
 logger.addHandler(stream_handler)
 
 logger.info("API is starting up")
-logger.info(f"Log level set to {logLevel}")
-
+logger.info(f"Log level set to {log_level}")
 
 client_api_key = os.getenv("LC_HALT_CLIENT_API_KEY")
 if client_api_key is None:
     logger.error("LC_HALT_CLIENT_API_KEY not configured! Shutting down...")
+    os.kill(os.getpid(), signal.SIGTERM)
+
+admin_api_key = os.getenv("LC_HALT_ADMIN_API_KEY")
+if admin_api_key is None:
+    logger.error("LC_HALT_ADMIN_API_KEY not configured! Shutting down...")
     os.kill(os.getpid(), signal.SIGTERM)
 
 req_api_key = APIKeyHeader(name="x-api-key", auto_error=False)
@@ -34,15 +38,26 @@ async def handle_api_key(req: Request, key: str = Security(req_api_key)):
     if key is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="You need to provide an api key",
+            detail="You need to provide an x-api-key header",
         )
+    logger.info(admin_api_key)
 
-    if client_api_key != key:
+    if key == admin_api_key:
+        return key
+
+    if req.url.path.startswith("/admin/"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to access this route",
         )
-    yield key
+
+    if key != client_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this route",
+        )
+
+    return key
 
 
 app = FastAPI(
@@ -70,7 +85,7 @@ class LicenceResponse(BaseModel):
     licencedMedia: list[LicencedMedium]
 
 
-@app.get("/licences/")
+@app.get("/licenced-media/")
 async def read_assigned_licences(
     userId: Annotated[
         str,
@@ -96,3 +111,8 @@ async def read_assigned_licences(
     return LicenceResponse(
         userId=userId, bundesland=bundesland, schulnummer=schulnummer, licencedMedia=[]
     )
+
+
+@app.get("/admin/test")
+async def test():
+    return
