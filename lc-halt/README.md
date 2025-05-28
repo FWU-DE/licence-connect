@@ -24,7 +24,6 @@ LC Halt is built using [FastAPI](https://fastapi.tiangolo.com).
 - docker & docker compose
 - [bun](https://bun.sh/)
 - [uv](https://github.com/astral-sh/uv)
-- Python 3
 
 Run LC Halt:
 
