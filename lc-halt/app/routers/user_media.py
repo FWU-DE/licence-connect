@@ -1,16 +1,12 @@
-import os
 from typing import Annotated, List, Optional
 from fastapi import APIRouter, Body, HTTPException, Response, status
-from motor import motor_asyncio
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 from pymongo import ReturnDocument
 from ..logger import logger
+from ..db import db
 from .licenced_media import LicencedMedium
 
 router = APIRouter(prefix="/admin/user_media", tags=["Administration"])
-
-client = motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URL"))
-db = client.get_database(os.getenv("MONGO_DB_NAME"))
 
 user_media_collection = db.get_collection("user_media")
 
