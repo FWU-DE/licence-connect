@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-router = APIRouter()
+router = APIRouter(prefix="/admin", tags=["Administration"])
 
 
-@router.get("/admin/test")
+@router.get("/test")
 async def test():
     return

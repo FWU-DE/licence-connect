@@ -3,7 +3,7 @@ from fastapi import APIRouter, Query
 from pydantic import BaseModel
 from ..logger import logger
 
-router = APIRouter()
+router = APIRouter(tags=["Public"])
 
 
 class LicencedMedium(BaseModel):
