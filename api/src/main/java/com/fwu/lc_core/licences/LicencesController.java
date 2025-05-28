@@ -27,7 +27,7 @@ public class LicencesController {
     LicencesCollector licencesCollector;
 
     @GetMapping("/v1/licences/request")
-    private Flux<ResponseEntity<ODRLLicenceResponse>> request(
+    private Flux<ODRLLicenceResponse> request(
             @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
@@ -36,7 +36,7 @@ public class LicencesController {
                 .flatMap(LicencesParser::parse)
                 .map(licenceList -> {
                     log.info("Found {} licences for client: {}", licenceList.permission.size(), clientName);
-                    return ResponseEntity.ok(licenceList);
+                    return licenceList;
                 })
                 .onErrorResume(e -> {
                     log.error("Error collecting licences: {}", e.getMessage());
