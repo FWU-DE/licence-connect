@@ -1,0 +1,17 @@
+services:
+  lc-halt:
+    build:
+      context: ..
+      dockerfile: ./mock-licence-servers/bilo-v2/Dockerfile
+    profiles:
+      - complete-setup
+    ports:
+      - "8000:80"
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    env_file:
+      - ../.env
+    ports:
+      - "27017:27017"
