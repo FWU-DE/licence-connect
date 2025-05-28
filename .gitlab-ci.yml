@@ -79,6 +79,9 @@ test_lc_halt:
     - docker
   image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
   stage: test
+  variables:
+    LC_HALT_CLIENT_API_KEY: "test-key"
+    LC_HALT_ADMIN_API_KEY: "admin-key"
   rules:
     # Run the job for a push to a branch that has an existing MR
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -94,6 +97,7 @@ test_lc_halt:
       when: never
   script:
     - cd lc-halt
+    - uv sync --all-extras
     - uv run pytest
 
 dockerize_api:
