@@ -13,10 +13,10 @@ import java.util.Optional;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
 public class LCHaltClient {
-    private final String apiUrl;
+    private final String licenceUrl;
 
-    public LCHaltClient(String apiUrl) {
-        this.apiUrl = apiUrl;
+    public LCHaltClient(String licenceUrl) {
+        this.licenceUrl = licenceUrl;
     }
 
     @Value("${lcHalt.clientApiKey}")
@@ -31,12 +31,11 @@ public class LCHaltClient {
             throw new IllegalArgumentException("A non-empty userId parameter is required.");
 
         WebClient webClient = WebClient.builder()
-                .baseUrl(apiUrl)
+                .baseUrl(licenceUrl)
                 .build();
 
         String responseBody = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                    .path("/licences/")
                     .queryParam("userId", userId)
                     .queryParamIfPresent("bundesland", Optional.ofNullable(bundesland))
                     .queryParamIfPresent("schulnummer", Optional.ofNullable(schulnummer))
