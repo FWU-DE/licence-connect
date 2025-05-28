@@ -95,9 +95,10 @@ test_lc_halt:
     # Never run job for a pushed tag
     - if: $CI_COMMIT_TAG
       when: never
-  script:
+  before_script:
     - cd lc-halt
     - uv sync --locked --no-install-project --no-dev
+  script:
     - uv run pytest
 
 dockerize_api:
