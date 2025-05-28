@@ -46,5 +46,8 @@ async def read_assigned_licences(
         f"Received request with userId {userId}, bundesland {bundesland}, schulnummer {schulnummer}"
     )
     return LicenceResponse(
-        userId=userId, bundesland=bundesland, schulnummer=schulnummer, licencedMedia=[]
+        userId=userId,
+        bundesland=bundesland,
+        schulnummer=schulnummer,
+        licencedMedia=[LicencedMedium(id="BWS-05050634")],
     )
