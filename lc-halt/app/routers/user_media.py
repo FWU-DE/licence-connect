@@ -1,11 +1,11 @@
 import os
 from typing import Annotated, List, Optional
-from bson import ObjectId
 from fastapi import APIRouter, Body, HTTPException, Response, status
 from motor import motor_asyncio
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 from pymongo import ReturnDocument
 from ..logger import logger
+from .licenced_media import LicencedMedium
 
 router = APIRouter(prefix="/admin/user_media", tags=["Administration"])
 
@@ -29,7 +29,7 @@ class UserMediaModel(BaseModel):
 
     user_id: str = Field(...)
 
-    licenced_media: list[str] = Field(...)
+    licenced_media: list[LicencedMedium] = Field(...)
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -40,26 +40,8 @@ class UserMediaModel(BaseModel):
     )
 
 
-class UpdateUserMediaModel(BaseModel):
-    """
-    A set of optional updates to be made to a document in the database.
-    """
-
-    user_id: Optional[str] = None
-
-    licenced_media: Optional[list[str]] = None
-
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True,
-        json_encoders={ObjectId: str},
-        json_schema_extra={
-            "example": {"user_id": "1234", "licenced_media": ["BWS-05050634"]}
-        },
-    )
-
-
 class SetMediaModel(BaseModel):
-    licenced_media: list[str] = []
+    licenced_media: list[LicencedMedium]
 
 
 class UserMediaCollection(BaseModel):
