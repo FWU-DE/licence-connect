@@ -1,5 +1,7 @@
 package com.fwu.lc_core.licences;
 
+import com.fwu.lc_core.licences.collection.ArixClient;
+import com.fwu.lc_core.licences.collection.LCHaltClient;
 import com.fwu.lc_core.licences.collection.LicencesCollector;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
@@ -46,13 +48,16 @@ class LicencesControllerWithFailingServerTests {
         @Autowired
         private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
+        @Autowired
+        private LCHaltClient lchaltClient;
+
         @Value("${arix.rejecting.url}")
         String arixUrlRejecting;
 
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
-            return new LicencesCollector(arixUrlRejecting);
+            return new LicencesCollector(clientLicenseHolderFilterService, arixUrlRejecting, lchaltClient);
         }
     }
 

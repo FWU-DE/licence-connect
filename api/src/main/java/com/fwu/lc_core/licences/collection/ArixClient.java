@@ -3,6 +3,8 @@ package com.fwu.lc_core.licences.collection;
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -12,10 +14,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+@Component
 public class ArixClient {
     private final String apiUrl;
-    public ArixClient(String apiUrl) {
+
+    public ArixClient(@Value("${arix.accepting.url}") String apiUrl) {
         this.apiUrl = apiUrl;
     }
 

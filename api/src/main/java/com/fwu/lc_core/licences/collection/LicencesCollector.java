@@ -14,16 +14,14 @@ import java.util.EnumSet;
 
 @Component
 public class LicencesCollector {
-    @Autowired
-    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+    private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
+    private final LCHaltClient lcHaltClient;
+    private final ArixClient arixClient;
 
-    @Autowired
-    private LCHaltClient lcHaltClient;
-
-    private final String arixUrl;
-
-    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl) {
-        this.arixUrl = arixUrl;
+    public LicencesCollector(ClientLicenseHolderFilterService clientLicenseHolderFilterService, @Value("${arix.accepting.url}") String arixUrl, LCHaltClient lcHaltClient) {
+        this.clientLicenseHolderFilterService = clientLicenseHolderFilterService;
+        this.arixClient = new ArixClient(arixUrl);
+        this.lcHaltClient = lcHaltClient;
     }
 
     public Flux<UnparsedLicences> getUnparsedLicences(LicencesRequestDto params, String clientName) {
@@ -37,14 +35,13 @@ public class LicencesCollector {
         if (!availableLicenceHolders.contains(AvailableLicenceHolders.ARIX))
             return Mono.empty();
 
-        var arixClient = new ArixClient(arixUrl);
         return arixClient.getLicences(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
     }
 
     private Mono<UnparsedLicences> getUnparsedLCHaltLicences(LicencesRequestDto params, EnumSet<AvailableLicenceHolders> availableLicenceHolders) {
         if (!availableLicenceHolders.contains(AvailableLicenceHolders.LC_HALT))
             return Mono.empty();
-        
+
         return lcHaltClient.getLicences(params.userId(), params.bundesland(), params.schulnummer());
     }
 }
