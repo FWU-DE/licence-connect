@@ -156,10 +156,13 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<ODRLLicenceResponse>() {})
+                .expectBody(new ParameterizedTypeReference<List<ODRLLicenceResponse>>() {})
                 .returnResult()
                 .getResponseBody();
 
+        if (response == null) {
+            assertThat(false).isTrue();
+        }
         assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
