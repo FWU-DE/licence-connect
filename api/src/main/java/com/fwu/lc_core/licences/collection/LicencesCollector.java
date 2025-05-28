@@ -17,12 +17,13 @@ public class LicencesCollector {
     @Autowired
     private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
-    private final String arixUrl;
-    private final String lcHaltUrl;
+    @Autowired
+    private LCHaltClient lcHaltClient;
 
-    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl, @Value("${lcHalt.licenceUrl}") String lcHaltUrl) {
+    private final String arixUrl;
+
+    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl) {
         this.arixUrl = arixUrl;
-        this.lcHaltUrl = lcHaltUrl;
     }
 
     public Flux<UnparsedLicences> getUnparsedLicences(LicencesRequestDto params, String clientName) {
@@ -43,8 +44,7 @@ public class LicencesCollector {
     private Mono<UnparsedLicences> getUnparsedLCHaltLicences(LicencesRequestDto params, EnumSet<AvailableLicenceHolders> availableLicenceHolders) {
         if (!availableLicenceHolders.contains(AvailableLicenceHolders.LC_HALT))
             return Mono.empty();
-
-        var lcHaltClient = new LCHaltClient(lcHaltUrl);
+        
         return lcHaltClient.getLicences(params.userId(), params.bundesland(), params.schulnummer());
     }
 }

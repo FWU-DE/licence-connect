@@ -4,6 +4,7 @@ import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -12,12 +13,10 @@ import java.util.Optional;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
+@Component
 public class LCHaltClient {
-    private final String licenceUrl;
-
-    public LCHaltClient(String licenceUrl) {
-        this.licenceUrl = licenceUrl;
-    }
+    @Value("${lcHalt.licenceUrl}")
+    private String licenceUrl;
 
     @Value("${lcHalt.clientApiKey}")
     private String lcHaltClientApiKey;
