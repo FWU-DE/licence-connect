@@ -20,7 +20,7 @@ public class LicencesCollector {
     private final String arixUrl;
     private final String lcHaltUrl;
 
-    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl, @Value("${lc-halt-url}") String lcHaltUrl) {
+    public LicencesCollector(@Value("${arix.accepting.url}") String arixUrl, @Value("${lcHalt.licenceUrl}") String lcHaltUrl) {
         this.arixUrl = arixUrl;
         this.lcHaltUrl = lcHaltUrl;
     }
