@@ -12,5 +12,10 @@ app = FastAPI(
 )
 
 
+@app.get("/")
+async def read_main():
+    return {"msg": "Welcome to LC Halt"}
+
+
 app.include_router(admin.router)
 app.include_router(licenced_media.router)

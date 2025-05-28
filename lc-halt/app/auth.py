@@ -20,8 +20,13 @@ admin_api_key = os.getenv(admin_api_key_env_variable_name)
 
 req_api_key = APIKeyHeader(name="x-api-key", auto_error=False)
 
+public_routes = ["/"]
+
 
 async def handle_api_key(req: Request, key: str = Security(req_api_key)):
+    if req.url.path in public_routes:
+        return
+
     if key not in [client_api_key, admin_api_key]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
