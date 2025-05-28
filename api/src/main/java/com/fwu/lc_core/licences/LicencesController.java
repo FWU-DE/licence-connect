@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.lang.annotation.ElementType;
@@ -26,21 +27,21 @@ public class LicencesController {
     LicencesCollector licencesCollector;
 
     @GetMapping("/v1/licences/request")
-    private Mono<ResponseEntity<ODRLLicenceResponse>> request(
+    private Flux<ResponseEntity<ODRLLicenceResponse>> request(
             @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
             @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
-        Mono<ODRLLicenceResponse> licences = licencesCollector.getUnparsedLicences(requestDto, clientName).flatMap(LicencesParser::parse);
-        return licences
+        return licencesCollector
+                .getUnparsedLicences(requestDto, clientName)
+                .flatMap(LicencesParser::parse)
                 .map(licenceList -> {
                     log.info("Found {} licences for client: {}", licenceList.permission.size(), clientName);
                     return ResponseEntity.ok(licenceList);
                 })
                 .onErrorResume(e -> {
-                            log.error("Error collecting licences: {}", e.getMessage());
-                            return Mono.empty();
-                        }
-                );
+                    log.error("Error collecting licences: {}", e.getMessage());
+                    return Mono.empty();
+                });
     }
 }
 
