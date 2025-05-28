@@ -14,7 +14,7 @@ def test_read_main():
 
 def test_admin_without_key_unauthorized():
     response = client.get("/admin/test")
-    assert response.status_code == 402
+    assert response.status_code == 401
 
 
 def test_admin_with_client_key_forbidden():
