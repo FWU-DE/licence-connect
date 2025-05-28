@@ -203,7 +203,7 @@ class LicencesControllerWithWorkingServerTests {
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(result).isNull();
+        assertThat(result).isEqualTo("[]");
     }
 
     @Test
