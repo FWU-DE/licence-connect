@@ -1,15 +1,17 @@
 {
-  "name": "lc-api",
-  "module": "index.ts",
-  "type": "module",
+  "name": "licence-connect",
   "private": true,
+  "workspaces": [
+    "api",
+    "lc-halt"
+  ],
   "scripts": {
-    "run:core": "cd api && (set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)",
-    "run:lc-halt": "cd lc-halt && (set -a && source ../.env && set +a && uv run fastapi dev app/main.py)",
+    "run:core": "bun run --elide-lines 0 --filter 'api' run:dev",
+    "run:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' run:dev",
     "run:mock-licence-servers": "docker compose -f mock-licence-servers/docker-compose.yml up -d",
-    "test:mocked": "cd api && ./mvnw test -Dspring.profiles.active=auto-start-mocks,local",
-    "test": "cd api && (set -a && source ../.env && set +a && ./mvnw test)",
+    "test:mocked": "bun run --elide-lines 0 --filter 'api' test:mocked",
+    "test": "bun run --elide-lines 0 --filter 'api' test",
     "format:python": "uvx ruff format",
-    "build-container:lc-halt": "docker build -t lc-halt ./lc-halt"
+    "build-container:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' build-container"
   }
 }
