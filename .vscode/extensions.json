@@ -1,6 +1,7 @@
 {
-    "recommendations": [
-        "asciidoctor.asciidoctor-vscode",
-        "charliermarsh.ruff"
-    ]
+  "recommendations": [
+    "asciidoctor.asciidoctor-vscode",
+    "charliermarsh.ruff",
+    "oven.bun-vscode"
+  ]
 }
