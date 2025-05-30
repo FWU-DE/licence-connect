@@ -9,6 +9,11 @@ admin_api_key = os.getenv("LC_HALT_ADMIN_API_KEY")
 client_api_key = os.getenv("LC_HALT_CLIENT_API_KEY")
 
 
+def test_licenced_media_no_query_params_bad_request():
+    response = client.get("/licenced-media", headers={"x-api-key": client_api_key})
+    assert response.status_code == 422
+
+
 def test_assign_media_no_params_bad_request():
     response = client.post(
         "/admin/media-licence-assignment",
