@@ -43,9 +43,6 @@ public class LicencesCollector {
 
             log.info("Found {} licences for client: {}", permissions.size(), clientName);
             return new ODRLLicenceResponse(permissions);
-        }).onErrorResume(e -> {
-            log.error("Error collecting licences: {}", e.getMessage());
-            return Mono.empty();
         });
     }
 
@@ -55,12 +52,22 @@ public class LicencesCollector {
 
         if (allowedLicenceHolders.contains(AvailableLicenceHolders.ARIX)) {
             var arixPermissions = arixClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
-            publishers.add(arixPermissions);
+            publishers.add(arixPermissions.onErrorResume(
+                    e -> {
+                        log.error("Error fetching ARIX licences: {}", e.getMessage());
+                        return Mono.just(new ArrayList<>());
+                    }
+            ));
         }
 
         if (allowedLicenceHolders.contains(AvailableLicenceHolders.LC_HALT)) {
             var lcHaltPermissions = lcHaltClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
-            publishers.add(lcHaltPermissions);
+            publishers.add(lcHaltPermissions.onErrorResume(
+                    e -> {
+                        log.error("Error fetching LC-Halt licences: {}", e.getMessage());
+                        return Mono.just(new ArrayList<>());
+                    }
+            ));
         }
 
         return publishers;
