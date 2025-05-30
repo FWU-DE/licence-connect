@@ -87,9 +87,10 @@ test_lc_halt:
         MONGO_INITDB_ROOT_PASSWORD: password
         MONGO_INITDB_DATABASE: lchalt
   variables:
+    UV_LINK_MODE: copy
     LC_HALT_CLIENT_API_KEY: "test-key"
     LC_HALT_ADMIN_API_KEY: "admin-key"
-    MONGODB_URL: "mongodb://mongo:password@localhost:27017/lchalt?authSource=admin"
+    MONGODB_URL: "mongodb://mongo:password@mongodb:27017/lchalt?authSource=admin"
   rules:
     # Run the job for a push to a branch that has an existing MR
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
