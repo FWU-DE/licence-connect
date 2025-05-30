@@ -4,6 +4,7 @@ import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.licences.models.ODRLAction;
 import com.fwu.lc_core.shared.Bundesland;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -65,11 +66,12 @@ public class ArixClient {
     }
 }
 
+@Slf4j
 class ArixParser {
     static List<ODRLLicenceResponse.Permission> parse(String responseBody) throws Exception {
         var rootElement = extractXmlRootElementFromRawResult(responseBody);
         var nodesWithNameR = extractXmlNodesWithNameR(rootElement);
-        return nodesWithNameR.stream().map(e -> {
+        var permissions = nodesWithNameR.stream().map(e -> {
             try {
                 return new ODRLLicenceResponse.Permission(
                         extractLicenceCodeFrom(e),
@@ -80,6 +82,8 @@ class ArixParser {
                 throw new RuntimeException("Error extracting licence code from node: " + e, ex);
             }
         }).toList();
+        log.info("Found {} licences on `{}`", permissions.size(), LicenceHolder.ARIX);
+        return permissions;
     }
 
     private static Element extractXmlRootElementFromRawResult(String responseBody) throws Exception {

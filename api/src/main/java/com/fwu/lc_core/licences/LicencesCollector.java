@@ -41,7 +41,7 @@ public class LicencesCollector {
                     .flatMap(List::stream)
                     .toList();
 
-            log.info("Found {} licences for client: {}", permissions.size(), clientName);
+            log.info("Found {} licences in total for client: {}", permissions.size(), clientName);
             return new ODRLLicenceResponse(permissions);
         });
     }
