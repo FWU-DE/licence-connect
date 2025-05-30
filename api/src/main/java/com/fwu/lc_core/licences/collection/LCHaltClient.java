@@ -15,10 +15,10 @@ import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
 @Component
 public class LCHaltClient {
-    @Value("${lcHalt.licenceUrl}")
+    @Value("${lc-halt.licence-url}")
     private String licenceUrl;
 
-    @Value("${lcHalt.clientApiKey}")
+    @Value("${lc-halt.client-api-key}")
     private String lcHaltClientApiKey;
 
     public Mono<UnparsedLicences> getLicences(String userId, Bundesland bundesland, String schulnummer) {
