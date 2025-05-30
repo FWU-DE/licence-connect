@@ -1,7 +1,6 @@
-package com.fwu.lc_core.licences.collection;
+package com.fwu.lc_core.licences.clients;
 
-import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.UnparsedLicences;
+import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -9,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
@@ -21,13 +22,12 @@ public class LCHaltClient {
     @Value("${lc-halt.client-api-key}")
     private String lcHaltClientApiKey;
 
-    public Mono<UnparsedLicences> getLicences(String userId, Bundesland bundesland, String schulnummer) {
-        return Mono.fromCallable(() -> getLicencesBlocking(userId, bundesland, schulnummer)).subscribeOn(Schedulers.boundedElastic());
+    public Mono<List<ODRLLicenceResponse.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private UnparsedLicences getLicencesBlocking(String userId, Bundesland bundesland, String schulnummer) {
-        if (userId == null)
-            throw new IllegalArgumentException("A non-empty userId parameter is required.");
+    private List<ODRLLicenceResponse.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        validateParameters(bundesland, standortnummer, schulnummer, userId);
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(licenceUrl)
@@ -42,6 +42,18 @@ public class LCHaltClient {
                 .header(API_KEY_HEADER, lcHaltClientApiKey)
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
 
-        return new UnparsedLicences(LicenceHolder.LC_HALT, responseBody);
+        return LCHaltParser.parse(responseBody);
+    }
+
+    private static void validateParameters(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("A non-empty userId parameter is required.");
+        }
+    }
+}
+
+class LCHaltParser {
+    static List<ODRLLicenceResponse.Permission> parse(String responseBody) {
+        return new ArrayList<ODRLLicenceResponse.Permission>();
     }
 }

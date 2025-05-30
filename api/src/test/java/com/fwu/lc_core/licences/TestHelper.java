@@ -6,7 +6,7 @@ import java.util.List;
 
 public class TestHelper {
     public static List<String> extractLicenceCodesFrom(ODRLLicenceResponse licence) {
-        return licence.permission
+        return licence.permissions
                 .stream()
                 .map(l -> l.target)
                 .toList();
@@ -14,7 +14,7 @@ public class TestHelper {
 
     public static List<String> extractLicenceCodesFrom(List<ODRLLicenceResponse> licences) {
         return licences.stream()
-                .flatMap(licence -> licence.permission.stream())
+                .flatMap(licence -> licence.permissions.stream())
                 .map(l -> l.target)
                 .toList();
     }

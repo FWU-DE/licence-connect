@@ -2,7 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
-import com.fwu.lc_core.licences.models.OdrlAction;
+import com.fwu.lc_core.licences.models.ODRLAction;
 import com.fwu.lc_core.licences.models.UnparsedLicences;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SpringBootTest
 public class LicencesParserArixTests {
-    private static final OdrlAction EXPECTED_ACTION = OdrlAction.Use;
+    private static final ODRLAction EXPECTED_ACTION = ODRLAction.Use;
     private static final LicenceHolder EXPECTED_ASSIGNER = LicenceHolder.ARIX;
 
 
@@ -62,13 +62,13 @@ public class LicencesParserArixTests {
 
     private static void assertThatCorrectLicenceResponseCreated(List<String> expectedLicenceCodes, ODRLLicenceResponse licence) {
         assertThat(licence).isNotNull();
-        assertThat(licence.permission.size()).isEqualTo(expectedLicenceCodes.size());
+        assertThat(licence.permissions.size()).isEqualTo(expectedLicenceCodes.size());
         assertLicenceResponseMetaData(licence);
-        if (licence.permission.isEmpty()) {
+        if (licence.permissions.isEmpty()) {
             return;
         }
         for (final String expectedTarget : expectedLicenceCodes) {
-            var permission = licence.permission.stream().filter(p -> p.target.equals(expectedTarget)).findFirst().orElse(null);
+            var permission = licence.permissions.stream().filter(p -> p.target.equals(expectedTarget)).findFirst().orElse(null);
             assertThatTargetsAllowUseIssuedByArixAndMatchTarget(expectedTarget, permission);
         }
     }
