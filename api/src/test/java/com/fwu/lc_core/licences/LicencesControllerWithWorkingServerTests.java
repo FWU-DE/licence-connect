@@ -206,7 +206,7 @@ class LicencesControllerWithWorkingServerTests {
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(result).isEqualTo("[]");
+        assertThat(result).isNull();
     }
 
     @Test
@@ -228,7 +228,7 @@ class LicencesControllerWithWorkingServerTests {
 
         assertThat(output.getOut()).contains("Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
         assertThat(output.getOut()).contains("Found ");
-        assertThat(output.getOut()).contains(" licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
+        assertThat(output.getOut()).contains(" licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
 
     @Test
@@ -236,7 +236,7 @@ class LicencesControllerWithWorkingServerTests {
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
         String expectedFirstLog = "Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
-        String expectedSecondLog = "Found 6 licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
+        String expectedSecondLog = "Found 6 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
 
         webTestClient
                 .get()
