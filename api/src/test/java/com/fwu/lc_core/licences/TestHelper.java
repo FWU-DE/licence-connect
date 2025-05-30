@@ -11,11 +11,4 @@ public class TestHelper {
                 .map(l -> l.target)
                 .toList();
     }
-
-    public static List<String> extractLicenceCodesFrom(List<ODRLLicenceResponse> licences) {
-        return licences.stream()
-                .flatMap(licence -> licence.permissions.stream())
-                .map(l -> l.target)
-                .toList();
-    }
 }

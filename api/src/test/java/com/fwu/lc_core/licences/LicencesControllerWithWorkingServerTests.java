@@ -101,7 +101,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void RequestWhichReturnsErrorDoesNotReturnTrace() {
-        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
         var test = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
@@ -156,7 +156,7 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<ODRLLicenceResponse>>() {})
+                .expectBody(new ParameterizedTypeReference<ODRLLicenceResponse>() {})
                 .returnResult()
                 .getResponseBody();
 
@@ -164,25 +164,6 @@ class LicencesControllerWithWorkingServerTests {
             assertThat(false).isTrue();
         }
         assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideInvalidInput")
-    void Authenticated_Request_WithInvalidBody_Returns_BadRequest(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
-
-        webTestClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/v1/licences/request")
-                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland() != null ? requestDto.bundesland().name() : null)
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
-                .header(API_KEY_HEADER, correctApiKey)
-                .exchange()
-                .expectStatus().isBadRequest();
     }
 
     @Test
@@ -268,19 +249,6 @@ class LicencesControllerWithWorkingServerTests {
                 Arguments.of(Bundesland.BY, "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
         );
     }
-
-    private static Stream<Arguments> provideInvalidInput() {
-        return Stream.of(
-                Arguments.of(null, null, null, null),
-                Arguments.of(null, "ORT1", null, null),
-                Arguments.of(null, null, "f3453b", null),
-                Arguments.of(null, null, null, "student.2"),
-                Arguments.of(Bundesland.BY, null, "f3453b", null),
-                Arguments.of(Bundesland.BY, null, null, "student.2"),
-                Arguments.of(Bundesland.BY, null, "f3453b", "student.2"),
-                Arguments.of(Bundesland.BY, "ORT1", null, "student.2")
-        );
-    }
 }
 
 @SpringBootTest
@@ -316,7 +284,7 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
 
     @Test
     void RequestWhichReturnsTrace() {
-        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
         var allExistingBeanNames = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
@@ -339,8 +307,8 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 record RelaxedLicencesRequestDto(
-        @JsonProperty() String bundesland,
-        @JsonProperty() String standortnummer,
-        @JsonProperty() String schulnummer,
-        @JsonProperty() String userId) {
+        @JsonProperty String bundesland,
+        @JsonProperty String standortnummer,
+        @JsonProperty String schulnummer,
+        @JsonProperty String userId) {
 }

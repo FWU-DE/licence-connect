@@ -27,8 +27,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 @AutoConfigureWebTestClient
 @ExtendWith(OutputCaptureExtension.class)
-@Import(LicencesControllerWithFailingServerTests.CustomTestConfig.class)
-class LicencesControllerWithFailingServerTests {
+@Import(LicencesControllerWithFailingArixServerTests.CustomTestConfig.class)
+class LicencesControllerWithFailingArixServerTests {
     private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
     @Autowired
     private WebTestClient webTestClient;
@@ -78,6 +78,6 @@ class LicencesControllerWithFailingServerTests {
                 .exchange()
                 .expectStatus().isOk();
 
-        assertThat(output.getOut()).contains("Error collecting licences:");
+        assertThat(output.getOut()).contains("Error fetching ARIX licences: <error>Sorry, interface search not allowed for your IP</error>");
     }
 }
