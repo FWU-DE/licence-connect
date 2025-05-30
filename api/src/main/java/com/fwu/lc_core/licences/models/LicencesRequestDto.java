@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record LicencesRequestDto(
-        @JsonProperty(required = true) @NotNull Bundesland bundesland,
-        @JsonProperty() String standortnummer,
-        @JsonProperty() String schulnummer,
-        @JsonProperty() String userId) {
+        @JsonProperty Bundesland bundesland,
+        @JsonProperty String standortnummer,
+        @JsonProperty String schulnummer,
+        @JsonProperty String userId) {
 }
