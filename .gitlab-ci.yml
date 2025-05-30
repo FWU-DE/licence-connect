@@ -79,9 +79,17 @@ test_lc_halt:
     - docker
   image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
   stage: test
+  services:
+    - name: mongo:8.0
+      alias: mongodb
+      variables:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: password
+        MONGO_INITDB_DATABASE: lchalt
   variables:
     LC_HALT_CLIENT_API_KEY: "test-key"
     LC_HALT_ADMIN_API_KEY: "admin-key"
+    MONGODB_URL: "mongodb://mongo:password@localhost:27017/lchalt?authSource=admin"
   rules:
     # Run the job for a push to a branch that has an existing MR
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"

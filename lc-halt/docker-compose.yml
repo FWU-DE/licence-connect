@@ -9,7 +9,7 @@ services:
       - "8000:80"
 
   mongodb:
-    image: mongo:latest
+    image: mongo:8.0
     restart: always
     env_file:
       - ../.env
