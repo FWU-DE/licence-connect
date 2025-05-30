@@ -1,7 +1,6 @@
 from fastapi import Depends, FastAPI
-from .auth import handle_api_key
-from app.routers import admin, licenced_media, user_media
-
+from app.util.auth import handle_api_key
+from app.media_management import licenced_media_controller, media_assignment_controller
 
 app = FastAPI(
     title="LC Halt",
@@ -13,10 +12,12 @@ app = FastAPI(
 
 
 @app.get("/health", tags=["Public"])
-async def read_main():
+async def health():
+    """
+    Check application health status
+    """
     return {"status": "healthy"}
 
 
-app.include_router(admin.router)
-app.include_router(licenced_media.router)
-app.include_router(user_media.router)
+app.include_router(licenced_media_controller.router)
+app.include_router(media_assignment_controller.router)

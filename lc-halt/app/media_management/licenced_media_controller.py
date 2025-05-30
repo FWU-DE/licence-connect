@@ -1,25 +1,18 @@
 from typing import Annotated
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
-from ..logger import logger
+from app.util.logger import logger
+from .media_management import Medium
+from . import media_management
 
 router = APIRouter(tags=["Public"])
-
-
-class LicencedMedium(BaseModel):
-    """
-    Represents one licenced medium.
-    Further information regarding the licencing of this medium may be added here.
-    """
-
-    id: str
 
 
 class LicenceResponse(BaseModel):
     userId: str
     bundesland: str | None = None
     schulnummer: str | None = None
-    licencedMedia: list[LicencedMedium]
+    licencedMedia: list[Medium]
 
 
 @router.get("/licenced-media")
@@ -45,9 +38,12 @@ async def read_assigned_licences(
     logger.info(
         f"Received request with userId {userId}, bundesland {bundesland}, schulnummer {schulnummer}"
     )
+    assigned_media = await media_management.get_all_assigned_media(
+        user_id=userId, bundesland_id=bundesland, schul_id=schulnummer
+    )
     return LicenceResponse(
         userId=userId,
         bundesland=bundesland,
         schulnummer=schulnummer,
-        licencedMedia=[LicencedMedium(id="BWS-05050634")],
+        licencedMedia=assigned_media,
     )
