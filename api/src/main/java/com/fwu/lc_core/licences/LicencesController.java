@@ -25,29 +25,8 @@ public class LicencesController {
     LicencesCollector licencesCollector;
 
     @GetMapping("/v1/licences/request")
-    private Mono<ODRLLicenceResponse> request(
-            @Valid @ValidLicencesRequest @ParameterObject LicencesRequestDto requestDto,
-            @RequestParam String clientName) {
+    private Mono<ODRLLicenceResponse> request(@ParameterObject LicencesRequestDto requestDto, @RequestParam String clientName) {
         log.info("Received licence request for client: {}", clientName);
         return licencesCollector.getODRLLicenceResponse(requestDto, clientName);
     }
-}
-
-
-class LicencesRequestValidator implements ConstraintValidator<ValidLicencesRequest, LicencesRequestDto> {
-    @Override
-    public boolean isValid(LicencesRequestDto params, ConstraintValidatorContext context) {
-        return params.bundesland() != null &&
-                (params.standortnummer() != null || params.schulnummer() == null) &&
-                (params.schulnummer() != null || params.userId() == null);
-    }
-}
-
-@Constraint(validatedBy = LicencesRequestValidator.class)
-@Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@interface ValidLicencesRequest {
-    String message() default "Invalid request parameters";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 }
