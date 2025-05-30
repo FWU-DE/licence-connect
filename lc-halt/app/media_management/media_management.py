@@ -155,6 +155,16 @@ async def get_all_assigned_media(
 
 
 def assert_media_assignment_is_valid(assignment: LicencedMediaAssignment):
+    if (
+        (assignment.user_id is None)
+        & (assignment.bundesland_id is None)
+        & (assignment.schul_id is None)
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Media must be assigned to specific users or bundesland/schule",
+        )
+
     if (assignment.schul_id is not None) & (assignment.bundesland_id is None):
         raise HTTPException(
             status_code=400,

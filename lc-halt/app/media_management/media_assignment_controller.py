@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body, status
 from .media_management import LicencedMediaAssignmentModel, LicencedMediaAssignment
 from . import media_management
 
-router = APIRouter(prefix="/admin/media_licence_assignment", tags=["Administration"])
+router = APIRouter(prefix="/admin/media-licence-assignment", tags=["Administration"])
 
 
 @router.get(
