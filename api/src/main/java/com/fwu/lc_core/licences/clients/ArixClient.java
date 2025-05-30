@@ -31,10 +31,10 @@ public class ArixClient {
     }
 
     public Mono<List<ODRLLicenceResponse.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        return Mono.fromCallable(() -> getLicencesBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
+        return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private List<ODRLLicenceResponse.Permission> getLicencesBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
+    private List<ODRLLicenceResponse.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
         validateParameters(bundesland, standortnummer, schulnummer, userId);
 
         WebClient webClient = WebClient.builder()
