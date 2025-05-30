@@ -21,8 +21,11 @@ import java.lang.annotation.Target;
 @RestController
 public class LicencesController {
 
-    @Autowired
-    LicencesCollector licencesCollector;
+    final LicencesCollector licencesCollector;
+
+    public LicencesController(LicencesCollector licencesCollector) {
+        this.licencesCollector = licencesCollector;
+    }
 
     @GetMapping("/v1/licences/request")
     private Mono<ODRLLicenceResponse> request(@ParameterObject LicencesRequestDto requestDto, @RequestParam String clientName) {
