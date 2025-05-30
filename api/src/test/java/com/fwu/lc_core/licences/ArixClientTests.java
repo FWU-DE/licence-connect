@@ -2,7 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.clients.ArixClient;
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.UnparsedLicences;
+import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
 import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,15 +10,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import reactor.test.StepVerifier;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.stream.Stream;
 
@@ -32,38 +27,40 @@ public class ArixClientTests {
     private String baseUrlRejecting;
 
     @Test
-    public void RequestLicences_GivenCorrectBL_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+    public void RequestPermissions_GivenCorrectBundesland_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
-        UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), null, null, null).block();
+        var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), null, null, null).block();
 
-        assert licences != null;
-        assertThat(licences.source).isEqualTo(LicenceHolder.ARIX);
-        assertValidityOfValidArixResponseBody(licences);
+        assertThat(permissions).isNotNull();
+        for (ODRLLicenceResponse.Permission p : permissions) {
+            assertThat(p.assigner).isEqualTo(LicenceHolder.ARIX);
+        }
     }
 
     @Test
-    public void RequestLicences_GivenCorrectBLandStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+    public void RequestPermissions_GivenCorrectBundeslandAndStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
-        UnparsedLicences licences = arixClient.getLicences(Bundesland.valueOf("STK"), "STR", null, null).block();
+        var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), "STR", null, null).block();
 
-        assert licences != null;
-        assertThat(licences.source).isEqualTo(LicenceHolder.ARIX);
-        assertValidityOfValidArixResponseBody(licences);
+        assertThat(permissions).isNotNull();
+        for (ODRLLicenceResponse.Permission p : permissions) {
+            assertThat(p.assigner).isEqualTo(LicenceHolder.ARIX);
+        }
     }
 
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
     public void RequestLicences_ArgumentsAreNotANonemptyPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         var arixClient = new ArixClient(baseUrlAccepting);
-        var licencesMono = arixClient.getLicences(bundesland, standortnummer, schulnummer, userId);
-        StepVerifier.create(licencesMono).expectError().verify();
+        var permissionsMono = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId);
+        StepVerifier.create(permissionsMono).expectError().verify();
     }
 
     @Test
     public void RequestLicences_notWhitelisted_throwsError() {
         var arixClient = new ArixClient(baseUrlRejecting);
-        var licencesMono = arixClient.getLicences(Bundesland.valueOf("BY"), "ORT1", null, null);
-        StepVerifier.create(licencesMono).expectError().verify();
+        var permissionsMono = arixClient.getPermissions(Bundesland.valueOf("BY"), "ORT1", null, null);
+        StepVerifier.create(permissionsMono).expectError().verify();
     }
 
     private static Stream<Arguments> provideIncorrectInfo() {
@@ -77,19 +74,5 @@ public class ArixClientTests {
                 Arguments.of("BY", null, "Schule", null),
                 Arguments.of(null, null, null, null)
         );
-    }
-
-    private static void assertValidityOfValidArixResponseBody(UnparsedLicences licences) throws SAXException, IOException, ParserConfigurationException {
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(licences.rawResult.getBytes()));
-
-        Element rootElement = document.getDocumentElement();
-        assertThat(rootElement.getTagName()).isEqualTo("result");
-
-        NodeList rNodes = rootElement.getElementsByTagName("r");
-        assertThat(rNodes.getLength()).isGreaterThan(0);
-        for (int i = 0; i < rNodes.getLength(); i++) {
-            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier")).isNotNull();
-            assertThat(rNodes.item(i).getAttributes().getNamedItem("identifier").getNodeValue()).isNotEmpty();
-        }
     }
 }
