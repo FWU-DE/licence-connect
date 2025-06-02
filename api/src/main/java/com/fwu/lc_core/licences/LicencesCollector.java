@@ -28,8 +28,8 @@ public class LicencesCollector {
         this.lcHaltClient = lcHaltClient;
     }
 
-    public Mono<ODRLPolicy> getODRLPolicy(Licencee params, String clientName) {
-        return Mono.zip(collectPermissions(params, clientName), results -> {
+    public Mono<ODRLPolicy> getODRLPolicy(Licencee licencee, String clientName) {
+        return Mono.zip(collectPermissions(licencee, clientName), results -> {
             // FIXME: This is a workaround for the type erasure that occurs with Mono.zip
             // I'd rather have a proper type check here or another way of
             // concatenating a 0-n list of lists of permissions with Mono.zip.
@@ -44,12 +44,12 @@ public class LicencesCollector {
         });
     }
 
-    private List<Mono<List<ODRLPolicy.Permission>>> collectPermissions(Licencee params, String clientName) {
+    private List<Mono<List<ODRLPolicy.Permission>>> collectPermissions(Licencee licencee, String clientName) {
         var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
         var publishers = new ArrayList<Mono<List<ODRLPolicy.Permission>>>();
 
         if (allowedLicenceHolders.contains(LicenceHolder.ARIX)) {
-            var arixPermissions = arixClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
+            var arixPermissions = arixClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
             publishers.add(arixPermissions.onErrorResume(
                     e -> {
                         log.error("Error fetching ARIX licences: {}", e.getMessage());
@@ -59,7 +59,7 @@ public class LicencesCollector {
         }
 
         if (allowedLicenceHolders.contains(LicenceHolder.LC_HALT)) {
-            var lcHaltPermissions = lcHaltClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
+            var lcHaltPermissions = lcHaltClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
             publishers.add(lcHaltPermissions.onErrorResume(
                     e -> {
                         log.error("Error fetching LC-Halt licences: {}", e.getMessage());
