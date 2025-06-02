@@ -1,5 +1,6 @@
 package com.fwu.lc_core.licences.clients.arix;
 
+import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,10 +52,25 @@ public class ArixClient {
     }
 
     private static void validateParameters(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        if (bundesland == null)
+        if (bundesland == null) {
             throw new IllegalArgumentException("You must provide a Bundesland.");
-        if ((standortnummer == null && schulnummer != null) || (schulnummer == null && userId != null))
-            throw new IllegalArgumentException("If you provide a parameter, you must provide all parameters before it.");
+        }
+
+        if ((isNullOrEmpty(standortnummer) && isNotNullOrEmpty(schulnummer))) {
+            throw new IllegalArgumentException("If schulnummer is provided, standortnummer must also be provided.");
+        }
+
+        if ((isNullOrEmpty(schulnummer) && isNotNullOrEmpty(userId))) {
+            throw new IllegalArgumentException("If userId is provided, schulnummer must also be provided.");
+        }
+    }
+
+    private static Boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    private static Boolean isNotNullOrEmpty(String str) {
+        return !isNullOrEmpty(str);
     }
 }
 
