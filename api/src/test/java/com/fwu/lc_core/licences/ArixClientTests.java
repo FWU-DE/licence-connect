@@ -2,7 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.clients.ArixClient;
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +32,7 @@ public class ArixClientTests {
         var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), null, null, null).block();
 
         assertThat(permissions).isNotNull();
-        for (ODRLLicenceResponse.Permission p : permissions) {
+        for (ODRLPolicy.Permission p : permissions) {
             assertThat(p.assigner).isEqualTo(LicenceHolder.ARIX);
         }
     }
@@ -43,7 +43,7 @@ public class ArixClientTests {
         var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), "STR", null, null).block();
 
         assertThat(permissions).isNotNull();
-        for (ODRLLicenceResponse.Permission p : permissions) {
+        for (ODRLPolicy.Permission p : permissions) {
             assertThat(p.assigner).isEqualTo(LicenceHolder.ARIX);
         }
     }

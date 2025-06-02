@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class ODRLLicenceResponse {
+public class ODRLPolicy {
     @JsonProperty("@context")
     public final String context = "http://www.w3.org/ns/odrl.jsonld";
     @JsonProperty("@type")
@@ -15,7 +15,7 @@ public class ODRLLicenceResponse {
     public String uid;
     public List<Permission> permissions;
 
-    public ODRLLicenceResponse(List<Permission> permissions) {
+    public ODRLPolicy(List<Permission> permissions) {
         this.permissions = permissions;
         this.uid = "urn:uuid:" + UUID.randomUUID();
     }

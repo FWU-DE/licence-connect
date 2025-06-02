@@ -3,7 +3,7 @@ package com.fwu.lc_core.licences.clients;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLAction;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +26,11 @@ public class LCHaltClient {
     @Value("${lc-halt.client-api-key}")
     private String lcHaltClientApiKey;
 
-    public Mono<List<ODRLLicenceResponse.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private List<ODRLLicenceResponse.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    private List<ODRLPolicy.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         validateParameters(bundesland, standortnummer, schulnummer, userId);
 
         WebClient webClient = WebClient.builder()
@@ -63,7 +63,7 @@ public class LCHaltClient {
 
 @Slf4j
 class LCHaltParser {
-    static List<ODRLLicenceResponse.Permission> parse(String responseBody) {
+    static List<ODRLPolicy.Permission> parse(String responseBody) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             var json = objectMapper.readTree(responseBody);
@@ -72,9 +72,9 @@ class LCHaltParser {
                 throw new RuntimeException("Invalid response format: 'licencedMedia' is missing or not an array.");
             }
 
-            List<ODRLLicenceResponse.Permission> permissions = new ArrayList<>();
+            List<ODRLPolicy.Permission> permissions = new ArrayList<>();
             for (var media : licencedMedia) {
-                permissions.add(new ODRLLicenceResponse.Permission(media.path("id").textValue(), LicenceHolder.LC_HALT, ODRLAction.Use));
+                permissions.add(new ODRLPolicy.Permission(media.path("id").textValue(), LicenceHolder.LC_HALT, ODRLAction.Use));
             }
             log.info("Found {} licences on `{}`", permissions.size(), LicenceHolder.LC_HALT);
             return permissions;

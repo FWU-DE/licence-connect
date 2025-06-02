@@ -3,18 +3,16 @@ package com.fwu.lc_core.licences;
 import com.fwu.lc_core.licences.clients.ArixClient;
 import com.fwu.lc_core.licences.clients.LCHaltClient;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 @Slf4j
@@ -30,25 +28,25 @@ public class LicencesCollector {
         this.lcHaltClient = lcHaltClient;
     }
 
-    public Mono<ODRLLicenceResponse> getODRLLicenceResponse(LicencesRequestDto params, String clientName) {
+    public Mono<ODRLPolicy> getODRLPolicy(LicencesRequestDto params, String clientName) {
         return Mono.zip(collectPermissions(params, clientName), results -> {
             // FIXME: This is a workaround for the type erasure that occurs with Mono.zip
             // I'd rather have a proper type check here or another way of
             // concatenating a 0-n list of lists of permissions with Mono.zip.
             @SuppressWarnings("unchecked")
             var permissions = Arrays.stream(results)
-                    .map(r -> (List<ODRLLicenceResponse.Permission>) r)
+                    .map(r -> (List<ODRLPolicy.Permission>) r)
                     .flatMap(List::stream)
                     .toList();
 
             log.info("Found {} licences in total for client: {}", permissions.size(), clientName);
-            return new ODRLLicenceResponse(permissions);
+            return new ODRLPolicy(permissions);
         });
     }
 
-    private List<Mono<List<ODRLLicenceResponse.Permission>>> collectPermissions(LicencesRequestDto params, String clientName) {
+    private List<Mono<List<ODRLPolicy.Permission>>> collectPermissions(LicencesRequestDto params, String clientName) {
         var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
-        var publishers = new ArrayList<Mono<List<ODRLLicenceResponse.Permission>>>();
+        var publishers = new ArrayList<Mono<List<ODRLPolicy.Permission>>>();
 
         if (allowedLicenceHolders.contains(AvailableLicenceHolders.ARIX)) {
             var arixPermissions = arixClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());

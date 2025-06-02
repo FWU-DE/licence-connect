@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences.clients;
 
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.licences.models.ODRLAction;
 import com.fwu.lc_core.shared.Bundesland;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +30,11 @@ public class ArixClient {
         this.apiUrl = apiUrl;
     }
 
-    public Mono<List<ODRLLicenceResponse.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private List<ODRLLicenceResponse.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
+    private List<ODRLPolicy.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
         validateParameters(bundesland, standortnummer, schulnummer, userId);
 
         WebClient webClient = WebClient.builder()
@@ -68,12 +68,12 @@ public class ArixClient {
 
 @Slf4j
 class ArixParser {
-    static List<ODRLLicenceResponse.Permission> parse(String responseBody) throws Exception {
+    static List<ODRLPolicy.Permission> parse(String responseBody) throws Exception {
         var rootElement = extractXmlRootElementFromRawResult(responseBody);
         var nodesWithNameR = extractXmlNodesWithNameR(rootElement);
         var permissions = nodesWithNameR.stream().map(e -> {
             try {
-                return new ODRLLicenceResponse.Permission(
+                return new ODRLPolicy.Permission(
                         extractLicenceCodeFrom(e),
                         LicenceHolder.ARIX,
                         ODRLAction.Use

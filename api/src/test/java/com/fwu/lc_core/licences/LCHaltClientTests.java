@@ -2,7 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.clients.LCHaltClient;
 import com.fwu.lc_core.licences.models.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ public class LCHaltClientTests {
         var permissions = lchaltClient.getPermissions(null, null, null, "currently any user id").block();
 
         assertThat(permissions).isNotNull();
-        for (ODRLLicenceResponse.Permission p : permissions) {
+        for (ODRLPolicy.Permission p : permissions) {
             assertThat(p.assigner).isEqualTo(LicenceHolder.LC_HALT);
         }
     }

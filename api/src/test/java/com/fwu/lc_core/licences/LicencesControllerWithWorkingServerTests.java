@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
 import com.fwu.lc_core.licences.models.LicencesRequestDto;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
@@ -25,7 +25,6 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
@@ -156,7 +155,7 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<ODRLLicenceResponse>() {})
+                .expectBody(new ParameterizedTypeReference<ODRLPolicy>() {})
                 .returnResult()
                 .getResponseBody();
 
