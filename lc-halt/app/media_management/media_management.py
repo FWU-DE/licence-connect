@@ -157,21 +157,21 @@ async def get_all_assigned_media(
 def assert_media_assignment_is_valid(assignment: LicencedMediaAssignment):
     if (
         (assignment.user_id is None)
-        & (assignment.bundesland_id is None)
-        & (assignment.schul_id is None)
+        and (assignment.bundesland_id is None)
+        and (assignment.schul_id is None)
     ):
         raise HTTPException(
             status_code=400,
             detail="Media must be assigned to specific users or bundesland/schule",
         )
 
-    if (assignment.schul_id is not None) & (assignment.bundesland_id is None):
+    if (assignment.schul_id is not None) and (assignment.bundesland_id is None):
         raise HTTPException(
             status_code=400,
             detail="Schulkennung is only valid in combination with bundesland",
         )
 
-    if (assignment.user_id is not None) & (
+    if (assignment.user_id is not None) and (
         (assignment.bundesland_id is not None) | (assignment.schul_id is not None)
     ):
         raise HTTPException(
