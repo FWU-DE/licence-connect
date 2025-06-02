@@ -20,3 +20,5 @@ include::0004-licenceholder.adoc[]
 include::0005-format-of-licences-responses.adoc[]
 
 include::0006-odrl-standard-and-mapping.adoc[]
+
+include::0007-framework-lc-halt.adoc[]

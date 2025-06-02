@@ -1,0 +1,10 @@
+{
+  "name": "lc-halt",
+  "private": true,
+  "scripts": {
+    "run:dev": "(set -a && source ../.env && set +a && uv run fastapi dev app/main.py)",
+    "format": "uvx ruff format",
+    "build-container": "docker build -t lc-halt .",
+    "test": "uv run pytest"
+  }
+}
