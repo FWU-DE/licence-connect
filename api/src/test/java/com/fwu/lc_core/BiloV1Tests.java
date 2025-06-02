@@ -3,7 +3,7 @@ package com.fwu.lc_core;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ class BiloV1Tests {
     @BeforeEach
     void setUp() {
         clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.BILO_V1));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.of(LicenceHolder.BILO_V1));
         webTestClient = webTestClient.mutate()
                 .responseTimeout(Duration.ofSeconds(30))
                 .build();
@@ -143,7 +143,7 @@ class BiloV1Tests {
     @Test
     void licenceRequest_Logs_Missing_Permissions(CapturedOutput output) {
         var requestDto = createValidUcsRequestDto();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.noneOf(AvailableLicenceHolders.class));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(BILO_TEST_CLIENT_NAME, EnumSet.noneOf(LicenceHolder.class));
 
         createRequest(requestDto)
                 .exchange()

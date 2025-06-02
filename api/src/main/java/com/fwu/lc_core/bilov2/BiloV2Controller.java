@@ -2,7 +2,7 @@ package com.fwu.lc_core.bilov2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class BiloV2Controller {
     @GetMapping("/v1/bilo/request/{userId}")
     public ResponseEntity<String> request(@PathVariable String userId, @RequestParam String clientName) {
         log.info("Received licence request for client: {} and userId: {}", clientName, userId);
-        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(AvailableLicenceHolders.BILO_V2)) {
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName).contains(LicenceHolder.BILO_V2)) {
             log.warn("Client {} is not allowed to access BILO_V2", clientName);
             return ResponseEntity.ok("[]");
         }

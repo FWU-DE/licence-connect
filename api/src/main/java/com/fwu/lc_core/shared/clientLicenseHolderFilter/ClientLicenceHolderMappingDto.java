@@ -2,6 +2,7 @@ package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
@@ -12,5 +13,5 @@ import java.util.EnumSet;
 public class ClientLicenceHolderMappingDto {
     @JsonProperty(required = true)
     @NotNull
-    public final EnumSet<AvailableLicenceHolders> availableLicenceHolders;
+    public final EnumSet<LicenceHolder> availableLicenceHolders;
 }

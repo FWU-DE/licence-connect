@@ -1,5 +1,6 @@
 package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,12 @@ public class ClientLicenseHolderFilterService {
     @Autowired
     private ClientLicenceHolderMappingRepository repository;
 
-    public EnumSet<AvailableLicenceHolders> getAllowedLicenceHolders(String clientName) {
+    public EnumSet<LicenceHolder> getAllowedLicenceHolders(String clientName) {
         Optional<ClientLicenceHolderMapping> mapping = repository.findByClientName(clientName);
-        return mapping.map(m -> EnumSetConverter.toEnumSet(m.getAllowedEntries())).orElse(EnumSet.noneOf(AvailableLicenceHolders.class));
+        return mapping.map(m -> EnumSetConverter.toEnumSet(m.getAllowedEntries())).orElse(EnumSet.noneOf(LicenceHolder.class));
     }
 
-    public void setAllowedLicenceHolders(String clientName, EnumSet<AvailableLicenceHolders> allowedEntries) {
+    public void setAllowedLicenceHolders(String clientName, EnumSet<LicenceHolder> allowedEntries) {
         Optional<ClientLicenceHolderMapping> existingMapping = repository.findByClientName(clientName);
         ClientLicenceHolderMapping mapping;
         if (existingMapping.isPresent()) {

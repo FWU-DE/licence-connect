@@ -4,7 +4,7 @@ import com.fwu.lc_core.licences.clients.ArixClient;
 import com.fwu.lc_core.licences.clients.LCHaltClient;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.licences.models.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +48,7 @@ public class LicencesCollector {
         var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
         var publishers = new ArrayList<Mono<List<ODRLPolicy.Permission>>>();
 
-        if (allowedLicenceHolders.contains(AvailableLicenceHolders.ARIX)) {
+        if (allowedLicenceHolders.contains(LicenceHolder.ARIX)) {
             var arixPermissions = arixClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
             publishers.add(arixPermissions.onErrorResume(
                     e -> {
@@ -58,7 +58,7 @@ public class LicencesCollector {
             ));
         }
 
-        if (allowedLicenceHolders.contains(AvailableLicenceHolders.LC_HALT)) {
+        if (allowedLicenceHolders.contains(LicenceHolder.LC_HALT)) {
             var lcHaltPermissions = lcHaltClient.getPermissions(params.bundesland(), params.standortnummer(), params.schulnummer(), params.userId());
             publishers.add(lcHaltPermissions.onErrorResume(
                     e -> {
