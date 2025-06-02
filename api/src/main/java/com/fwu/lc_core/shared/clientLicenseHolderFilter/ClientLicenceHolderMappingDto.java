@@ -9,9 +9,6 @@ import lombok.AllArgsConstructor;
 import java.util.EnumSet;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
-public class ClientLicenceHolderMappingDto {
-    @JsonProperty(required = true)
-    @NotNull
-    public final EnumSet<LicenceHolder> availableLicenceHolders;
+public record ClientLicenceHolderMappingDto(
+        @JsonProperty(required = true) @NotNull EnumSet<LicenceHolder> availableLicenceHolders) {
 }

@@ -29,8 +29,8 @@ public class ClientLicenceHolderFilterController {
             @PathVariable String clientName
     ) {
         log.info("Setting new available licence holders for client: {}", clientName);
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders);
-        log.info("New allowed systems: {} for client: {}", newMapping.availableLicenceHolders.toString(), clientName);
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders());
+        log.info("New allowed systems: {} for client: {}", newMapping.availableLicenceHolders().toString(), clientName);
         return ResponseEntity.noContent().build();
     }
 }
