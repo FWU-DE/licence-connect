@@ -3,6 +3,8 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-context-and-scope]]
 == Context and Scope
 
+=== Context Diagram
+
 [plantuml]
 ----
 @startuml
@@ -30,5 +32,31 @@ Rel_L(lc, vidis, "Gesammelte Lizenzen zurückgeben", "")
 Rel_R(lc, lh, "Lizenzen anfragen","")
 Rel_L(lh, lc, "Lizenzen bereitstellen", "")
 
+@enduml
+----
+
+=== Domain Stories
+
+See <<section-domain-storytelling>> for more infos on the method.
+
+[plantuml]
+----
+@startuml licences domain story
+!include <DomainStory/domainStory>
+
+Person(Schüler)
+Person(Lehrer)
+Person(Schule)
+System(Videoplattform)
+ 
+activity(_, Lehrer, wählt für Unterrichtsstunde, Document: Video, bei, Videoplattform)
+activity(_, Lehrer, bestellt, Document: Video, bei, Schule)
+activity(_, Schule, bestellt, Document: Video mit Laufzeit, bei, Videoplattform)
+activity(_, Videoplattform, übermittelt, Document: Lizenzcode, an, Schule)
+activity(_, Schule, übermittelt, Document: Lizenzcode, an, Lehrer)
+activity(_, Lehrer, übermittelt, Document: Lizenzcode, an, Schüler)
+activity(_, Schüler, loggt sich ein bei, Videoplattform)
+activity(_, Schüler, trägt, Document: Lizenzcode, ein bei, Videoplattform)
+activity(_, Schüler, ruft, Document: Video, ab bei, Videoplattform)
 @enduml
 ----
