@@ -53,6 +53,11 @@ public class LCHaltClient {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("A non-empty userId parameter is required.");
         }
+        if (schulnummer != null && !schulnummer.isEmpty()) {
+            if (bundesland == null) {
+                throw new IllegalArgumentException("If schulnummer is provided, bundesland must also be provided.");
+            }
+        }
     }
 }
 
