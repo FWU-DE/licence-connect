@@ -1,6 +1,6 @@
 package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
-import com.fwu.lc_core.licences.models.LicenceHolder;
+import com.fwu.lc_core.shared.LicenceHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

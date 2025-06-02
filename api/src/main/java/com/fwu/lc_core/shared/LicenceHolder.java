@@ -1,4 +1,4 @@
-package com.fwu.lc_core.licences.models;
+package com.fwu.lc_core.shared;
 
 import lombok.Getter;
 

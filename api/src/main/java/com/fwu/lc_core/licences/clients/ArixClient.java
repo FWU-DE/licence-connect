@@ -1,6 +1,6 @@
 package com.fwu.lc_core.licences.clients;
 
-import com.fwu.lc_core.licences.models.LicenceHolder;
+import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.licences.models.ODRLAction;
 import com.fwu.lc_core.shared.Bundesland;

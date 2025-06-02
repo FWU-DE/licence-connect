@@ -2,7 +2,7 @@ package com.fwu.lc_core.bilov1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.licences.models.LicenceHolder;
+import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

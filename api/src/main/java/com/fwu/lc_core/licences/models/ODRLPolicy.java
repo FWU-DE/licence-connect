@@ -1,6 +1,7 @@
 package com.fwu.lc_core.licences.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.shared.LicenceHolder;
 import lombok.AllArgsConstructor;
 import java.util.List;
 import java.util.UUID;
