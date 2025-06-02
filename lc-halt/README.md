@@ -25,14 +25,18 @@ LC Halt is built using [FastAPI](https://fastapi.tiangolo.com).
 - [bun](https://bun.sh/)
 - [uv](https://github.com/astral-sh/uv)
 
+Start Services required for lc halt:
+
+```
+docker compose up -d
+```
+
+## Run LC Halt
+
 Run LC Halt:
 
 ```sh
 bun run:dev
 ```
-
-## Run LC Halt
-
-<!-- containerized setup goes here -->
 
 ## Deployment
