@@ -3,6 +3,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
+LC Core is a "licence broker". 
+It is connected to several licence holding systems and can return all relevant licences for a user.
+
 === Requirements Overview
 
 

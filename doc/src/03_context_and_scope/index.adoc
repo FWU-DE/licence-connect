@@ -7,33 +7,55 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [plantuml]
 ----
-@startuml
+@startuml Context_and_Scope
 !include <C4/C4_Container>
 SHOW_PERSON_OUTLINE()
 
-Person_Ext(student, "Schüler und Lehrer", "")
+Person_Ext(student, "Schüler", "")
+Person_Ext(teacher, "Lehrer", "")
 
-System_Ext(ln, "Lizenznutzende", "z. B. Bildungsplattform, Verlage, Bilo")
-
+System_Ext(licenceuser, "Lizenznutzende", "z. B. Bildungsplattform, Verlage, Bilo")
 System_Ext(vidis, "Vidis", "")
 
 System(lc, "LC core", "")
 
-System_Ext(lh, "Lizenzhalter [1..]", "z. B. Bilo, Verlage, Arix")
+System_Ext(lchalt, "LC Halt", "")
+System_Ext(arix, "Arix", "")
+System_Ext(bilo_v1, "Bilo_v1", "")
+System_Ext(bilo_v2, "Bilo_v2", "")
 
-
-Rel_R(student, ln, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
-
-Rel_R(ln, vidis, "Login umleiten\nLizenzen anfragen", "")
-
-Rel_R(vidis, lc, "Lizenzen anfragen", "")
-Rel_L(lc, vidis, "Gesammelte Lizenzen zurückgeben", "")
-
-Rel_R(lc, lh, "Lizenzen anfragen","")
-Rel_L(lh, lc, "Lizenzen bereitstellen", "")
+Rel(student, licenceuser, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
+Rel(teacher, licenceuser, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
+Rel(licenceuser, vidis, "Login umleiten\nLizenzen anfragen", "")
+Rel(vidis, lc, "Lizenzen anfragen", "")
+Rel(lc, lchalt, "Lizenzen anfragen","")
+Rel(lc, arix, "Lizenzen anfragen","")
+Rel(lc, bilo_v1, "Lizenzen anfragen","")
+Rel(lc, bilo_v2, "Lizenzen anfragen","")
 
 @enduml
 ----
+
+[cols="e,2a" options="header"]
+|===
+|Building Block |Purpose
+
+|VIDIS|
+SSO Provider for educational purposes.
+https://www.vidis.schule/
+
+Due to the sign in via VIDIS, licence holders only have pseudonyms of users.
+In order to assign actual licences to users, the request to LC Halt goes through VIDIS.
+VIDIS can then ask LC Halt for licences using real names and ids of users.
+
+|LC Halt|
+LC Halt is a demo system intended to demonstrate licence management.
+
+|Arix|
+Arix is another licence holding system.
+
+|===
+
 
 === Domain Stories
 

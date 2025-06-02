@@ -4,11 +4,11 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 == Building Block View
 
-=== Whitebox Overall System
+=== Level 1: Whitebox Overall System
 
 [plantuml]
 ----
-@startuml C4_Elements
+@startuml Building_Block_Level_1
 !include <C4/C4_Component>
 !include <office/Servers/application_server>
 SHOW_PERSON_OUTLINE()
@@ -16,54 +16,96 @@ SHOW_PERSON_OUTLINE()
 AddRelTag("dashed", $lineStyle = DashedLine())
 
 System_Ext(vidis, "Vidis", "")
-System_Boundary(c1, "LC core"){
-    Boundary(bilo_system, "Bilo Domain"){
-        Component(lc_bilo_v1, "Bilo V1 Lizenzen Controller", "")
-        Component(lc_bilo_v2, "Bilo V2 Lizenzen Controller", "")
-    }
-    Boundary(generic_licence_system, "Generic Licence Domain"){
-        Component(lc_licenses, "Lizenzen Controller", "")
-        Component(lc_parser, "Lizenz Parser", "")
-        Component(lc_collector, "Lizenz Sammler", "")
-    }
-
-   Boundary(lc_shared_system, "Shared Domain"){
-        Component(lc_auth, "Authorisierer", "")
-        Component("lc_client_licence_holder_filter", "Zugriffsfilter", "")
-        Component("lc_client_licence_holder_filter_controller", "Zugriffsfilterkonfiguration Controller", "")
-        ContainerDb(lc_config_db, "Zugriffsfilterdatenbank", "")
-        Rel_D(lc_client_licence_holder_filter_controller, lc_client_licence_holder_filter, "erlaubt Anpassung", "")
-        Rel_D(lc_client_licence_holder_filter, lc_config_db, "nutzt", "")
-    }
-
-
-    Rel_U(lc_licenses, lc_auth, "nutzt", "",$tags="dashed")
-    Rel_D(lc_bilo_v1, lc_auth, "nutzt", "",$tags="dashed")
-    Rel_D(lc_bilo_v2, lc_auth, "nutzt", "",$tags="dashed")
-    Rel_D(lc_licenses, lc_parser, "nutzt", "")
-    Rel_D(lc_licenses, lc_collector, "nutzt", "")
-}
-System_Ext(lh1, "Lizenzhalter [1..]", "")
+System_Ext(lchalt, "LC Halt", "")
+System_Ext(arix, "Arix", "")
 System_Ext(bilo_v1, "Bilo_v1", "")
 System_Ext(bilo_v2, "Bilo_v2", "")
+System_Ext(vidis, "Vidis", "")
 
-Lay_R(vidis, c1)
-Lay_R(lc_parser, lc_collector)
-Lay_D(lc_bilo_v1, lc_bilo_v2)
-Lay_D(bilo_v1, bilo_v2)
+System_Boundary(c1, "LC Core"){
+    Component(lc_client_mapping, client licence holder mapper)
+    Component(lc_licences, licences)
+    Component(lc_bilo_v1_client, bilov1)
+    Component(lc_bilo_v2_client, bilov2)
+    Component(lc_config, config)
 
+    ComponentDb(db, "Database")
+}
 
-Rel_R(vidis, lc_licenses, "Lizenzen anfragen (Generisch)", "GET Enpunkt")
-Rel_R(vidis, lc_bilo_v1, "Lizenzen anfragen (Bilo)", "GET Endpunkt")
-Rel_R(vidis, lc_bilo_v2, "Lizenzen anfragen (Bilo)", "GET Endpunkt")
-'If the third argument of the relation is an empty string, some'
-'PlantUML/GraphViz version combinations throw an IllegalArgumentException'
-Rel_U(lc_licenses, lc_client_licence_holder_filter,  " ", "")
-Rel_R(lc_bilo_v1, lc_client_licence_holder_filter,  " ", "")
-Rel_R(lc_bilo_v2, lc_client_licence_holder_filter,  " ", "")
-Rel_R(lc_collector, lh1, "Lizenzen anfragen","")
-Rel_R(lc_bilo_v1, bilo_v1, "Lizenzen anfragen","")
-Rel_R(lc_bilo_v2, bilo_v2, "Lizenzen anfragen","")
+Rel(vidis, lc_licences, "Lizenzen anfragen (für clientName)")
+Rel(vidis, lc_bilo_v1_client, "Lizenzen anfragen (für clientName)")
+Rel(vidis, lc_bilo_v2_client, "Lizenzen anfragen (für clientName)")
+Rel_R(lc_licences, lc_client_mapping, "Freigeschaltete Lizenzhalter für client abrufen")
+Rel(lc_licences, lchalt, "Lizenzen anfragen")
+Rel(lc_licences, arix, "Lizenzen anfragen")
+Rel_R(lc_client_mapping, db, "Zugriffsfilter konfigurieren")
+
+Rel(lc_bilo_v1_client, bilo_v1, "")
+Rel(lc_bilo_v2_client, bilo_v2, "")
 
 @enduml
 ----
+
+=== Level 2
+
+==== Licences
+
+[plantuml]
+----
+@startuml
+
+[VIDIS] as vidis #white
+[LC Halt] as lchalt #white
+[Arix] as arix #white
+
+[client licence holder mapper] as client_mapper
+
+package Licences {
+    [Arix Client] as arix_client
+    [LC Halt Client] as lchalt_client
+    [LicencesController] as lcontroller
+    [LicencesCollector] as lcollector
+}
+
+vidis --> lcontroller: Fragt nach Lizenzen für \n(Bundesland, Schulnummer, UserId, ClientName)
+lcontroller --> lcollector: Fragt nach Lizenzen für \n(Bundesland, Schulnummer, UserId, ClientName)
+lcollector --> client_mapper: Fragt nach freigegebenen \n Lizenzhaltern für ClientName
+lcollector --> arix_client: Ruft Lizenzen ab für \n(Bundesland, Schulnummer, UserId)
+lcollector --> lchalt_client: Ruft Lizenzen ab für \n(Bundesland, Schulnummer, UserId)
+arix_client --> arix
+lchalt_client --> lchalt
+
+@enduml
+----
+
+
+==== Client Licence Holder Mapper
+
+[plantuml]
+----
+@startuml
+
+:Admin: as admin
+
+[LicencesCollector] as lcollector
+database Database as db
+
+package "client licence holder mapper" {
+    [ClientLicenceHolderFilterController] as controller
+    [ClientLicenceHolderFilterService] as service
+    [ClientLicenceHolderMappingRepository] as repository
+}
+
+admin --> controller: Client Mappings verwalten
+controller --> service: Client Mappings verwalten
+lcollector --> service: Client Mappings abrufen
+service --> repository: Client Mappings verwalten
+service --> repository: Client Mappings abrufen
+repository --> db: Client Mappings persistieren/abrufen
+
+@enduml
+----
+
+The client licence holder mapping allows the admin to control which licence holders are requested for which client requests.
+Each mapping maps one client name to 0:n licence holders.
+Each request to lc core requesting licences is providing a client.
