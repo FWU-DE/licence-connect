@@ -34,9 +34,9 @@ public class LCHaltClient {
 
         String responseBody = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                    .queryParam("userId", userId)
-                    .queryParamIfPresent("bundesland", Optional.ofNullable(bundesland))
-                    .queryParamIfPresent("schulnummer", Optional.ofNullable(schulnummer))
+                    .queryParam("user_id", userId)
+                    .queryParamIfPresent("bundesland_id", Optional.ofNullable(bundesland))
+                    .queryParamIfPresent("schul_id", Optional.ofNullable(schulnummer))
                     .build())
                 .header(API_KEY_HEADER, lcHaltClientApiKey)
                 .exchangeToMono(response -> response.bodyToMono(String.class)).block();
