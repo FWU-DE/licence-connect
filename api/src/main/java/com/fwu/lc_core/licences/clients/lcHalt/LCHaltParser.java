@@ -15,9 +15,9 @@ class LCHaltParser {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             var json = objectMapper.readTree(responseBody);
-            var licencedMedia = json.path("licencedMedia");
+            var licencedMedia = json.path("licenced_media");
             if (licencedMedia.isMissingNode() || !licencedMedia.isArray()) {
-                throw new RuntimeException("Invalid response format: 'licencedMedia' is missing or not an array.");
+                throw new RuntimeException("Invalid response format: 'licenced_media' key is missing or is not an array.");
             }
 
             List<ODRLPolicy.Permission> permissions = new ArrayList<>();
