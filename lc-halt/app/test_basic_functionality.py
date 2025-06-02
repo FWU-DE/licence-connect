@@ -44,13 +44,13 @@ def test_licenced_media_without_key_unauthorized():
 
 def test_licenced_media_with_client_key_success():
     response = client.get(
-        "/licenced-media?userId=1", headers={"x-api-key": client_api_key}
+        "/licenced-media?user_id=1", headers={"x-api-key": client_api_key}
     )
     assert response.status_code == 200
 
 
 def test_licenced_media_with_admin_key_success():
     response = client.get(
-        "/licenced-media?userId=1", headers={"x-api-key": admin_api_key}
+        "/licenced-media?user_id=1", headers={"x-api-key": admin_api_key}
     )
     assert response.status_code == 200

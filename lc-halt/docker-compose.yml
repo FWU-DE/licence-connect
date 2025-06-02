@@ -1,8 +1,9 @@
 services:
   lc-halt:
     build:
-      context: ..
-      dockerfile: ./mock-licence-servers/bilo-v2/Dockerfile
+      dockerfile: ./Dockerfile
+    env_file:
+      - ../.env
     profiles:
       - complete-setup
     ports:

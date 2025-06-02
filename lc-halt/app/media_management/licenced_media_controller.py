@@ -9,23 +9,23 @@ router = APIRouter(tags=["Public"])
 
 
 class LicenceResponse(BaseModel):
-    userId: str
-    bundesland: str | None = None
-    schulnummer: str | None = None
-    licencedMedia: list[Medium]
+    user_id: str
+    bundesland_id: str | None = None
+    schul_id: str | None = None
+    licenced_media: list[Medium]
 
 
 @router.get("/licenced-media")
 async def read_assigned_licences(
-    userId: Annotated[
+    user_id: Annotated[
         str,
         Query(description="User identifier, usually assigned by VIDIS"),
     ],
-    bundesland: Annotated[
+    bundesland_id: Annotated[
         str | None,
         Query(description="Federal state identifier"),
     ] = None,
-    schulnummer: Annotated[
+    schul_id: Annotated[
         str | None,
         Query(description="School identifier"),
     ] = None,
@@ -33,17 +33,17 @@ async def read_assigned_licences(
     """
     Licences managed by LC-Halt can be retrieved using this endpoint.
 
-    Provided with a userId and optionally a bundesland and/or schulnummer, LC-Halt will return all media the user is allowed to access.
+    Provided with a user id and optionally a bundesland id and/or schul id, LC-Halt will return all media the user is allowed to access.
     """
     logger.info(
-        f"Received request with userId {userId}, bundesland {bundesland}, schulnummer {schulnummer}"
+        f"Received request with user_id {user_id}, bundesland_id {bundesland_id}, schul_id {schul_id}"
     )
     assigned_media = await media_management.get_all_assigned_media(
-        user_id=userId, bundesland_id=bundesland, schul_id=schulnummer
+        user_id=user_id, bundesland_id=bundesland_id, schul_id=schul_id
     )
     return LicenceResponse(
-        userId=userId,
-        bundesland=bundesland,
-        schulnummer=schulnummer,
-        licencedMedia=assigned_media,
+        user_id=user_id,
+        bundesland_id=bundesland_id,
+        schul_id=schul_id,
+        licenced_media=assigned_media,
     )

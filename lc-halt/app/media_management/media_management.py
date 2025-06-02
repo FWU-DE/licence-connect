@@ -56,7 +56,8 @@ licenced_media_assignment_collection = db.get_collection("licenced_media")
 
 
 async def get_all_assignments() -> List[LicencedMediaAssignmentModel]:
-    return await licenced_media_assignment_collection.find().to_list(1000)
+    # The maximum number of items is not optional. If this is an issue we need to implement limit & offset params.
+    return await licenced_media_assignment_collection.find().to_list(10000)
 
 
 async def set_assignment(
@@ -134,6 +135,7 @@ async def delete_assignment(id: str):
 async def get_all_assigned_media(
     user_id: str, bundesland_id: str | None = None, schul_id: str | None = None
 ):
+    # The maximum number of items is not optional. If this is an issue we need to implement limit & offset params.
     assignments = await licenced_media_assignment_collection.find(
         {
             "$or": [
@@ -142,7 +144,7 @@ async def get_all_assigned_media(
                 {"bundesland_id": bundesland_id, "schul_id": None, "user_id": None},
             ]
         }
-    ).to_list(1000)
+    ).to_list(10000)
 
     assigned_media = []
 
