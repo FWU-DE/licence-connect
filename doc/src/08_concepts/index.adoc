@@ -2,3 +2,12 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-concepts]]
 == Cross-cutting Concepts
+
+[[section-domain-storytelling]]
+=== Domain Storytelling
+
+We use domain storytelling to describe processes in the domain of licence connect.
+
+An explanation and intro to domain storytelling in general can be found here: https://domainstorytelling.org/quick-start-guide
+
+The PlantUML library used is explained here: https://github.com/johthor/DomainStory-PlantUML?tab=readme-ov-file
