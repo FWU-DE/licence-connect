@@ -78,6 +78,6 @@ class LicencesControllerWithFailingArixServerTests {
                 .exchange()
                 .expectStatus().isOk();
 
-        assertThat(output.getOut()).contains("Error fetching ARIX licences: <error>Sorry, interface search not allowed for your IP</error>");
+        assertThat(output.getOut()).contains("Error fetching licences from ARIX: <error>Sorry, interface search not allowed for your IP</error>");
     }
 }

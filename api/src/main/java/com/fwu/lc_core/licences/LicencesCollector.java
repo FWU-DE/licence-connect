@@ -9,10 +9,11 @@ import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilte
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 @Slf4j
@@ -29,46 +30,40 @@ public class LicencesCollector {
     }
 
     public Mono<ODRLPolicy> getODRLPolicy(Licencee licencee, String clientName) {
-        return Mono.zip(collectPermissions(licencee, clientName), results -> {
-            // FIXME: This is a workaround for the type erasure that occurs with Mono.zip
-            // I'd rather have a proper type check here or another way of
-            // concatenating a 0-n list of lists of permissions with Mono.zip.
-            @SuppressWarnings("unchecked")
-            var permissions = Arrays.stream(results)
-                    .map(r -> (List<ODRLPolicy.Permission>) r)
-                    .flatMap(List::stream)
-                    .toList();
+        var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
 
-            log.info("Found {} licences in total for client: {}", permissions.size(), clientName);
-            return new ODRLPolicy(permissions);
-        });
+        if (allowedLicenceHolders.isEmpty()) {
+            log.warn("No allowed licence holders found for client: {}", clientName);
+            return Mono.empty();
+        }
+
+        return collectPermissions(licencee, allowedLicenceHolders)
+                .reduce(new ArrayList<ODRLPolicy.Permission>(), (agg, lst) -> {
+                    agg.addAll(lst);
+                    return agg;
+                })
+                .map(ODRLPolicy::new)
+                .doOnSuccess(policy ->
+                        log.info("Found {} licences in total for client: {}", policy.permissions.size(), clientName)
+                );
     }
 
-    private List<Mono<List<ODRLPolicy.Permission>>> collectPermissions(Licencee licencee, String clientName) {
-        var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
-        var publishers = new ArrayList<Mono<List<ODRLPolicy.Permission>>>();
+    private Flux<List<ODRLPolicy.Permission>> collectPermissions(Licencee licencee, EnumSet<LicenceHolder> licenceHolders) {
+        return Flux.fromIterable(licenceHolders).flatMap(licenceHolder ->
+                permissionsFor(licencee, licenceHolder).onErrorResume(e -> {
+                    log.error("Error fetching licences from {}: {}", licenceHolder, e.getMessage());
+                    return Mono.just(new ArrayList<>());
+                }));
+    }
 
-        if (allowedLicenceHolders.contains(LicenceHolder.ARIX)) {
-            var arixPermissions = arixClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
-            publishers.add(arixPermissions.onErrorResume(
-                    e -> {
-                        log.error("Error fetching ARIX licences: {}", e.getMessage());
-                        return Mono.just(new ArrayList<>());
-                    }
-            ));
-        }
-
-        if (allowedLicenceHolders.contains(LicenceHolder.LC_HALT)) {
-            var lcHaltPermissions = lcHaltClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
-            publishers.add(lcHaltPermissions.onErrorResume(
-                    e -> {
-                        log.error("Error fetching LC-Halt licences: {}", e.getMessage());
-                        return Mono.just(new ArrayList<>());
-                    }
-            ));
-        }
-
-        return publishers;
+    private Mono<List<ODRLPolicy.Permission>> permissionsFor(Licencee licencee, LicenceHolder licenceHolder) {
+        return switch (licenceHolder) {
+            case LicenceHolder.ARIX -> arixClient.getPermissions(
+                    licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
+            case LicenceHolder.LC_HALT -> lcHaltClient.getPermissions(
+                    licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
+            default -> Mono.just(new ArrayList<>());
+        };
     }
 }
 
