@@ -45,14 +45,21 @@ public class LCHaltClient {
     }
 
     private static void validateParameters(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("A non-empty userId parameter is required.");
+        if (isNullOrEmpty(userId)) {
+            throw new IllegalArgumentException("You must provide a userId parameter.");
         }
-        if (schulnummer != null && !schulnummer.isEmpty()) {
-            if (bundesland == null) {
-                throw new IllegalArgumentException("If schulnummer is provided, bundesland must also be provided.");
-            }
+
+        if (bundesland == null && isNotNullOrEmpty(schulnummer)) {
+            throw new IllegalArgumentException("If schulnummer is provided, bundesland must also be provided.");
         }
+    }
+
+    private static Boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    private static Boolean isNotNullOrEmpty(String str) {
+        return !isNullOrEmpty(str);
     }
 }
 
