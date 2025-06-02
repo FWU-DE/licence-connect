@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Request, Security, status
 from fastapi.security import APIKeyHeader
-from .logger import logger
+from app.util.logger import logger
 import os
 
 client_api_key_env_variable_name = "LC_HALT_CLIENT_API_KEY"
@@ -20,7 +20,7 @@ admin_api_key = os.getenv(admin_api_key_env_variable_name)
 
 req_api_key = APIKeyHeader(name="x-api-key", auto_error=False)
 
-public_routes = ["/"]
+public_routes = ["/health"]
 
 
 async def handle_api_key(req: Request, key: str = Security(req_api_key)):

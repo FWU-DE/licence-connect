@@ -18,4 +18,13 @@ endif::arc42help[]
 |Lizenzhaltendes System
 |licence holder
 |A system managing licences, to be consumed by LC
+
+|Bundesland
+|federal state
+|One of 16 federal states of Germany.
+
+|Schule
+|school
+|
+
 |===
