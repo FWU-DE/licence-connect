@@ -2,7 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.clients.ArixClient;
 import com.fwu.lc_core.licences.clients.LCHaltClient;
-import com.fwu.lc_core.licences.models.LicencesRequestDto;
+import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
@@ -28,7 +28,7 @@ public class LicencesCollector {
         this.lcHaltClient = lcHaltClient;
     }
 
-    public Mono<ODRLPolicy> getODRLPolicy(LicencesRequestDto params, String clientName) {
+    public Mono<ODRLPolicy> getODRLPolicy(Licencee params, String clientName) {
         return Mono.zip(collectPermissions(params, clientName), results -> {
             // FIXME: This is a workaround for the type erasure that occurs with Mono.zip
             // I'd rather have a proper type check here or another way of
@@ -44,7 +44,7 @@ public class LicencesCollector {
         });
     }
 
-    private List<Mono<List<ODRLPolicy.Permission>>> collectPermissions(LicencesRequestDto params, String clientName) {
+    private List<Mono<List<ODRLPolicy.Permission>>> collectPermissions(Licencee params, String clientName) {
         var allowedLicenceHolders = clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName);
         var publishers = new ArrayList<Mono<List<ODRLPolicy.Permission>>>();
 

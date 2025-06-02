@@ -3,7 +3,6 @@ package com.fwu.lc_core.licences;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
-import com.fwu.lc_core.licences.models.LicencesRequestDto;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
