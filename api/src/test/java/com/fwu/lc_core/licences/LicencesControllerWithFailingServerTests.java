@@ -1,6 +1,6 @@
 package com.fwu.lc_core.licences;
 
-import com.fwu.lc_core.licences.clients.LCHaltClient;
+import com.fwu.lc_core.licences.clients.lcHalt.LCHaltClient;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;

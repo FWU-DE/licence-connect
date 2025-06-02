@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
-import com.fwu.lc_core.licences.clients.ArixClient;
-import com.fwu.lc_core.licences.clients.LCHaltClient;
+import com.fwu.lc_core.licences.clients.arix.ArixClient;
+import com.fwu.lc_core.licences.clients.lcHalt.LCHaltClient;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.LicenceHolder;
