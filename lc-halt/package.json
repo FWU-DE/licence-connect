@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "run:dev": "(set -a && source ../.env && set +a && uv run fastapi dev app/main.py)",
+    "run:container": "docker compose --profile complete-setup up -d",
     "format": "uvx ruff format",
     "build-container": "docker build -t lc-halt .",
     "test": "(set -a && source ../.env && set +a && uv run pytest)"
