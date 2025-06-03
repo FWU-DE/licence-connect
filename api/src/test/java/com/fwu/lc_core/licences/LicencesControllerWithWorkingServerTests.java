@@ -34,6 +34,7 @@ import static com.fwu.lc_core.licences.TestHelper.extractLicenceCodesFrom;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
+import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
@@ -159,9 +160,10 @@ class LicencesControllerWithWorkingServerTests {
                 .getResponseBody();
 
         if (response == null) {
-            assertThat(false).isTrue();
+            fail();
+        } else {
+            assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
         }
-        assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
     }
 
     @Test

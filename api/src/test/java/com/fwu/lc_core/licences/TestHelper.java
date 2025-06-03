@@ -11,4 +11,11 @@ public class TestHelper {
                 .map(l -> l.target)
                 .toList();
     }
+
+    public static List<String> extractLicenceCodesFrom(List<ODRLPolicy.Permission> permissions) {
+        return permissions
+                .stream()
+                .map(l -> l.target)
+                .toList();
+    }
 }

@@ -16,21 +16,25 @@ import java.util.Objects;
 @Slf4j
 public class ArixParser {
     public static List<ODRLPolicy.Permission> parse(String responseBody) throws Exception {
-        var rootElement = extractXmlRootElementFromRawResult(responseBody);
-        var nodesWithNameR = extractXmlNodesWithNameR(rootElement);
-        var permissions = nodesWithNameR.stream().map(e -> {
-            try {
-                return new ODRLPolicy.Permission(
-                        extractLicenceCodeFrom(e),
-                        LicenceHolder.ARIX,
-                        ODRLAction.Use
-                );
-            } catch (Exception ex) {
-                throw new RuntimeException("Error extracting licence code from node: " + e, ex);
-            }
-        }).toList();
-        log.info("Found {} licences on `{}`", permissions.size(), LicenceHolder.ARIX);
-        return permissions;
+        try {
+            var rootElement = extractXmlRootElementFromRawResult(responseBody);
+            var nodesWithNameR = extractXmlNodesWithNameR(rootElement);
+            var permissions = nodesWithNameR.stream().map(node -> {
+                try {
+                    return new ODRLPolicy.Permission(
+                            extractLicenceCodeFrom(node),
+                            LicenceHolder.ARIX,
+                            ODRLAction.Use
+                    );
+                } catch (Exception ex) {
+                    throw new RuntimeException("Error extracting licence codes: " + node, ex);
+                }
+            }).toList();
+            log.info("Found {} licences on `{}`", permissions.size(), LicenceHolder.ARIX);
+            return permissions;
+        } catch (Exception ex) {
+            throw new RuntimeException("Error extracting licence codes: ", ex);
+        }
     }
 
     private static Element extractXmlRootElementFromRawResult(String responseBody) throws Exception {
