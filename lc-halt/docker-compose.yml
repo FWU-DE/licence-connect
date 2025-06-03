@@ -1,18 +1,23 @@
+networks:
+  lc_net:
+    driver: bridge
+
 services:
   lc-halt:
-    build:
-      dockerfile: ./Dockerfile
+    networks:
+      - lc_net
+    image: ${LC_HALT_IMAGE}
     env_file:
       - ../.env
     profiles:
       - complete-setup
-    ports:
-      - "8000:80"
+    expose:
+      - "8000"
 
   mongodb:
     image: mongo:8.0
     restart: always
     env_file:
       - ../.env
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"

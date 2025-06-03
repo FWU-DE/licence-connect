@@ -1,5 +1,11 @@
+networks:
+  lc_net:
+    driver: bridge
+
 services:
   nginx:
+    networks:
+      - lc_net
     image: nginx:latest
     container_name: lc-nginx
     restart: unless-stopped
@@ -10,12 +16,14 @@ services:
     depends_on:
       - licence-connect
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck" ]
+      test: ["CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck"]
       interval: 1s
       timeout: 5s
       retries: 100
 
   licence-connect:
+    networks:
+      - lc_net
     image: ${LC_IMAGE}
     container_name: licence-connect
     restart: unless-stopped
@@ -47,4 +55,3 @@ services:
       # With this volume, we can persist the data in local development even if the container is removed.
       # This is useful because it removes the need to re-add the Loki datasource every time you start the container.
       - ./grafana_data:/var/lib/grafana
-
