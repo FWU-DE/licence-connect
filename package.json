@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "run:core": "bun run --elide-lines 0 --filter 'api' run:dev",
-    "run:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' run:dev",
+    "run:lc-halt:dev": "bun run --elide-lines 0 --filter 'lc-halt' run:dev",
+    "run:lc-halt:container": "bun run --elide-lines 0 --filter 'lc-halt' run:container",
     "run:mock-licence-servers": "docker compose -f mock-licence-servers/docker-compose.yml up -d",
     "test:mocked": "bun run --elide-lines 0 --filter 'api' test:mocked",
     "test:api": "bun run --elide-lines 0 --filter 'api' test",
