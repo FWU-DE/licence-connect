@@ -2,7 +2,7 @@
   "name": "api",
   "private": true,
   "scripts": {
-    "run:dev": "(set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring.profiles.active=dev)",
+    "run:dev": "(set -a && source ../.env && set +a && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev)",
     "test:mocked": "./mvnw test -Dspring.profiles.active=auto-start-mocks,local",
     "test": "(set -a && source ../.env && set +a && ./mvnw test)"
   }
