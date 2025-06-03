@@ -14,3 +14,64 @@ Licence Connect Core is supposed to:
 * unify the retrieved licence information in a generic format (ODRL, see <<adr5>>)
 * enable VIDIS to retrieve licence information for specific users and clients (aka licence consumers)
 * enable administrators to enable or disable sources for specific clients
+
+
+=== Domain Stories
+
+See <<section-domain-storytelling>> for more infos on the method.
+
+==== Licence Management without Licence Connect and VIDIS
+
+[plantuml]
+----
+@startuml licences domain story
+!include <DomainStory/domainStory>
+
+Person(Schüler)
+Person(Lehrer)
+Person(Schule)
+System(Videoplattform)
+ 
+activity(_, Lehrer, wählt für Unterrichtsstunde, Document: Video, bei, Videoplattform)
+activity(_, Lehrer, bestellt, Document: Video, bei, Schule)
+activity(_, Schule, bestellt, Document: Video mit Laufzeit, bei, Videoplattform)
+activity(_, Videoplattform, übermittelt, Document: Lizenzcode, an, Schule)
+activity(_, Schule, übermittelt, Document: Lizenzcode, an, Lehrer)
+activity(_, Lehrer, übermittelt, Document: Lizenzcode, an, Schüler)
+activity(_, Schüler, loggt sich ein bei, Videoplattform)
+activity(_, Schüler, trägt, Document: Lizenzcode, ein bei, Videoplattform)
+activity(_, Schüler, ruft, Document: Video, ab bei, Videoplattform)
+@enduml
+----
+
+* the licence code in this case is an actual secret, activating a licence when entered in the video platform (similar to a licence code contained in the dvd package of a computer game)
+
+==== Licence Management with VIDIS, Licence Connect Core, a Licence Holder and a Media Library
+
+[plantuml]
+----
+@startuml licencing with lc
+!include <DomainStory/domainStory>
+
+Person(Schüler)
+System(Mediathek)
+System(VIDIS)
+System(lccore, LC Kern)
+System(länderidp, Länderportal (IDP))
+System(Lizenzhalter)
+ 
+activity(_, Schüler, besucht, Mediathek)
+activity(_, Schüler, triggert Login bei, Mediathek)
+activity(_, Mediathek, leitet für Login weiter an, VIDIS)
+activity(_, VIDIS, leitet für Login weiter an, länderidp)
+activity(_, Schüler, loggt sich ein bei, länderidp)
+activity(_, VIDIS, erhält, Document: User Informationen, von, länderidp)
+activity(_, VIDIS, fragt nach Lizenzen für, Document: User Informationen, von, lccore)
+activity(_, lccore, fragt nach Lizenzen für, Document: User Informationen, von, Lizenzhalter)
+activity(_, Lizenzhalter, antwortet mit, Document: Lizenzen (eigenes Format), an, lccore)
+activity(_, lccore, übersetzt Lizenzen in, Document: Lizenzen (ODRL Format))
+activity(_, lccore, antwortet mit, Document: Lizenzen (ODRL Format), an, VIDIS)
+activity(_, VIDIS, antwortet mit, Document: VIDIS Token mit Lizenzen, an, Mediathek)
+activity(_, Mediathek, zeigt abhängig von Lizenzen, Document: Medien, an für, Schüler)
+@enduml
+----
