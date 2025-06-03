@@ -2,3 +2,22 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-solution-strategy]]
 == Solution Strategy
+
+Licence Connect Core is developed as a Spring Boot (see <<adr1>>) web application providing a REST API.
+
+In general, we integrate each licence holding system implementing an isolated client.
+This isolated client shall provide a clear interface, providing a method to fetch all licences provided by the licence holding system as a list of ODRL permissions.
+
+When queried by VIDIS for licences, a LicencesCollector can then query each client for the licences and wrap the results in one ODRL policy that is returned to VIDIS.
+
+=== Possible Extensions
+
+In the future, we may implement a generic licence holder client that can be configured to connect to 1:n licence holder adapters via http.
+That way it would be possible to integrate new licence holding systems by deploying a separate adapter and configuring the generic client to talk to it.
+That would enable integrations without changes to the code of licence connect core itself.
+
+=== Current Deviations
+
+The current connections to bilos v1 and v2 APIs deviate from the solution strategy described above.
+To integrate them, Licence Connect Core provides dedicated endpoints.
+This is due to different requirements of bilo when retrieving the licences as a licence consumer.

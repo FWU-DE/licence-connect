@@ -13,6 +13,8 @@ ifndef::imagesdir[:imagesdir: ../images]
 !include <office/Servers/application_server>
 SHOW_PERSON_OUTLINE()
 
+Person(admin, "Administrator")
+
 AddRelTag("dashed", $lineStyle = DashedLine())
 
 System_Ext(vidis, "Vidis", "")
@@ -22,29 +24,48 @@ System_Ext(bilo_v1, "Bilo_v1", "")
 System_Ext(bilo_v2, "Bilo_v2", "")
 System_Ext(vidis, "Vidis", "")
 
-System_Boundary(c1, "LC Core"){
-    Component(lc_client_mapping, client licence holder mapper)
-    Component(lc_licences, licences)
-    Component(lc_bilo_v1_client, bilov1)
-    Component(lc_bilo_v2_client, bilov2)
-    Component(lc_config, config)
+System_Boundary(c1, "Licence Connect Core"){
+    Component(lc_client_mapping, Client Licence Holder Mapper)
+    Component(lc_licences, Licences)
+    Component(lc_bilo, BiLo)
+    Component(lc_config, Config)
 
     ComponentDb(db, "Database")
 }
 
+Rel(admin, lc_client_mapping, "Freigeschaltete Lizenzhalter für Clients konfigurieren")
 Rel(vidis, lc_licences, "Lizenzen anfragen (für clientName)")
-Rel(vidis, lc_bilo_v1_client, "Lizenzen anfragen (für clientName)")
-Rel(vidis, lc_bilo_v2_client, "Lizenzen anfragen (für clientName)")
+Rel(vidis, lc_bilo, "BiLo Lizenzen anfragen")
 Rel_R(lc_licences, lc_client_mapping, "Freigeschaltete Lizenzhalter für client abrufen")
 Rel(lc_licences, lchalt, "Lizenzen anfragen")
 Rel(lc_licences, arix, "Lizenzen anfragen")
 Rel_R(lc_client_mapping, db, "Zugriffsfilter konfigurieren")
 
-Rel(lc_bilo_v1_client, bilo_v1, "")
-Rel(lc_bilo_v2_client, bilo_v2, "")
+Rel(lc_bilo, bilo_v1, "")
+Rel(lc_bilo, bilo_v2, "")
 
 @enduml
 ----
+
+[cols="e,2a" options="header"]
+|===
+|Building Blocks |Notes
+
+|Licences|
+The Licences module is the main module providing the API for VIDIS and fetching licences from different licence holding systems.
+
+|Client Licence Holder Mapping|
+The Client Licence Holder Mapping module enables administrators to enable/disable different licence sources for different licence consumers.
+The Licences module can then retrieve only the enabled licences for requesting consumer.
+
+|Config|
+The Config module configures relevant parts of Licence Connect Core, e.g. authentication or logging.
+
+|BiLo|
+The BiLo module is responsible for enabling VIDIS to fetch BiLo licences.
+It is separated due to different requirements of the respective consumers.
+
+|===
 
 === Level 2
 

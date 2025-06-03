@@ -17,6 +17,8 @@ Taken from ADR-07:
 
 LC Halt is built using [FastAPI](https://fastapi.tiangolo.com).
 
+## Using LC Halt
+
 ## Dev Setup
 
 **Prerequisites:**

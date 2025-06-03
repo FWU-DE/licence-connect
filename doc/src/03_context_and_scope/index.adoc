@@ -11,34 +11,37 @@ ifndef::imagesdir[:imagesdir: ../images]
 !include <C4/C4_Container>
 SHOW_PERSON_OUTLINE()
 
-Person_Ext(student, "Schüler", "")
-Person_Ext(teacher, "Lehrer", "")
+Person_Ext(student, "Student", "")
+Person_Ext(teacher, "Teacher", "")
+Person(admin, "Administrator", "")
 
-System_Ext(licenceuser, "Lizenznutzende", "z. B. Bildungsplattform, Verlage, Bilo")
-System_Ext(vidis, "Vidis", "")
+System_Ext(licence_consumer, "Licence Consumer", "z. B. Educational Offer, Publisher, Bilo")
+System_Ext(vidis, "VIDIS", "")
 
-System(lc, "LC core", "")
+System(lc, "Licence Connect Core", "")
 
 System_Ext(lchalt, "LC Halt", "")
 System_Ext(arix, "Arix", "")
 System_Ext(bilo_v1, "Bilo_v1", "")
 System_Ext(bilo_v2, "Bilo_v2", "")
 
-Rel(student, licenceuser, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
-Rel(teacher, licenceuser, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
-Rel(licenceuser, vidis, "Login umleiten\nLizenzen anfragen", "")
-Rel(vidis, lc, "Lizenzen anfragen", "")
-Rel(lc, lchalt, "Lizenzen anfragen","")
-Rel(lc, arix, "Lizenzen anfragen","")
-Rel(lc, bilo_v1, "Lizenzen anfragen","")
-Rel(lc, bilo_v2, "Lizenzen anfragen","")
+Rel(student, licence_consumer, "Use licenced media", "")
+Rel(teacher, licence_consumer, "Use licenced media", "")
+Rel_R(licence_consumer, vidis, "Retrieve relevant licences", "")
+Rel(vidis, lc, "Retrieve relevant licences", "")
+Rel(lc, lchalt, "Retrieve relevant licences","")
+Rel(lc, arix, "Retrieve relevant licences","")
+Rel(lc, bilo_v1, "Retrieve relevant licences","")
+Rel(lc, bilo_v2, "Retrieve relevant licences","")
+
+Rel(admin, lc, "Enable licence holder for specific consumers")
 
 @enduml
 ----
 
 [cols="e,2a" options="header"]
 |===
-|Building Block |Purpose
+|External System |Notes
 
 |VIDIS|
 SSO Provider for educational purposes.

@@ -3,11 +3,14 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
-LC Core is a "licence broker". 
+Licence Connect Core is a "licence broker". 
 It is connected to several licence holding systems and can return all relevant licences for a user.
 
 === Requirements Overview
 
+Licence Connect Core is supposed to:
 
-=== Quality Goals
-
+* retrieve licence information from different sources (aka licence holding systems)
+* unify the retrieved licence information in a generic format (ODRL, see <<adr5>>)
+* enable VIDIS to retrieve licence information for specific users and clients (aka licence consumers)
+* enable administrators to enable or disable sources for specific clients
