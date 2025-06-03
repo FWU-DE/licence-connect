@@ -20,8 +20,7 @@ Licence Connect Core is supposed to:
 
 See <<section-domain-storytelling>> for more infos on the method.
 
-==== Licence Management without Licence Connect and VIDIS
-
+.Licence Management without Licence Connect and VIDIS
 [plantuml]
 ----
 @startuml licences domain story
@@ -45,10 +44,10 @@ activity(_, Schüler, ruft, Document: Video, ab bei, Videoplattform)
 @enduml
 ----
 
-* the licence code in this case is an actual secret, activating a licence when entered in the video platform (similar to a licence code contained in the dvd package of a computer game)
+[NOTE]
+the licence code in this case is an actual secret, activating a licence when entered in the video platform (similar to a licence code contained in the dvd package of a computer game)
 
-==== Licence Management with VIDIS, Licence Connect Core, a Licence Holder and a Media Library
-
+.Licence Management with VIDIS, Licence Connect Core, a Licence Holder and a Media Library
 [plantuml]
 ----
 @startuml licencing with lc
@@ -62,21 +61,46 @@ System(lccore, LC Kern)
 System(länderidp, Länderportal (IDP))
 System(Lizenzhalter)
  
-activity(v_, Schüler, besucht, Mediathek)
-activity(v_, Schüler, triggert Login bei, Mediathek)
-activity(>_, Mediathek, leitet für Login weiter an, VIDIS)
-activity(v_, VIDIS, leitet für Login weiter an, länderidp)
+activity(_, Schüler, besucht, Mediathek)
+activity(_, Schüler, triggert Login bei, Mediathek)
+activity(_, Mediathek, leitet für Login weiter an, VIDIS)
+activity(_, VIDIS, leitet für Login weiter an, länderidp)
 activity(_, Schüler, loggt sich ein bei, länderidp)
-activity(v_, VIDIS, erhält, Document: User Informationen, von, länderidp)
-activity(v_, VIDIS, fragt nach Lizenzen für, Document: User Informationen, von, lccore)
-activity(_, lccore, fragt nach Lizenzen für, Document: User Informationen, von, Lizenzhalter)
-activity(_, Lizenzhalter, antwortet mit, Document: Lizenzen (eigenes Format), an, lccore)
-activity(_, lccore, übersetzt Lizenzen in, Document: Lizenzen (ODRL Format))
-activity(_, lccore, antwortet mit, Document: Lizenzen (ODRL Format), an, VIDIS)
-activity(_, VIDIS, cached, Document: Lizenzen (ODRL Format))
+activity(_, länderidp, antwortet mit, Document: User Informationen, an, VIDIS)
+activity(_, VIDIS, fragt nach lizensierten Medien für, Document: User Informationen, von, lccore)
+activity(_, lccore, prüft für clientId ob Lizenzhalter freigegeben ist in, Document: Client Licence Holder Mapping)
+activity(_, lccore, fragt nach lizensierten Medien für, Document: User Informationen, von, Lizenzhalter)
+activity(_, Lizenzhalter, antwortet mit, Document: Lizensierte Medien (eigenes Format), an, lccore)
+activity(_, lccore, übersetzt lizensierte Medien in, Document: lizensierte Medien (ODRL Format))
+activity(_, lccore, antwortet mit, Document: lizensierte Medien (ODRL Format), an, VIDIS)
+activity(_, VIDIS, cached, Document: lizensierte Medien (ODRL Format))
 activity(_, VIDIS, antwortet mit, Document: VIDIS Token, an, Mediathek)
-activity(_, Mediathek, fragt mit, Document: VIDIS Token, nach Lizenzen bei, VIDIS)
-activity(_, VIDIS, antwortet mit, Document: Lizenzen (ODRL Format), aus Cache an, Mediathek)
+activity(_, Mediathek, fragt mit, Document: VIDIS Token, nach lizensierten Medien bei, VIDIS)
+activity(_, VIDIS, antwortet mit, Document: lizensierte Medien (ODRL Format), aus Cache an, Mediathek)
 activity(_, Mediathek, zeigt abhängig von Lizenzen, Document: Medien, an für, Schüler)
+@enduml
+----
+
+.Enabling Licence Holders for Clients
+[plantuml]
+----
+@startuml Enabling Licence Holders
+!$Story_Layout = "portrait"
+!include <DomainStory/domainStory>
+
+Person(Admin)
+Person(VIDISTeam, VIDIS Team)
+System(lccore, LC Kern)
+System(VIDIS)
+System(Lizenzhalter)
+
+activity(_, VIDISTeam, beauftragt Freischaltung von, Document: Lizenzhalter für Lizenznutzer, bei, Admin)
+activity(_, Admin, ermittelt, Document: ClientId, von Lizenznutzer bei, VIDIS)
+activity(_, Admin, übermittelt, Document: ClientId und LizenzhalterId, an, lccore)
+activity(_, lccore, persistiert, Document: ClientId und LizenzhalterId)
+activity(_, VIDIS, fragt lizensierte Medien an für, Document: ClientId, bei, lccore)
+activity(_, lccore, fragt, Document: lizensierte Medien, an bei, Lizenzhalter)
+activity(_, Lizenzhalter, übermittelt, Document: lizensierte Medien, an, lccore)
+activity(_, lccore, übermittelt, Document: lizensierte Medien, an, VIDIS)
 @enduml
 ----
