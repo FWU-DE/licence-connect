@@ -25,6 +25,7 @@ See <<section-domain-storytelling>> for more infos on the method.
 [plantuml]
 ----
 @startuml licences domain story
+!$Story_Layout = "portrait"
 !include <DomainStory/domainStory>
 
 Person(Schüler)
@@ -51,6 +52,7 @@ activity(_, Schüler, ruft, Document: Video, ab bei, Videoplattform)
 [plantuml]
 ----
 @startuml licencing with lc
+!$Story_Layout = "portrait"
 !include <DomainStory/domainStory>
 
 Person(Schüler)
@@ -60,18 +62,21 @@ System(lccore, LC Kern)
 System(länderidp, Länderportal (IDP))
 System(Lizenzhalter)
  
-activity(_, Schüler, besucht, Mediathek)
-activity(_, Schüler, triggert Login bei, Mediathek)
-activity(_, Mediathek, leitet für Login weiter an, VIDIS)
-activity(_, VIDIS, leitet für Login weiter an, länderidp)
+activity(v_, Schüler, besucht, Mediathek)
+activity(v_, Schüler, triggert Login bei, Mediathek)
+activity(>_, Mediathek, leitet für Login weiter an, VIDIS)
+activity(v_, VIDIS, leitet für Login weiter an, länderidp)
 activity(_, Schüler, loggt sich ein bei, länderidp)
-activity(_, VIDIS, erhält, Document: User Informationen, von, länderidp)
-activity(_, VIDIS, fragt nach Lizenzen für, Document: User Informationen, von, lccore)
+activity(v_, VIDIS, erhält, Document: User Informationen, von, länderidp)
+activity(v_, VIDIS, fragt nach Lizenzen für, Document: User Informationen, von, lccore)
 activity(_, lccore, fragt nach Lizenzen für, Document: User Informationen, von, Lizenzhalter)
 activity(_, Lizenzhalter, antwortet mit, Document: Lizenzen (eigenes Format), an, lccore)
 activity(_, lccore, übersetzt Lizenzen in, Document: Lizenzen (ODRL Format))
 activity(_, lccore, antwortet mit, Document: Lizenzen (ODRL Format), an, VIDIS)
-activity(_, VIDIS, antwortet mit, Document: VIDIS Token mit Lizenzen, an, Mediathek)
+activity(_, VIDIS, cached, Document: Lizenzen (ODRL Format))
+activity(_, VIDIS, antwortet mit, Document: VIDIS Token, an, Mediathek)
+activity(_, Mediathek, fragt mit, Document: VIDIS Token, nach Lizenzen bei, VIDIS)
+activity(_, VIDIS, antwortet mit, Document: Lizenzen (ODRL Format), aus Cache an, Mediathek)
 activity(_, Mediathek, zeigt abhängig von Lizenzen, Document: Medien, an für, Schüler)
 @enduml
 ----
