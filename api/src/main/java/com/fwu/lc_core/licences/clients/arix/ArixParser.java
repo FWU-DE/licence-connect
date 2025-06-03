@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-class ArixParser {
-    static List<ODRLPolicy.Permission> parse(String responseBody) throws Exception {
+public class ArixParser {
+    public static List<ODRLPolicy.Permission> parse(String responseBody) throws Exception {
         var rootElement = extractXmlRootElementFromRawResult(responseBody);
         var nodesWithNameR = extractXmlNodesWithNameR(rootElement);
         var permissions = nodesWithNameR.stream().map(e -> {

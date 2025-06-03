@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-class LCHaltParser {
-    static List<ODRLPolicy.Permission> parse(String responseBody) {
+public class LCHaltParser {
+    public static List<ODRLPolicy.Permission> parse(String responseBody) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             var json = objectMapper.readTree(responseBody);
