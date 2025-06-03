@@ -179,3 +179,33 @@ deploy_api:
     - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$API_RELEASE_IMAGE docker compose up -d --wait"
     # delete all dangling docker images on the VM
     - $SSH_EVAL "docker image prune -f"
+
+deploy_lc_halt:
+  stage: deploy
+  rules:
+    # Never run the job for a pushed tag
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Only run the job for pushes to main
+    - if: $CI_COMMIT_BRANCH == 'main'
+  variables:
+    SSH_PARAMS: -o StrictHostKeyChecking=no
+    SSH_USER_AND_HOST: docker@licence-connect-api.fwu.nhnbg
+    SSH_EVAL: "ssh $SSH_PARAMS $SSH_USER_AND_HOST"
+    SCP_EVAL: "scp $SSH_PARAMS"
+    APP_DIR_ON_VM: /var/docker/apps/lc-halt
+  script:
+    # Create the `/var/docker/apps/lc-halt` directory on the VM if it does not exist yet
+    - $SSH_EVAL "mkdir -p $APP_DIR_ON_VM"
+    # log into the private registry on the VM
+    - $SSH_EVAL "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
+    # pull the latest lc-halt image on the VM
+    - $SSH_EVAL "docker pull LC_HALT_IMAGE=$LC_HALT_RELEASE_IMAGE"
+    # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_HALT_IMAGE=$LC_HALT_RELEASE_IMAGE docker compose down"
+    # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
+    - $SCP_EVAL lc-halt/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
+    # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_HALT_IMAGE=$LC_HALT_RELEASE_IMAGE docker compose up -d --wait"
+    # delete all dangling docker images on the VM
+    - $SSH_EVAL "docker image prune -f"
