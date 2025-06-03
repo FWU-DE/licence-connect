@@ -1,6 +1,5 @@
-package com.fwu.lc_core.licences;
+package com.fwu.lc_core.licences.clients.arix;
 
-import com.fwu.lc_core.licences.clients.arix.ArixParser;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLAction;
