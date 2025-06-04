@@ -8,8 +8,10 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - licence-connect
-      - lc-halt
+      licence-connect:
+        condition: service_started
+      lc-halt:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://licence-connect:8080/v1/healthcheck && curl -f http://lc-halt:80/health"]
       interval: 5s
@@ -33,6 +35,9 @@ services:
     container_name: lc-halt
     env_file: ../.env
     restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
   mongodb:
     image: mongo:8.0
