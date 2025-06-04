@@ -1,7 +1,7 @@
 package com.fwu.lc_core.licences;
 
-import com.fwu.lc_core.licences.collection.LicencesCollector;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.licences.clients.lcHalt.LCHaltClient;
+import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +27,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 @AutoConfigureWebTestClient
 @ExtendWith(OutputCaptureExtension.class)
-@Import(LicencesControllerWithFailingServerTests.CustomTestConfig.class)
-class LicencesControllerWithFailingServerTests {
+@Import(LicencesControllerWithFailingArixServerTests.CustomTestConfig.class)
+class LicencesControllerWithFailingArixServerTests {
     private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
     @Autowired
     private WebTestClient webTestClient;
@@ -46,20 +46,23 @@ class LicencesControllerWithFailingServerTests {
         @Autowired
         private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
+        @Autowired
+        private LCHaltClient lchaltClient;
+
         @Value("${arix.rejecting.url}")
         String arixUrlRejecting;
 
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
-            return new LicencesCollector(arixUrlRejecting);
+            return new LicencesCollector(clientLicenseHolderFilterService, arixUrlRejecting, lchaltClient);
         }
     }
 
     @BeforeEach
     void setUp() {
         clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(LicenceHolder.ARIX));
     }
 
     @Test
@@ -75,6 +78,6 @@ class LicencesControllerWithFailingServerTests {
                 .exchange()
                 .expectStatus().isOk();
 
-        assertThat(output.getOut()).contains("Error collecting licences:");
+        assertThat(output.getOut()).contains("Error fetching licences from ARIX: <error>Sorry, interface search not allowed for your IP</error>");
     }
 }

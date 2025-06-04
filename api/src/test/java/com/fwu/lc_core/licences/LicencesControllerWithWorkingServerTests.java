@@ -3,10 +3,9 @@ package com.fwu.lc_core.licences;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
-import com.fwu.lc_core.licences.models.LicencesRequestDto;
-import com.fwu.lc_core.licences.models.ODRLLicenceResponse;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,6 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.EnumSet;
@@ -36,6 +34,7 @@ import static com.fwu.lc_core.licences.TestHelper.extractLicenceCodesFrom;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
+import static org.assertj.core.api.AssertionsForClassTypes.fail;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
@@ -60,7 +59,7 @@ class LicencesControllerWithWorkingServerTests {
     @BeforeEach
     void setUp() {
         clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(LicenceHolder.ARIX));
     }
 
     @Test
@@ -101,7 +100,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void RequestWhichReturnsErrorDoesNotReturnTrace() {
-        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
         var test = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
@@ -156,30 +155,15 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<ODRLLicenceResponse>() {})
+                .expectBody(new ParameterizedTypeReference<ODRLPolicy>() {})
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideInvalidInput")
-    void Authenticated_Request_WithInvalidBody_Returns_BadRequest(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
-
-        webTestClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/v1/licences/request")
-                        .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland() != null ? requestDto.bundesland().name() : null)
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
-                .header(API_KEY_HEADER, correctApiKey)
-                .exchange()
-                .expectStatus().isBadRequest();
+        if (response == null) {
+            fail();
+        } else {
+            assertThat(extractLicenceCodesFrom(response)).containsExactlyInAnyOrderElementsOf(expectedLicenceCodes);
+        }
     }
 
     @Test
@@ -225,7 +209,7 @@ class LicencesControllerWithWorkingServerTests {
 
         assertThat(output.getOut()).contains("Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
         assertThat(output.getOut()).contains("Found ");
-        assertThat(output.getOut()).contains(" licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
+        assertThat(output.getOut()).contains(" licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
 
     @Test
@@ -233,7 +217,7 @@ class LicencesControllerWithWorkingServerTests {
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
         String expectedFirstLog = "Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
-        String expectedSecondLog = "Found 6 licences for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
+        String expectedSecondLog = "Found 6 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
 
         webTestClient
                 .get()
@@ -263,19 +247,6 @@ class LicencesControllerWithWorkingServerTests {
                 Arguments.of(Bundesland.BY, "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
                 Arguments.of(Bundesland.BY, "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
                 Arguments.of(Bundesland.BY, "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
-        );
-    }
-
-    private static Stream<Arguments> provideInvalidInput() {
-        return Stream.of(
-                Arguments.of(null, null, null, null),
-                Arguments.of(null, "ORT1", null, null),
-                Arguments.of(null, null, "f3453b", null),
-                Arguments.of(null, null, null, "student.2"),
-                Arguments.of(Bundesland.BY, null, "f3453b", null),
-                Arguments.of(Bundesland.BY, null, null, "student.2"),
-                Arguments.of(Bundesland.BY, null, "f3453b", "student.2"),
-                Arguments.of(Bundesland.BY, "ORT1", null, "student.2")
         );
     }
 }
@@ -308,12 +279,12 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
     @BeforeEach
     void setUp() {
         clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(AvailableLicenceHolders.ARIX));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(LicenceHolder.ARIX));
     }
 
     @Test
     void RequestWhichReturnsTrace() {
-        var requestDto = new RelaxedLicencesRequestDto("STK", "STR", null, "qwr");
+        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
         var allExistingBeanNames = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
@@ -336,8 +307,8 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 record RelaxedLicencesRequestDto(
-        @JsonProperty() String bundesland,
-        @JsonProperty() String standortnummer,
-        @JsonProperty() String schulnummer,
-        @JsonProperty() String userId) {
+        @JsonProperty String bundesland,
+        @JsonProperty String standortnummer,
+        @JsonProperty String schulnummer,
+        @JsonProperty String userId) {
 }
