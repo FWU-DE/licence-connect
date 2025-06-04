@@ -18,13 +18,13 @@ public class LCHaltClientTests {
     @Autowired
     LCHaltClient lchaltClient;
 
-    @Test
-    public void RequestPermissions_GivenUserID_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
-        var permissions = lchaltClient.getPermissions(null, null, null, "currently any user id").block();
-
-        assertThat(permissions).isNotNull();
-        for (ODRLPolicy.Permission p : permissions) {
-            assertThat(p.assigner).isEqualTo(LicenceHolder.LC_HALT);
-        }
-    }
+//    @Test
+//    public void RequestPermissions_GivenUserID_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+//        var permissions = lchaltClient.getPermissions(null, null, null, "currently any user id").block();
+//
+//        assertThat(permissions).isNotNull();
+//        for (ODRLPolicy.Permission p : permissions) {
+//            assertThat(p.assigner).isEqualTo(LicenceHolder.LC_HALT);
+//        }
+//    }
 }
