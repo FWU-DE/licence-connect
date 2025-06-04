@@ -1,14 +1,7 @@
-networks:
-  lc_net:
-    name: lc_net
-    driver: bridge
-
 services:
   lc-halt:
-    container_name: lc-halt
-    image: ${LC_HALT_IMAGE}
-    networks:
-      - lc_net
+    build:
+      dockerfile: ./Dockerfile
     env_file:
       - ../.env
     profiles:
@@ -18,8 +11,6 @@ services:
 
   mongodb:
     image: mongo:8.0
-    networks:
-      - lc_net
     restart: always
     env_file:
       - ../.env
