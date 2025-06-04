@@ -41,8 +41,8 @@ public class LCHaltClient {
                 .header(API_KEY_HEADER, lcHaltClientApiKey)
                 .exchangeToMono(response -> response.bodyToMono(String.class))
                 .handle((responseBody, sink) -> {
-                    if (responseBody == null || !responseBody.startsWith("<result")) {
-                        sink.error(new RuntimeException(responseBody));
+                    if (responseBody == null) {
+                        sink.error(new RuntimeException("Response body is null"));
                         return;
                     }
 
