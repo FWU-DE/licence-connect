@@ -21,6 +21,12 @@
 
     "build-and-run:container:api": "bun build:container:api && bun run:container:api",
     "build-and-run:container:lc-halt": "bun build:container:lc-halt && bun run:container:lc-halt",
-    "build-and-run:container:all": "bun build:container:all && bun run:container:all"
+    "build-and-run:container:all": "bun build:container:all && bun run:container:all",
+
+    // The `down` `up` dance is done to ensure that env file changes are definitely picked up
+    "restart:container:nginx": "docker compose -f docker/docker-compose.yaml down nginx && docker compose -f docker/docker-compose.yaml up -d nginx",
+    "restart:container:api": "docker compose -f docker/docker-compose.yaml down licence-connect && docker compose -f docker/docker-compose.yaml up -d licence-connect",
+    "restart:container:lc-halt": "docker compose -f docker/docker-compose.yaml down lc-halt && docker compose -f docker/docker-compose.yaml up -d lc-halt",
+    "restart:container:all": "docker compose -f docker/docker-compose.yaml down && docker compose -f docker/docker-compose.yaml up -d"
   }
 }
