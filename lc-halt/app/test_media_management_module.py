@@ -160,3 +160,94 @@ def test_assign_and_delete_media_smoke_test():
         headers={"x-api-key": admin_api_key},
     )
     assert delete_schul_assignment_again_response.status_code == 404
+
+
+def test_assign_multiple_media_in_one_request_success():
+    # Assign media to user, bundesland and school
+
+    assign_medium_response = client.post(
+        "/admin/media-licence-assignment",
+        headers={"x-api-key": admin_api_key},
+        json={
+            "user_id": "automated-test-user",
+            "licenced_media": [{"id": "medium1"}, {"id": "medium2"}],
+        },
+    )
+    assert assign_medium_response.status_code == 200
+    assert {"id": "medium1"} in assign_medium_response.json()["licenced_media"]
+    assert {"id": "medium2"} in assign_medium_response.json()["licenced_media"]
+    assert len(assign_medium_response.json()["licenced_media"]) == 2
+
+    # Check licenced media responses
+
+    licenced_media_only_response = client.get(
+        "/licenced-media?user_id=automated-test-user",
+        headers={"x-api-key": client_api_key},
+    )
+    assigned_media = licenced_media_only_response.json()["licenced_media"]
+    assert licenced_media_only_response.status_code == 200
+    assert {"id": "medium1"} in assigned_media
+    assert {"id": "medium2"} in assigned_media
+    assert len(assigned_media) == 2
+
+    # Delete created licence assignments
+
+    delete_user_assignment_response = client.delete(
+        f"/admin/media-licence-assignment/{assign_medium_response.json()['id']}",
+        headers={"x-api-key": admin_api_key},
+    )
+    assert delete_user_assignment_response.status_code == 204
+
+
+def test_assign_media_consecutively_success():
+    # Assign media to user, bundesland and school
+
+    assign_medium1_response = client.post(
+        "/admin/media-licence-assignment",
+        headers={"x-api-key": admin_api_key},
+        json={
+            "user_id": "automated-test-user",
+            "licenced_media": [{"id": "medium1"}],
+        },
+    )
+    assert assign_medium1_response.status_code == 200
+    assert {"id": "medium1"} in assign_medium1_response.json()["licenced_media"]
+    assert len(assign_medium1_response.json()["licenced_media"]) == 1
+
+    assign_medium2_response = client.post(
+        "/admin/media-licence-assignment",
+        headers={"x-api-key": admin_api_key},
+        json={
+            "user_id": "automated-test-user",
+            "licenced_media": [{"id": "medium2"}],
+        },
+    )
+    assert assign_medium2_response.status_code == 200
+    assert {"id": "medium2"} in assign_medium2_response.json()["licenced_media"]
+    assert len(assign_medium2_response.json()["licenced_media"]) == 1
+
+    # Check licenced media responses
+
+    licenced_media_only_response = client.get(
+        "/licenced-media?user_id=automated-test-user",
+        headers={"x-api-key": client_api_key},
+    )
+    assigned_media = licenced_media_only_response.json()["licenced_media"]
+    assert licenced_media_only_response.status_code == 200
+    assert {"id": "medium1"} in assigned_media
+    assert {"id": "medium2"} in assigned_media
+    assert len(assigned_media) == 2
+
+    # Delete created licence assignments
+
+    delete_user_assignment_response = client.delete(
+        f"/admin/media-licence-assignment/{assign_medium1_response.json()['id']}",
+        headers={"x-api-key": admin_api_key},
+    )
+    assert delete_user_assignment_response.status_code == 204
+
+    delete_user_assignment_response = client.delete(
+        f"/admin/media-licence-assignment/{assign_medium2_response.json()['id']}",
+        headers={"x-api-key": admin_api_key},
+    )
+    assert delete_user_assignment_response.status_code == 204

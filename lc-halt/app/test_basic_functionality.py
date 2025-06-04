@@ -11,12 +11,6 @@ client_api_key = os.getenv("LC_HALT_CLIENT_API_KEY")
 admin_api_key = os.getenv("LC_HALT_ADMIN_API_KEY")
 
 
-@pytest.fixture(scope="module")
-def event_loop():
-    loop = get_event_loop()
-    yield loop
-
-
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
