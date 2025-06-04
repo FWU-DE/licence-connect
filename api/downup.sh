@@ -17,9 +17,7 @@ then
   fi
 fi
 
-export LC_IMAGE=lc_core:$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
-
 docker compose --profile debug -f ../docker/docker-compose.yaml down
-./mvnw clean spring-boot:build-image -DskipTests
+./mvnw clean spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName="gitcr.fwu.de/licenceconnect/api:latest"
 docker compose --profile debug -f ../docker/docker-compose.yaml up --detach --wait
 echo -e $(curl -X GET http://localhost:80/v1/healthcheck)
