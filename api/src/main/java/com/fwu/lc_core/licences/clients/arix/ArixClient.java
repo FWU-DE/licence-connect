@@ -1,6 +1,5 @@
 package com.fwu.lc_core.licences.clients.arix;
 
-import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +23,11 @@ public class ArixClient {
     }
 
     public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        assertParametersAreValid(bundesland, standortnummer, schulnummer, userId);
         return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
     private List<ODRLPolicy.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
-        validateParameters(bundesland, standortnummer, schulnummer, userId);
-
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
@@ -51,7 +49,7 @@ public class ArixClient {
         return ArixParser.parse(responseBody);
     }
 
-    private static void validateParameters(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         if (bundesland == null) {
             throw new IllegalArgumentException("You must provide a Bundesland.");
         }

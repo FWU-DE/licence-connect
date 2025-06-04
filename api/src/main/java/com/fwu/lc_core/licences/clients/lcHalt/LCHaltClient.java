@@ -22,12 +22,11 @@ public class LCHaltClient {
     private String lcHaltClientApiKey;
 
     public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        assertParametersAreValid(bundesland, standortnummer, schulnummer, userId);
         return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
     private List<ODRLPolicy.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        validateParameters(bundesland, standortnummer, schulnummer, userId);
-
         WebClient webClient = WebClient.builder()
                 .baseUrl(licenceUrl)
                 .build();
@@ -44,7 +43,7 @@ public class LCHaltClient {
         return LCHaltParser.parse(responseBody);
     }
 
-    private static void validateParameters(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         if (isNullOrEmpty(userId)) {
             throw new IllegalArgumentException("You must provide a userId parameter.");
         }
