@@ -1,0 +1,9 @@
+api.licenceconnect.schule {
+	reverse_proxy localhost:81
+	tls internal
+}
+
+halt.licenceconnect.schule {
+	reverse_proxy localhost:81
+	tls internal
+}
