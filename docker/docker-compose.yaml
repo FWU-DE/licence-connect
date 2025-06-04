@@ -11,12 +11,8 @@ services:
       - licence-connect
       - lc-halt
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -f http://licence-connect:8080/v1/healthcheck && curl -f http://lc-halt:80/health",
-        ]
-      interval: 1s
+      test: ["CMD-SHELL", "curl -f http://licence-connect:8080/v1/healthcheck && curl -f http://lc-halt:80/health"]
+      interval: 5s
       timeout: 5s
       retries: 100
 
