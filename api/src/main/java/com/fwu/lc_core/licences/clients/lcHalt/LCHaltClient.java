@@ -28,24 +28,30 @@ public class LCHaltClient {
             return Mono.error(e);
         }
 
-        return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
-    }
-
-    private List<ODRLPolicy.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         WebClient webClient = WebClient.builder()
                 .baseUrl(licenceUrl)
                 .build();
 
-        String responseBody = webClient.get()
+        return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                    .queryParam("user_id", userId)
-                    .queryParamIfPresent("bundesland_id", Optional.ofNullable(bundesland))
-                    .queryParamIfPresent("schul_id", Optional.ofNullable(schulnummer))
-                    .build())
+                        .queryParam("user_id", userId)
+                        .queryParamIfPresent("bundesland_id", Optional.ofNullable(bundesland))
+                        .queryParamIfPresent("schul_id", Optional.ofNullable(schulnummer))
+                        .build())
                 .header(API_KEY_HEADER, lcHaltClientApiKey)
-                .exchangeToMono(response -> response.bodyToMono(String.class)).block();
+                .exchangeToMono(response -> response.bodyToMono(String.class))
+                .handle((responseBody, sink) -> {
+                    if (responseBody == null || !responseBody.startsWith("<result")) {
+                        sink.error(new RuntimeException(responseBody));
+                        return;
+                    }
 
-        return LCHaltParser.parse(responseBody);
+                    try {
+                        sink.next(LCHaltParser.parse(responseBody));
+                    } catch (Exception e) {
+                        sink.error(e);
+                    }
+                });
     }
 
     private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {

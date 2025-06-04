@@ -29,10 +29,6 @@ public class ArixClient {
             return Mono.error(e);
         }
 
-        return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
-    }
-
-    private List<ODRLPolicy.Permission> getPermissionsBlocking(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws Exception {
         WebClient webClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
@@ -42,16 +38,23 @@ public class ArixClient {
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining("/"));
 
-        String responseBody = webClient.post()
+        return webClient.post()
                 .uri(uri)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromFormData("xmlstatement", "<search></search>"))
-                .exchangeToMono(response -> response.bodyToMono(String.class)).block();
+                .exchangeToMono(response -> response.bodyToMono(String.class))
+                .handle((responseBody, sink) -> {
+                    if (responseBody == null || !responseBody.startsWith("<result")) {
+                        sink.error(new RuntimeException(responseBody));
+                        return;
+                    }
 
-        if (responseBody == null || !responseBody.startsWith("<result"))
-            throw new RuntimeException(responseBody);
-
-        return ArixParser.parse(responseBody);
+                    try {
+                        sink.next(ArixParser.parse(responseBody));
+                    } catch (Exception e) {
+                        sink.error(e);
+                    }
+                });
     }
 
     private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
