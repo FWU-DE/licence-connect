@@ -17,7 +17,7 @@ then
   fi
 fi
 
-docker compose --profile debug -f ../docker/docker-compose.yaml down
+docker compose -f ../docker/docker-compose.yaml down
 ./mvnw clean spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName="gitcr.fwu.de/licenceconnect/api:latest"
-docker compose --profile debug -f ../docker/docker-compose.yaml up --detach --wait
+docker compose -f ../docker/docker-compose.yaml up --detach --wait
 echo -e $(curl -X GET http://localhost:80/v1/healthcheck)
