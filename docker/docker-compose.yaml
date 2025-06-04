@@ -1,12 +1,13 @@
 networks:
   lc_net:
-    driver: bridge
+    name: lc_net
+    external: true
 
 services:
   nginx:
+    image: nginx:latest
     networks:
       - lc_net
-    image: nginx:latest
     container_name: lc-nginx
     restart: unless-stopped
     volumes:
@@ -22,9 +23,9 @@ services:
       retries: 100
 
   licence-connect:
+    image: ${LC_IMAGE}
     networks:
       - lc_net
-    image: ${LC_IMAGE}
     container_name: licence-connect
     restart: unless-stopped
     env_file: "../.env"

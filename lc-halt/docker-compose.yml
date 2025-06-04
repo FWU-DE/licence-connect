@@ -1,21 +1,25 @@
 networks:
   lc_net:
+    name: lc_net
     driver: bridge
 
 services:
   lc-halt:
+    container_name: lc-halt
+    image: ${LC_HALT_IMAGE}
     networks:
       - lc_net
-    image: ${LC_HALT_IMAGE}
     env_file:
       - ../.env
     profiles:
       - complete-setup
-    expose:
-      - "8000"
+    ports:
+      - "8000:80"
 
   mongodb:
     image: mongo:8.0
+    networks:
+      - lc_net
     restart: always
     env_file:
       - ../.env
