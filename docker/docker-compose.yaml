@@ -44,8 +44,8 @@ services:
     container_name: mongodb
     env_file: ../.env
     restart: unless-stopped
-    expose:
-      - "27017"
+    ports:
+      - "27017:27017"
     volumes:
       - ./lc-halt-db:/data/db
     healthcheck:
