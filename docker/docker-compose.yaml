@@ -1,13 +1,6 @@
-networks:
-  lc_net:
-    name: lc_net
-    external: true
-
 services:
   nginx:
     image: nginx:latest
-    networks:
-      - lc_net
     container_name: lc-nginx
     restart: unless-stopped
     volumes:
@@ -16,6 +9,7 @@ services:
       - "80:80"
     depends_on:
       - licence-connect
+      - lc-halt
     healthcheck:
       test: ["CMD", "curl", "-f", "http://licence-connect:8080/v1/healthcheck"]
       interval: 1s
@@ -24,8 +18,6 @@ services:
 
   licence-connect:
     image: ${LC_IMAGE}
-    networks:
-      - lc_net
     container_name: licence-connect
     restart: unless-stopped
     env_file: "../.env"
@@ -35,6 +27,20 @@ services:
       - "8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/data/database.h2;DB_CLOSE_ON_EXIT=FALSE
+
+  lc-halt:
+    container_name: lc-halt
+    image: ${LC_HALT_IMAGE}
+    env_file:
+      - ../.env
+
+  mongodb:
+    image: mongo:8.0
+    restart: always
+    env_file:
+      - ../.env
+    expose:
+      - "27017"
 
   loki:
     profiles: [debug]
