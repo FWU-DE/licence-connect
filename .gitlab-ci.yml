@@ -170,12 +170,12 @@ deploy_api:
     # pull the latest licenceconnect image on the VM
     - $SSH_EVAL "docker pull $API_RELEASE_IMAGE"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
-    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$API_RELEASE_IMAGE docker compose down"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_HALT_IMAGE=$LC_HALT_RELEASE_IMAGE LC_IMAGE=$API_RELEASE_IMAGE docker compose down"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
     - $SCP_EVAL docker/docker-compose.yaml $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # Copy the (potentially) new version of the nginx directory (and its contents) into the directory on the VM
     - $SCP_EVAL -r docker/nginx $SSH_USER_AND_HOST:$APP_DIR_ON_VM
     # cd into the directory on the VM and start the containers using the (potentially) new docker-compose.yaml
-    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_IMAGE=$API_RELEASE_IMAGE docker compose up -d --wait"
+    - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_HALT_IMAGE=$LC_HALT_RELEASE_IMAGE LC_IMAGE=$API_RELEASE_IMAGE docker compose up -d --wait"
     # delete all dangling docker images on the VM
     - $SSH_EVAL "docker image prune -f"
