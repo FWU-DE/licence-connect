@@ -9,11 +9,18 @@
     "run:core": "bun run --elide-lines 0 --filter 'api' run:dev",
     "run:lc-halt:dev": "bun run --elide-lines 0 --filter 'lc-halt' run:dev",
     "run:lc-halt:container": "bun run --elide-lines 0 --filter 'lc-halt' run:container",
+    "run:container:all": "docker compose -f docker/docker-compose.yaml up -d",
     "run:mock-licence-servers": "docker compose -f mock-licence-servers/docker-compose.yml up -d",
     "test:mocked": "bun run --elide-lines 0 --filter 'api' test:mocked",
     "test:api": "bun run --elide-lines 0 --filter 'api' test",
     "test:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' test",
     "format:python": "uvx ruff format",
-    "build-container:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' build-container"
+    "build-container:api": "bun run --elide-lines 0 --filter 'api' build-container",
+    "build-container:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' build-container",
+    "build-container:all": "bun run --elide-lines 0 --filter 'lc-halt' build-container && bun run --elide-lines 0 --filter 'api' build-container",
+
+    "build-and-run-container:api": "bun build-container:api && bun run:container:api",
+    "build-and-run-container:lc-halt": "bun build-container:lc-halt && bun run:container:lc-halt",
+    "build-and-run-container:all": "bun build-container:all && bun run:container:all"
   }
 }
