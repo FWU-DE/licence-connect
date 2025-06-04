@@ -15,12 +15,12 @@
     "test:api": "bun run --elide-lines 0 --filter 'api' test",
     "test:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' test",
     "format:python": "uvx ruff format",
-    "build-container:api": "bun run --elide-lines 0 --filter 'api' build-container",
-    "build-container:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' build-container",
-    "build-container:all": "bun run --elide-lines 0 --filter 'lc-halt' build-container && bun run --elide-lines 0 --filter 'api' build-container",
+    "build:container:api": "bun run --elide-lines 0 --filter 'api' build:container",
+    "build:container:lc-halt": "bun run --elide-lines 0 --filter 'lc-halt' build:container",
+    "build:container:all": "bun build:container:api && bun build:container:lc-halt",
 
-    "build-and-run-container:api": "bun build-container:api && bun run:container:api",
-    "build-and-run-container:lc-halt": "bun build-container:lc-halt && bun run:container:lc-halt",
-    "build-and-run-container:all": "bun build-container:all && bun run:container:all"
+    "build-and-run:container:api": "bun build:container:api && bun run:container:api",
+    "build-and-run:container:lc-halt": "bun build:container:lc-halt && bun run:container:lc-halt",
+    "build-and-run:container:all": "bun build:container:all && bun run:container:all"
   }
 }
