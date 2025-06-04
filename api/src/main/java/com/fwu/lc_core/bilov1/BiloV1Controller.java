@@ -2,7 +2,7 @@ package com.fwu.lc_core.bilov1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.AvailableLicenceHolders;
+import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -49,7 +49,7 @@ public class BiloV1Controller {
             @RequestParam(required = false) String schulkennung,
             @RequestParam @NotNull Bundesland bundesland) {
         log.info("Received licence request for client: {} with Bundesland: {}, Schulkennung: {}, UserId: {}", clientId, bundesland, schulkennung, userId);
-        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientId).contains(AvailableLicenceHolders.BILO_V1)) {
+        if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientId).contains(LicenceHolder.BILO_V1)) {
             log.info("Client {} is not allowed to access BILO_V1", clientId);
             return ResponseEntity.ok(null);
         }

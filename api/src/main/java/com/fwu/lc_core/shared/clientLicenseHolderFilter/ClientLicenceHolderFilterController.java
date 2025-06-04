@@ -1,5 +1,6 @@
 package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
+import com.fwu.lc_core.shared.LicenceHolder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class ClientLicenceHolderFilterController {
     private final ClientLicenseHolderFilterService clientLicenseHolderFilterService;
 
     @GetMapping("/admin/client-licence-holder-mapping/{clientName}")
-    public ResponseEntity<EnumSet<AvailableLicenceHolders>> getLicenceHolders(@PathVariable String clientName) {
+    public ResponseEntity<EnumSet<LicenceHolder>> getLicenceHolders(@PathVariable String clientName) {
         log.info("Received request to get licence holders for client: {}", clientName);
         return ResponseEntity.ok(clientLicenseHolderFilterService.getAllowedLicenceHolders(clientName));
     }
@@ -28,8 +29,8 @@ public class ClientLicenceHolderFilterController {
             @PathVariable String clientName
     ) {
         log.info("Setting new available licence holders for client: {}", clientName);
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders);
-        log.info("New allowed systems: {} for client: {}", newMapping.availableLicenceHolders.toString(), clientName);
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, newMapping.availableLicenceHolders());
+        log.info("New allowed systems: {} for client: {}", newMapping.availableLicenceHolders().toString(), clientName);
         return ResponseEntity.noContent().build();
     }
 }

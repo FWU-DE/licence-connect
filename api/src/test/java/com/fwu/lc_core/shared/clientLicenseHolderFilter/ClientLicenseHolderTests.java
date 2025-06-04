@@ -1,5 +1,6 @@
 package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
+import com.fwu.lc_core.shared.LicenceHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +56,7 @@ public class ClientLicenseHolderTests {
     void getRequestWithoutApiKeyForExistingClientNameReturnsUnauthorized() {
         var clientName = "clientName";
 
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, EnumSet.of(AvailableLicenceHolders.ARIX));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, EnumSet.of(LicenceHolder.ARIX));
 
         webTestClient.get()
                 .uri("/admin/client-licence-holder-mapping/" + clientName)
@@ -78,7 +79,7 @@ public class ClientLicenseHolderTests {
     void getRequestWithNonPrivilegedApiKeyForExistingClientNameReturnsUnauthorized() {
         var clientName = "clientName";
 
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, EnumSet.of(AvailableLicenceHolders.ARIX));
+        clientLicenseHolderFilterService.setAllowedLicenceHolders(clientName, EnumSet.of(LicenceHolder.ARIX));
 
         webTestClient.get()
                 .uri("/admin/client-licence-holder-mapping/" + clientName)
