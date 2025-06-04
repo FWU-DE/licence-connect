@@ -23,7 +23,12 @@ public class ArixClient {
     }
 
     public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        assertParametersAreValid(bundesland, standortnummer, schulnummer, userId);
+        try {
+            assertParametersAreValid(bundesland, standortnummer, schulnummer, userId);
+        } catch (IllegalArgumentException e) {
+            return Mono.error(e);
+        }
+
         return Mono.fromCallable(() -> getPermissionsBlocking(bundesland, standortnummer, schulnummer, userId)).subscribeOn(Schedulers.boundedElastic());
     }
 
