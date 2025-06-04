@@ -43,6 +43,11 @@ services:
       - "27017"
     volumes:
       - ./lc-halt-db:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--port", "27017", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   loki:
     profiles: [debug]
