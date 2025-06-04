@@ -17,7 +17,7 @@ services:
       retries: 100
 
   licence-connect:
-    image: ${LC_IMAGE}
+    image: gitcr.fwu.de/licenceconnect/api:latest
     container_name: licence-connect
     restart: unless-stopped
     env_file: "../.env"
@@ -29,8 +29,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/data/database.h2;DB_CLOSE_ON_EXIT=FALSE
 
   lc-halt:
+    image: gitcr.fwu.de/licenceconnect/api/lc-halt:latest
     container_name: lc-halt
-    image: ${LC_HALT_IMAGE}
     env_file:
       - ../.env
 
