@@ -20,7 +20,7 @@ services:
     image: gitcr.fwu.de/licenceconnect/api:latest
     container_name: licence-connect
     restart: unless-stopped
-    env_file: "../.env"
+    env_file: ../.env
     volumes:
       - ${DB_FILE_PATH:-./db}:/workspace/data
     expose:
@@ -31,16 +31,14 @@ services:
   lc-halt:
     image: gitcr.fwu.de/licenceconnect/api/lc-halt:latest
     container_name: lc-halt
-    env_file:
-      - ../.env
+    env_file: ../.env
 
   mongodb:
     image: mongo:8.0
     restart: always
-    env_file:
-      - ../.env
     expose:
       - "27017"
+    env_file: ../.env
 
   loki:
     profiles: [debug]
