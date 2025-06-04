@@ -32,11 +32,12 @@ services:
     image: gitcr.fwu.de/licenceconnect/api/lc-halt:latest
     container_name: lc-halt
     env_file: ../.env
+    restart: unless-stopped
 
   mongodb:
     image: mongo:8.0
-    restart: always
     env_file: ../.env
+    restart: unless-stopped
     expose:
       - "27017"
 
