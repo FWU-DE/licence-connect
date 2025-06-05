@@ -2,3 +2,17 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-architecture-constraints]]
 == Architecture Constraints
+
+
+[cols="a,a,2a" options="header"]
+|===
+|ID |Constraint| Notes
+
+|C001|No Licence Persistence|
+Licence Connect Core shall not persist user or licence information.
+It merely acts as a broker finding all relevant licence information based on the information provided by VIDIS.
+
+|C002|Minimize transmitted Metadata|
+Licence Connect Core shall only transmit a minimum of metadata alongside licence information.
+
+|===

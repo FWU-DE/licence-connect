@@ -7,56 +7,54 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [plantuml]
 ----
-@startuml
+@startuml Context_and_Scope
 !include <C4/C4_Container>
 SHOW_PERSON_OUTLINE()
 
-Person_Ext(student, "Schüler und Lehrer", "")
+Person_Ext(student, "Student", "")
+Person_Ext(teacher, "Teacher", "")
+Person(admin, "Administrator", "")
 
-System_Ext(ln, "Lizenznutzende", "z. B. Bildungsplattform, Verlage, Bilo")
+System_Ext(licence_consumer, "Licence Consumer", "z. B. Educational Offer, Publisher, Bilo")
+System_Ext(vidis, "VIDIS", "")
 
-System_Ext(vidis, "Vidis", "")
+System(lc, "Licence Connect Core", "")
 
-System(lc, "LC core", "")
+System_Ext(lchalt, "LC Halt", "")
+System_Ext(arix, "Arix", "")
+System_Ext(bilo_v1, "Bilo_v1", "")
+System_Ext(bilo_v2, "Bilo_v2", "")
 
-System_Ext(lh, "Lizenzhalter [1..]", "z. B. Bilo, Verlage, Arix")
+Rel(student, licence_consumer, "Use licenced media", "")
+Rel(teacher, licence_consumer, "Use licenced media", "")
+Rel_R(licence_consumer, vidis, "Retrieve relevant licences", "")
+Rel(vidis, lc, "Retrieve relevant licences", "")
+Rel(lc, lchalt, "Retrieve relevant licences","")
+Rel(lc, arix, "Retrieve relevant licences","")
+Rel(lc, bilo_v1, "Retrieve relevant licences","")
+Rel(lc, bilo_v2, "Retrieve relevant licences","")
 
-
-Rel_R(student, ln, "Login\nLizenzen ansehen\nLizenzen nutzen", "")
-
-Rel_R(ln, vidis, "Login umleiten\nLizenzen anfragen", "")
-
-Rel_R(vidis, lc, "Lizenzen anfragen", "")
-Rel_L(lc, vidis, "Gesammelte Lizenzen zurückgeben", "")
-
-Rel_R(lc, lh, "Lizenzen anfragen","")
-Rel_L(lh, lc, "Lizenzen bereitstellen", "")
+Rel(admin, lc, "Enable licence holder for specific consumers")
 
 @enduml
 ----
 
-=== Domain Stories
+[cols="e,2a" options="header"]
+|===
+|External System |Notes
 
-See <<section-domain-storytelling>> for more infos on the method.
+|VIDIS|
+SSO Provider for educational purposes.
+https://www.vidis.schule/
 
-[plantuml]
-----
-@startuml licences domain story
-!include <DomainStory/domainStory>
+Due to the sign in via VIDIS, licence holders only have pseudonyms of users.
+In order to assign actual licences to users, the request to LC Halt goes through VIDIS.
+That way, VIDIS and LC Halt can potentially use data that is not available to the licence holder.
 
-Person(Schüler)
-Person(Lehrer)
-Person(Schule)
-System(Videoplattform)
- 
-activity(_, Lehrer, wählt für Unterrichtsstunde, Document: Video, bei, Videoplattform)
-activity(_, Lehrer, bestellt, Document: Video, bei, Schule)
-activity(_, Schule, bestellt, Document: Video mit Laufzeit, bei, Videoplattform)
-activity(_, Videoplattform, übermittelt, Document: Lizenzcode, an, Schule)
-activity(_, Schule, übermittelt, Document: Lizenzcode, an, Lehrer)
-activity(_, Lehrer, übermittelt, Document: Lizenzcode, an, Schüler)
-activity(_, Schüler, loggt sich ein bei, Videoplattform)
-activity(_, Schüler, trägt, Document: Lizenzcode, ein bei, Videoplattform)
-activity(_, Schüler, ruft, Document: Video, ab bei, Videoplattform)
-@enduml
-----
+|LC Halt|
+LC Halt is a demo system intended to demonstrate licence management.
+
+|Arix|
+ARIX (Antares Repository Interface/XML) is licence holding system developed and run by the Antares Project: https://www.antares.net
+
+|===

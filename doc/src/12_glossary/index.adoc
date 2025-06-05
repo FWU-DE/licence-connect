@@ -23,8 +23,18 @@ endif::arc42help[]
 |federal state
 |One of 16 federal states of Germany.
 
+|Standortnummer
+|location id
+|Identifier for a "grouping" of schools.
+E.g. a school district.
+
 |Schule
 |school
 |
+
+|Schulnummer
+|school id
+|Identifier for one school.
+Unique for one federal state.
 
 |===
