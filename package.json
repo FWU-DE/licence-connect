@@ -27,6 +27,8 @@
     "restart:container:nginx": "docker compose -f docker/docker-compose.yaml down nginx && docker compose -f docker/docker-compose.yaml up -d nginx",
     "restart:container:api": "docker compose -f docker/docker-compose.yaml down licence-connect && docker compose -f docker/docker-compose.yaml up -d licence-connect",
     "restart:container:lc-halt": "docker compose -f docker/docker-compose.yaml down lc-halt && docker compose -f docker/docker-compose.yaml up -d lc-halt",
-    "restart:container:all": "docker compose -f docker/docker-compose.yaml down && docker compose -f docker/docker-compose.yaml up -d"
+    "restart:container:all": "bun stop:container:all && docker compose -f docker/docker-compose.yaml up -d",
+
+    "stop:container:all": "docker compose -f docker/docker-compose.yaml down"
   }
 }
