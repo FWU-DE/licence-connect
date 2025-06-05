@@ -18,6 +18,6 @@ That would enable integrations without changes to the code of licence connect co
 
 === Current Deviations
 
-The current connections to bilos v1 and v2 APIs deviate from the solution strategy described above.
+The current connections to the BiLo v1 and v2 APIs deviate from the solution strategy described above.
 To integrate them, Licence Connect Core provides dedicated endpoints.
-This is due to different requirements of bilo when retrieving the licences as a licence consumer.
+This is due to different requirements of BiLo when retrieving the licences as a licence consumer.

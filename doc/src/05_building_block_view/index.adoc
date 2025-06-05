@@ -56,7 +56,7 @@ The Licences module is the main module providing the API for VIDIS and fetching 
 
 |Client Licence Holder Mapping|
 The Client Licence Holder Mapping module enables administrators to enable/disable different licence sources for different licence consumers.
-The Licences module can then retrieve only the enabled licences for requesting consumer.
+The Licences module can then retrieve licences only from licence sources that are enabled for the requesting consumer.
 
 |Config|
 The Config module configures relevant parts of Licence Connect Core, e.g. authentication or logging.
@@ -127,6 +127,6 @@ repository --> db: Client Mappings persistieren/abrufen
 @enduml
 ----
 
-The client licence holder mapping allows the admin to control which licence holders are requested for which client requests.
+The client licence holder mapping allows the administrator to control which licence holders are requested for which client requests.
 Each mapping maps one client name to 0:n licence holders.
-Each request to lc core requesting licences is providing a client.
+Each request to lc core requesting licences must provide a client name.

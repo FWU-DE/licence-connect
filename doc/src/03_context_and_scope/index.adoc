@@ -49,12 +49,12 @@ https://www.vidis.schule/
 
 Due to the sign in via VIDIS, licence holders only have pseudonyms of users.
 In order to assign actual licences to users, the request to LC Halt goes through VIDIS.
-VIDIS can then ask LC Halt for licences using real names and ids of users.
+That way, VIDIS and LC Halt can potentially use data that is not available to the licence holder.
 
 |LC Halt|
 LC Halt is a demo system intended to demonstrate licence management.
 
 |Arix|
-Arix is another licence holding system.
+ARIX (Antares Repository Interface/XML) is licence holding system developed and run by the Antares Project: https://www.antares.net
 
 |===
