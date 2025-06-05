@@ -65,43 +65,14 @@ async def set_assignment(
 ):
     logger.info(media_to_licence)
     assert_media_assignment_is_valid(media_to_licence)
-    existing_licenced_media = await licenced_media_assignment_collection.find_one(
-        {
-            "user_id": media_to_licence.user_id,
-            "bundesland_id": media_to_licence.bundesland_id,
-            "schul_id": media_to_licence.schul_id,
-        }
+
+    new_licenced_media = await licenced_media_assignment_collection.insert_one(
+        media_to_licence.model_dump(by_alias=True, exclude=["id"])
     )
-
-    if existing_licenced_media is None:
-        new_licenced_media = await licenced_media_assignment_collection.insert_one(
-            media_to_licence.model_dump(by_alias=True, exclude=["id"])
-        )
-        created_user_media = await licenced_media_assignment_collection.find_one(
-            {"_id": new_licenced_media.inserted_id}
-        )
-        return created_user_media
-
-    # Remove None values
-    clean_user_media_to_set = {
-        k: v
-        for k, v in media_to_licence.model_dump(by_alias=True).items()
-        if v is not None
-    }
-
-    licenced_media_assignment_collection.find_one_and_update(
-        {"_id": existing_licenced_media["_id"]},
-        {"$set": clean_user_media_to_set},
-        return_document=ReturnDocument.AFTER,
+    created_user_media = await licenced_media_assignment_collection.find_one(
+        {"_id": new_licenced_media.inserted_id}
     )
-
-    return await licenced_media_assignment_collection.find_one(
-        {
-            "user_id": media_to_licence.user_id,
-            "bundesland_id": media_to_licence.bundesland_id,
-            "schul_id": media_to_licence.schul_id,
-        }
-    )
+    return created_user_media
 
 
 async def get_assignment(id: str):
