@@ -17,6 +17,8 @@ Taken from ADR-07:
 
 LC Halt is built using [FastAPI](https://fastapi.tiangolo.com).
 
+A running instance will provide a SwaggerUI with comprehensive documentation at `/docs`.
+
 ## Dev Setup
 
 **Prerequisites:**
