@@ -1,3 +1,4 @@
+[[adr5]]
 === ADR 5: Licence responses format
 
 Date: 2025-03-20

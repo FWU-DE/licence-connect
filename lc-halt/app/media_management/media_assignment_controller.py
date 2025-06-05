@@ -13,6 +13,9 @@ router = APIRouter(prefix="/admin/media-licence-assignment", tags=["Administrati
     response_model_by_alias=False,
 )
 async def list_media_licence_assignments():
+    """
+    This endpoint returns all existing assignments.
+    """
     return await media_management.get_all_assignments()
 
 
@@ -30,6 +33,8 @@ async def assign_licenced_media(
     - to a single user
     - to all users of a bundesland
     - to all users of a schule in a bundesland
+
+    It will override existing assignments for the same user or bundesland or bundesland/schule
     """
     return await media_management.set_assignment(licenced_media_body)
 
@@ -41,9 +46,15 @@ async def assign_licenced_media(
     response_model_by_alias=False,
 )
 async def show_media_licence_assignment(id: str):
+    """
+    This endpoint allows to retrieve a single assignment using it's id.
+    """
     return await media_management.get_assignment(id)
 
 
 @router.delete("/{id}")
 async def delete_media_licence_assignment(id: str):
+    """
+    This endpoint allows to delete a single assignment using it's id.
+    """
     return await media_management.delete_assignment(id)
