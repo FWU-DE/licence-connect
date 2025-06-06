@@ -147,8 +147,17 @@ The architectural documentation and it's diagrams can be rendered using either:
 1. Check if code is in releasable state on branch `develop`
 2. Check and potentially adapt version numbers in `api/pom.xml` for LC Core and `lc-halt/pyproject.toml` and `lc-halt/app/main.py` for LC Halt
 3. Create Merge Request from `develop` to `main`
-4. Validate Deployment
-5. Create release tag
+4. Make sure that the .env file on the deployment VM is up to date with the latest environment variables
+   - If there are new environment variables, add them to the `.env` file on the deployment VM
+   - If there are removed environment variables, remove them from the `.env` file on the deployment VM
+   - If there are changed environment variables, change them in the `.env` file on the deployment VM
+5. Validate Deployment
+   - Make sure that the latest docker images for LC Core and LC Halt have been pulled by the deployment step in the pipeline
+   - Make sure that the deployment pipeline runs successfully and the apps are reachable via `https://api.licenceconnect.schule/` and `https://halt.licenceconnect.schule/`
+   - Check if the swagger UIs are available at `https://api.licenceconnect.schule/swagger` and `https://halt.licenceconnect.schule/docs`
+6. Create release tag on the merge commit on `main`
+   - If LC Core was changed, add a tag with the format `x.y.z`
+   - If LC Halt was changed, add a tag with the format `lc-halt_x.y.z`
 
 <!-- Open Questions: How do we want to deal with multiple version sources and condensing it to one tag? -->
 
