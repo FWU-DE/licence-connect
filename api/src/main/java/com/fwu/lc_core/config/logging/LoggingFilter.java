@@ -15,7 +15,7 @@ import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 public class LoggingFilter implements WebFilter {
 
     @Value("${vidis.api-key.unprivileged}")
-    private String unprivilegedApiKey;
+    private String vidisApiKey;
 
     @Value("${admin.api-key}")
     private String adminApiKey;
@@ -37,10 +37,10 @@ public class LoggingFilter implements WebFilter {
 
         var auth = "None";
         if (apiKey != null) {
-            if (apiKey.equals(unprivilegedApiKey)) {
-                auth = "Unprivileged";
+            if (apiKey.equals(vidisApiKey)) {
+                auth = "VIDIS API Key";
             } else if (apiKey.equals(adminApiKey)) {
-                auth = "Admin";
+                auth = "Admin API Key";
             }
         }
 
