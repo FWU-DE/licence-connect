@@ -42,6 +42,8 @@ public class SecurityConfig {
                                 return Mono.empty();
                         })
                 )
+                // We need to explicitly add the logging filter before the authentication filter,
+                // so unauthenticated requests are logged as well.
                 .addFilterAt(loggingFilter, SecurityWebFiltersOrder.FIRST)
                 .addFilterAt(apiKeyAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
