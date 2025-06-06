@@ -207,7 +207,7 @@ class LicencesControllerWithWorkingServerTests {
                 .exchange()
                 .expectStatus().isOk();
 
-        assertThat(output.getOut()).contains("Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
+        assertThat(output.getOut()).contains("GET /v1/licences/request: clientName: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
         assertThat(output.getOut()).contains("Found ");
         assertThat(output.getOut()).contains(" licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME);
     }
@@ -216,7 +216,7 @@ class LicencesControllerWithWorkingServerTests {
     @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
-        String expectedFirstLog = "Received licence request for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
+        String expectedFirstLog = "GET /v1/licences/request: clientName: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found 6 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
 
         webTestClient
