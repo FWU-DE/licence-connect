@@ -20,6 +20,7 @@ services:
 
   licence-connect:
     image: gitcr.fwu.de/licenceconnect/api:latest
+    pull_policy: always
     container_name: licence-connect
     restart: unless-stopped
     env_file: ../.env
@@ -32,6 +33,7 @@ services:
 
   lc-halt:
     image: gitcr.fwu.de/licenceconnect/api/lc-halt:latest
+    pull_policy: always
     container_name: lc-halt
     env_file: ../.env
     restart: unless-stopped
