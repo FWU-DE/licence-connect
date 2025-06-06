@@ -24,15 +24,17 @@ public class LicencesController {
 
     @GetMapping("/v1/licences/request")
     private Mono<ODRLPolicy> request(@ParameterObject LicencesRequestDto requestDto, @RequestParam String clientName) {
-        log.info("Received licence request for client: {}", clientName);
+        final var bundesland = requestDto.bundesland();
+        final var standortnummer = requestDto.standortnummer();
+        final var schulnummer = requestDto.schulnummer();
+        final var userId = requestDto.userId();
 
-        var licencee = new Licencee(
-                requestDto.bundesland(),
-                requestDto.standortnummer(),
-                requestDto.schulnummer(),
-                requestDto.userId()
+        log.info(
+                "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {}; userId: {};",
+                clientName, bundesland, standortnummer, schulnummer, userId
         );
 
+        var licencee = new Licencee(bundesland, standortnummer, schulnummer, userId);
         return licencesCollector.getODRLPolicy(licencee, clientName);
     }
 }

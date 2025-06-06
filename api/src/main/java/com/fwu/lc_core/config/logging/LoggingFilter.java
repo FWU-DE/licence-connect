@@ -15,7 +15,7 @@ import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 public class LoggingFilter implements WebFilter {
 
     @Value("${vidis.api-key.unprivileged}")
-    private String unprivilegedApiKey;
+    private String vidisApiKey;
 
     @Value("${admin.api-key}")
     private String adminApiKey;
@@ -24,25 +24,16 @@ public class LoggingFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        final var request = exchange.getRequest();
+
         // Since the healthcheck endpoint is called every few seconds in production,
         // we skip logging requests to it to reduce logging noise.
-        if (exchange.getRequest().getPath().value().equals("/v1/healthcheck")) {
+        if (request.getPath().value().equals("/v1/healthcheck")) {
             return chain.filter(exchange);
         }
-
-        var request = exchange.getRequest();
-
-        var headers = request.getHeaders();
-        var apiKey = headers.getFirst(API_KEY_HEADER);
-
-        var auth = "None";
-        if (apiKey != null) {
-            if (apiKey.equals(unprivilegedApiKey)) {
-                auth = "Unprivileged";
-            } else if (apiKey.equals(adminApiKey)) {
-                auth = "Admin";
-            }
-        }
+        
+        final var apiKey = request.getHeaders().getFirst(API_KEY_HEADER);
+        final var auth = getAuthenticationType(apiKey);
 
         logger.info("Request: Id={} Method={}, Path={}, Auth='{}'",
                 request.getId(),
@@ -51,6 +42,17 @@ public class LoggingFilter implements WebFilter {
                 auth);
 
         return chain.filter(exchange);
+    }
+
+    private String getAuthenticationType(String apiKey) {
+        if (apiKey == null) {
+            return "No API Key";
+        } else if (apiKey.equals(vidisApiKey)) {
+            return "VIDIS API Key";
+        } else if (apiKey.equals(adminApiKey)) {
+            return "Admin API Key";
+        }
+        return "Unknown API Key";
     }
 }
 
