@@ -165,13 +165,14 @@ deploy_api:
   script:
     # Create the `/var/docker/apps/licenceconnect` directory on the VM if it does not exist yet
     - $SSH_EVAL "mkdir -p $APP_DIR_ON_VM"
-    # log into the private registry on the VM
+    # Log into the private registry on the VM
     - $SSH_EVAL "echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY"
-    # pull the latest licenceconnect and lc-halt images from gitcr.fwu.de
+    # Pull the latest licenceconnect and lc-halt images from gitcr.fwu.de
     # We intentionally do this here instead of in the docker-compose.yaml `via pull_policy: always`,
     # so we can easily use locally built images in development without docker compose wanting to pull them
     # from the gitcr.fwu.de registry and failing because of locally missing credentials for that registry.
-    - $SSH_EVAL "docker pull $API_RELEASE_IMAGE $LC_HALT_RELEASE_IMAGE"
+    - $SSH_EVAL "docker pull $API_RELEASE_IMAGE"
+    - $SSH_EVAL "docker pull $LC_HALT_RELEASE_IMAGE"
     # cd into the directory on the VM, stop and remove the containers, using the old docker-compose.yaml if it exists
     - $SSH_EVAL "cd $APP_DIR_ON_VM; LC_HALT_IMAGE=$LC_HALT_RELEASE_IMAGE LC_IMAGE=$API_RELEASE_IMAGE docker compose down"
     # Copy the (potentially) new version of `docker-compose.yaml` into the directory on the VM
