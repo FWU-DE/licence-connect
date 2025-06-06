@@ -133,10 +133,31 @@ The Grafana container is only started for the `debug` docker service profile, i.
 or supply the `COMPOSE_PROFILES=debug` variable either directly before the command or via the environment. On the deployment-VM, the Grafana container should not run,
 as instead an existing Grafana instance will use the Loki container as a data source.
 
+### Rendering the Architectural Documentation
+
+The architectural documentation and it's diagrams can be rendered using either:
+
+- VSCode with the [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) extension and kroki enabled
+  (this is also recommended in the repo settings)
+- IntelliJ (Kroki needs to be enabled manually)
+
+
+## Release Process 
+
+1. Check if code is in releasable state on branch `develop`
+2. Check and potentially adapt version numbers in `api/pom.xml` for LC Core and `lc-halt/pyproject.toml` and `lc-halt/app/main.py` for LC Halt
+3. Create Merge Request from `develop` to `main`
+4. Validate Deployment
+5. Create release tag
+
+<!-- Open Questions: How do we want to deal with multiple version sources and condensing it to one tag? -->
+
 ### Deployment
 
 The app is deployed for every push to the `main` branch.
-It is deployed onto the `licence-connect-api.fwu.nhnbg` VM, which can be reached via the VPN provided by Netz-Haut GmbH for the FWU. The user used to deploy and run the app is `docker`, whose home directory on the VM is `/var/docker`. The app resides in `/var/docker/apps/licenceconnect`
+It is deployed onto the `licence-connect-api.fwu.nhnbg` VM, which can be reached via the VPN provided by Netz-Haut GmbH for the FWU. 
+The user used to deploy and run the app is `docker`, whose home directory on the VM is `/var/docker`. 
+The app resides in `/var/docker/apps/licenceconnect`
 
 Externally, the app can be reached via `https://api.licenceconnect.schule/`, with a publicly available swagger UI on `https://api.licenceconnect.schule/swagger`.
 
@@ -148,13 +169,6 @@ The exact deployment process can be seen inside `.gitlab-ci.yml`, but essentiall
 
 On the server, instead of providing the environment variables directly to the docker compose command, there is an `.env` file located in the app folder in which all required environment variables must be set.
 
-### Rendering the Architectural Documentation
-
-The architectural documentation and it's diagrams can be rendered using either:
-
-- VSCode with the [AsciiDoc](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode) extension and kroki enabled
-  (this is also recommended in the repo settings)
-- IntelliJ (Kroki needs to be enabled manually)
 
 ## Mock Licence Servers
 

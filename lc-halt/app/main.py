@@ -4,7 +4,7 @@ from app.media_management import licenced_media_controller, media_assignment_con
 
 app = FastAPI(
     title="LC Halt",
-    version="0.1.0",
+    version="0.2.0",
     summary="LC Halt is a licence holding system.",
     description="Using this API, media can be assigned to users, schools or federal states. Other services can then access this information and act accordingly.",
     dependencies=[Depends(handle_api_key)],
