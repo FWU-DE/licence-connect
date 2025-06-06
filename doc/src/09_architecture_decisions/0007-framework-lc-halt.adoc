@@ -24,7 +24,7 @@ The authentication at the API can be done with API keys.
 
 |Experience in the team / Fit to existing code base
 |Very good fit
-|Has previously been discontinued, see <<adr01>>
+|Has previously been discontinued, see <<adr1>>
 |Has already been used for the mock licence services
 |Similar to flask
 
