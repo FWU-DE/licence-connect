@@ -20,7 +20,10 @@ services:
 
   licence-connect:
     image: gitcr.fwu.de/licenceconnect/api:latest
-    pull_policy: always
+    # On deployment, the image will be pulled in the deploy job in `.gitlab-ci.yaml`.
+    # This way, we can easily use locally built images in development without docker compose wanting to pull them
+    # from the gitcr.fwu.de registry and failing because of locally missing credentials for that registry.
+#    pull_policy: always
     container_name: licence-connect
     restart: unless-stopped
     env_file: ../.env
@@ -33,7 +36,10 @@ services:
 
   lc-halt:
     image: gitcr.fwu.de/licenceconnect/api/lc-halt:latest
-    pull_policy: always
+    # On deployment, the image will be pulled in the deploy job in `.gitlab-ci.yaml`.
+    # This way, we can easily use locally built images in development without docker compose wanting to pull them
+    # from the gitcr.fwu.de registry and failing because of locally missing credentials for that registry.
+#    pull_policy: always
     container_name: lc-halt
     env_file: ../.env
     restart: unless-stopped
