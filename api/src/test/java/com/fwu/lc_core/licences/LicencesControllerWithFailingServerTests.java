@@ -55,7 +55,7 @@ class LicencesControllerWithFailingArixServerTests {
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
-            return new LicencesCollector(clientLicenseHolderFilterService, arixUrlRejecting, lchaltClient);
+            return new LicencesCollector();
         }
     }
 

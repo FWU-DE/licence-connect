@@ -1,5 +1,8 @@
 {
   "asciidoc.extensions.enableKroki": true,
+  "asciidoc.preview.asciidoctorAttributes": {
+    "kroki-server-url": "http://localhost:8001"
+  },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[python]": {

@@ -2,7 +2,6 @@ package com.fwu.lc_core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
@@ -81,8 +80,7 @@ class BiloV1Tests {
                         .path("/v1/ucs/request")
                         .queryParam("userId", requestDto.userId)
                         .queryParam("clientId", requestDto.clientId)
-                        .queryParam("schulkennung", requestDto.schulkennung)
-                        .queryParam("bundesland", requestDto.bundesland.toString()).build())
+                        .queryParam("schulkennung", requestDto.schulkennung).build())
                 .header("x-api-key", correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
@@ -125,17 +123,8 @@ class BiloV1Tests {
 
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
-    void requestWithIncorrectInfo(String userId, String clientId, String schulkennung, String bundesland) {
-        createRequestFromStringInfo(userId, clientId, schulkennung, bundesland)
-                .exchange()
-                .expectStatus().isBadRequest();
-    }
-
-    @Test
-    void requestWithIncorrectBundesland() {
-        var requestDto = createValidUcsRequestDto();
-        String invalidBundesland = "XX";
-        createRequestFromStringInfo(requestDto.userId, requestDto.clientId, requestDto.schulkennung, invalidBundesland)
+    void requestWithIncorrectInfo(String userId, String clientId, String schulkennung) {
+        createRequestFromStringInfo(userId, clientId, schulkennung)
                 .exchange()
                 .expectStatus().isBadRequest();
     }
@@ -166,7 +155,6 @@ class BiloV1Tests {
         assertThat(logs).contains(expectedFirstLog);
         assertThat(logs).contains(expectedSecondLog);
         assertThatFirstLogComesBeforeSecondLog(logs, expectedFirstLog, expectedSecondLog);
-        assertThat(output.getOut()).contains("Bundesland: " + requestDto.bundesland);
         assertThat(output.getOut()).contains("Schulkennung: " + requestDto.schulkennung);
         assertThat(output.getOut()).contains("UserId: " + requestDto.userId);
         assertThatBothLogsHaveTheSameTraceId(logs, expectedFirstLog, expectedSecondLog);
@@ -179,23 +167,20 @@ class BiloV1Tests {
                         .path("/v1/ucs/request")
                         .queryParam("userId", requestDto.userId)
                         .queryParam("clientId", requestDto.clientId)
-                        .queryParam("schulkennung", requestDto.schulkennung)
-                        .queryParam("bundesland", requestDto.bundesland.toString()).build())
+                        .queryParam("schulkennung", requestDto.schulkennung).build())
                 .header(API_KEY_HEADER, correctApiKey);
     }
 
     private static Stream<Arguments> provideIncorrectInfo() {
         return Stream.of(
-                Arguments.of(null, "clientId", "schulkennung", "BY"),
-                Arguments.of("userId", null, "schulkennung", "BY"),
-                Arguments.of("userId", "clientId", "schulkennung", null),
-                Arguments.of("", "clientId", "schulkennung", "BY"),
-                Arguments.of("userId", "", "schulkennung", "BY"),
-                Arguments.of("userId", "clientId", "schulkennung", "")
+                Arguments.of(null, "clientId", "schulkennung"),
+                Arguments.of("userId", null, "schulkennung"),
+                Arguments.of("", "clientId", "schulkennung"),
+                Arguments.of("userId", "", "schulkennung")
         );
     }
 
-    private WebTestClient.RequestHeadersSpec<?> createRequestFromStringInfo(String userId, String clientId, String schulkennung, String bundesland) {
+    private WebTestClient.RequestHeadersSpec<?> createRequestFromStringInfo(String userId, String clientId, String schulkennung) {
         return webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -203,8 +188,7 @@ class BiloV1Tests {
                         .queryParam("clientName", BILO_TEST_CLIENT_NAME)
                         .queryParam("userId", userId)
                         .queryParam("clientId", clientId)
-                        .queryParam("schulkennung", schulkennung)
-                        .queryParam("bundesland", bundesland).build())
+                        .queryParam("schulkennung", schulkennung).build())
                 .header(API_KEY_HEADER, correctApiKey);
     }
 
@@ -213,20 +197,18 @@ class BiloV1Tests {
     }
 
     private static UcsRequestDto createValidUcsRequestDto(String clientId) {
-        return new UcsRequestDto("student.2", clientId == null ? BILO_TEST_CLIENT_NAME : clientId, null, Bundesland.MV);
+        return new UcsRequestDto("student.2", clientId == null ? BILO_TEST_CLIENT_NAME : clientId, null);
     }
 
     private static class UcsRequestDto {
         public final String userId;
         public final String clientId;
         public final String schulkennung;
-        public final Bundesland bundesland;
 
-        public UcsRequestDto(String userId, String clientId, String schulkennung, Bundesland bundesland) {
+        public UcsRequestDto(String userId, String clientId, String schulkennung) {
             this.userId = userId;
             this.clientId = clientId;
             this.schulkennung = schulkennung;
-            this.bundesland = bundesland;
         }
     }
 }
