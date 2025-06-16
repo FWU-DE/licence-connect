@@ -99,6 +99,35 @@ lchalt_client --> lchalt
 @enduml
 ----
 
+[[vidis-interface]]
+===== Interface to VIDIS
+
+VIDIS fetches licences, generally using the endpoint `/licences/request` provided by this module.
+The following list contains the parameters and how VIDIS obtains them:
+
+|===
+|Parameter|Notes
+
+|`clientName`
+|Each system connected to the VIDIS-SSO has a dedicated client.
+The id of this client will also be the clientId VIDIS provides to LC Core for this query.
+
+|`userId`
+|The `userId` is usually the id of the user in the IDP of the federal state. 
+E.g. if a user has the userId "abc" in the bavarian school portal, VIDIS will request licences for this userId, *not* the id assigned by VIDIS.
+
+|`bundesland`
+|The federal state where the user account originated from.
+
+|`standortnummer`
+|Is supposed to be the "Landkreis" where the school is located.
+This value is currently not provided since it is not yet clarified how to resolve this.
+
+|`schulnummer`
+|The id of the school of the user.
+Provided to VIDIS by the IDP of the federal state.
+|=== 
+
 
 ==== Client Licence Holder Mapper
 
