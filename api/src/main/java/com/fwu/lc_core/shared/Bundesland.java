@@ -1,8 +1,9 @@
 package com.fwu.lc_core.shared;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.shared.validators.HasValue;
 
-public enum Bundesland {
+public enum Bundesland implements HasValue {
     MV("MV"),
     RP("RP"),
     BW("BW"),
@@ -75,4 +76,5 @@ public enum Bundesland {
     Bundesland(String value) {
         this.value = value;
     }
+
 }

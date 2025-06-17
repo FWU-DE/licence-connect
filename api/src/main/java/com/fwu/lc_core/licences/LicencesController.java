@@ -3,6 +3,8 @@ package com.fwu.lc_core.licences;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 
+import com.fwu.lc_core.shared.Bundesland;
+import com.fwu.lc_core.shared.validators.EnumValue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +23,7 @@ public class LicencesController {
 
     @GetMapping("/v1/licences/request")
     private Mono<ODRLPolicy> request(
-        @RequestParam(required = false) String bundesland,
+        @EnumValue(enumClass = Bundesland.class) @RequestParam(required = false) String bundesland,
         @RequestParam(required = false) String standortnummer,
         @RequestParam(required = false) String schulnummer,
         @RequestParam(required = false) String userId, 
