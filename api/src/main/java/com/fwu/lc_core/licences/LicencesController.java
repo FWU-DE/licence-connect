@@ -1,5 +1,6 @@
 package com.fwu.lc_core.licences;
 
+import brave.Response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.licences.models.Licencee;
@@ -7,9 +8,12 @@ import com.fwu.lc_core.licences.models.ODRLPolicy;
 import com.fwu.lc_core.shared.Bundesland;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -23,7 +27,7 @@ public class LicencesController {
     }
 
     @GetMapping("/v1/licences/request")
-    private Mono<ODRLPolicy> request(@ParameterObject LicencesRequestDto requestDto, @RequestParam String clientName) {
+    private Mono<ODRLPolicy> request(@ParameterObject LicencesRequestDto requestDto, @RequestParam(required = false) String clientName) {
         final var bundesland = requestDto.bundesland();
         final var standortnummer = requestDto.standortnummer();
         final var schulnummer = requestDto.schulnummer();
@@ -33,6 +37,11 @@ public class LicencesController {
                 "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {}; userId: {};",
                 clientName, bundesland, standortnummer, schulnummer, userId
         );
+
+        if (clientName == null) {
+            log.error("ClientName not defined, returning 400.");
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        }
 
         var licencee = new Licencee(bundesland, standortnummer, schulnummer, userId);
         return licencesCollector.getODRLPolicy(licencee, clientName);
