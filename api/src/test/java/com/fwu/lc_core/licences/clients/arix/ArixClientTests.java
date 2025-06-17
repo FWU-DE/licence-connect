@@ -2,7 +2,6 @@ package com.fwu.lc_core.licences.clients.arix;
 
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,7 +27,7 @@ public class ArixClientTests {
     @Test
     public void RequestPermissions_GivenCorrectBundesland_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
-        var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), null, null, null).block();
+        var permissions = arixClient.getPermissions("STK", null, null, null).block();
 
         assertThat(permissions).isNotNull();
         for (ODRLPolicy.Permission p : permissions) {
@@ -39,7 +38,7 @@ public class ArixClientTests {
     @Test
     public void RequestPermissions_GivenCorrectBundeslandAndStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
-        var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), "STR", null, null).block();
+        var permissions = arixClient.getPermissions("STK", "STR", null, null).block();
 
         assertThat(permissions).isNotNull();
         for (ODRLPolicy.Permission p : permissions) {
@@ -49,7 +48,7 @@ public class ArixClientTests {
 
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
-    public void RequestLicences_ArgumentsAreNotANonemptyPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public void RequestLicences_ArgumentsAreNotANonemptyPrefix(String bundesland, String standortnummer, String schulnummer, String userId) {
         var arixClient = new ArixClient(baseUrlAccepting);
         var permissionsMono = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId);
         StepVerifier.create(permissionsMono).expectError().verify();
@@ -58,7 +57,7 @@ public class ArixClientTests {
     @Test
     public void RequestLicences_notWhitelisted_throwsError() {
         var arixClient = new ArixClient(baseUrlRejecting);
-        var permissionsMono = arixClient.getPermissions(Bundesland.valueOf("BY"), "ORT1", null, null);
+        var permissionsMono = arixClient.getPermissions("BY", "ORT1", null, null);
         StepVerifier.create(permissionsMono).expectError().verify();
     }
 

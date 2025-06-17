@@ -1,12 +1,9 @@
 package com.fwu.lc_core.licences;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.Bundesland;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,11 +20,14 @@ public class LicencesController {
     }
 
     @GetMapping("/v1/licences/request")
-    private Mono<ODRLPolicy> request(@ParameterObject LicencesRequestDto requestDto, @RequestParam String clientName) {
-        final var bundesland = requestDto.bundesland();
-        final var standortnummer = requestDto.standortnummer();
-        final var schulnummer = requestDto.schulnummer();
-        final var userId = requestDto.userId();
+    private Mono<ODRLPolicy> request(
+        @RequestParam(required = false) String bundesland,
+        @RequestParam(required = false) String standortnummer,
+        @RequestParam(required = false) String schulnummer,
+        @RequestParam(required = false) String userId, 
+        @RequestParam String clientName) {
+
+        
 
         log.info(
                 "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {}; userId: {};",
@@ -39,11 +39,3 @@ public class LicencesController {
     }
 }
 
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-record LicencesRequestDto(
-        @JsonProperty Bundesland bundesland,
-        @JsonProperty String standortnummer,
-        @JsonProperty String schulnummer,
-        @JsonProperty String userId) {
-}

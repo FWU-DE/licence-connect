@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.config.ClassNameRetriever;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
@@ -83,7 +82,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() {
-        var requestDto = new RelaxedLicencesRequestDto(Bundesland.BY.value, null, null, null);
+        var requestDto = new RelaxedLicencesRequestDto("BY", null, null, null);
 
         webTestClient
                 .get()
@@ -141,17 +140,16 @@ class LicencesControllerWithWorkingServerTests {
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
     @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
-    void Authenticated_Request_WithValidBody_Returns_CorrectLicences(Bundesland bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
-        var requestDto = new LicencesRequestDto(bundesland, standortnummer, schulnummer, userId);
+    void Authenticated_Request_WithValidBody_Returns_CorrectLicences(String bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var response = webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland().name())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .queryParam("bundesland", bundesland)
+                        .queryParam("standortnummer", standortnummer)
+                        .queryParam("schulnummer", schulnummer)
+                        .queryParam("userId", userId).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
@@ -168,7 +166,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void Authenticated_Request_WithInvalidClientName_Returns_emptyResponse() {
-        var requestDto = new RelaxedLicencesRequestDto(Bundesland.BY.name(), null, null, null);
+        var requestDto = new RelaxedLicencesRequestDto("BY", null, null, null);
         String unregisteredClientName = "unregistered client name";
 
         var result = webTestClient
@@ -192,17 +190,14 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void licenceRequest_Logs_Request(CapturedOutput output) {
-        var requestDto = new LicencesRequestDto(Bundesland.STK, null, null, null);
 
         webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland().name())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .queryParam("bundesland", "STK")
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
@@ -215,7 +210,6 @@ class LicencesControllerWithWorkingServerTests {
     @Test
     @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
-        var requestDto = new LicencesRequestDto(Bundesland.BY, "ORT1", "f3453b", "student.2");
         String expectedFirstLog = "GET /v1/licences/request: clientName: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found 6 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
 
@@ -224,10 +218,10 @@ class LicencesControllerWithWorkingServerTests {
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland().name())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .queryParam("bundesland", "BY")
+                        .queryParam("standortnummer", "ORT1")
+                        .queryParam("schulnummer", "f3453b")
+                        .queryParam("userId", "student.2").build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
@@ -242,11 +236,11 @@ class LicencesControllerWithWorkingServerTests {
 
     private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
-                Arguments.of(Bundesland.BB, null, null, null, List.of()),
-                Arguments.of(Bundesland.BY, null, null, null, List.of("BY_1_23ui4g23c")),
-                Arguments.of(Bundesland.BY, "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
-                Arguments.of(Bundesland.BY, "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
-                Arguments.of(Bundesland.BY, "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
+                Arguments.of("BB", null, null, null, List.of()),
+                Arguments.of("BY", null, null, null, List.of("BY_1_23ui4g23c")),
+                Arguments.of("BY", "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
+                Arguments.of("BY", "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
+                Arguments.of("BY", "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
         );
     }
 }
