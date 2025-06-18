@@ -20,7 +20,6 @@ public enum Bundesland {
     //TODO: ONCE WE CONNECT TO PRODUCTION ARIX API, MAKE STK ONLY AVAILABLE IN TEST CODE OR REMOVE IT COMPLETELY
     STK("STK");
 
-
     public final String value;
 
     Bundesland(String value) {
@@ -52,4 +51,7 @@ public enum Bundesland {
         };
     }
 
+    public String toISOIdentifier() {
+        return "DE-" + value;
+    }
 }
