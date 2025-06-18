@@ -33,8 +33,6 @@ async def assign_licenced_media(
     - to a single user
     - to all users of a bundesland
     - to all users of a schule in a bundesland
-
-    It will override existing assignments for the same user or bundesland or bundesland/schule
     """
     return await media_management.set_assignment(licenced_media_body)
 
