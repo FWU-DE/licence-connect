@@ -1,11 +1,9 @@
 package com.fwu.lc_core.bilov1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,9 +44,8 @@ public class BiloV1Controller {
     private ResponseEntity<UcsLicenceeDto> request(
             @RequestParam @NotEmpty String userId,
             @RequestParam @NotEmpty String clientId,
-            @RequestParam(required = false) String schulkennung,
-            @RequestParam @NotNull Bundesland bundesland) {
-        log.info("Received licence request for client: {} with Bundesland: {}, Schulkennung: {}, UserId: {}", clientId, bundesland, schulkennung, userId);
+            @RequestParam(required = false) String schulkennung) {
+        log.info("Received licence request for client: {} with Schulkennung: {}, UserId: {}", clientId, schulkennung, userId);
         if (!clientLicenseHolderFilterService.getAllowedLicenceHolders(clientId).contains(LicenceHolder.BILO_V1)) {
             log.info("Client {} is not allowed to access BILO_V1", clientId);
             return ResponseEntity.ok(null);
