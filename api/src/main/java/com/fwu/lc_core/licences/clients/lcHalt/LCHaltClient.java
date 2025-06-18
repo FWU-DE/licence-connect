@@ -1,12 +1,15 @@
 package com.fwu.lc_core.licences.clients.lcHalt;
 
 import com.fwu.lc_core.licences.models.ODRLPolicy;
+
 import com.fwu.lc_core.shared.Bundesland;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +17,8 @@ import java.util.Optional;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 
 @Component
+@ConditionalOnProperty(name="lc-halt.enabled", havingValue="true")
+@Slf4j
 public class LCHaltClient {
     @Value("${lc-halt.licence-url}")
     private String licenceUrl;
