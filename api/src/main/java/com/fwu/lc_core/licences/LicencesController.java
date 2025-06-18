@@ -40,12 +40,16 @@ public class LicencesController {
             @RequestParam(required = false) String standortnummer,
             @RequestParam(required = false) String schulnummer,
             @RequestParam(required = false) String userId,
-            @RequestParam String clientName) {
+            @RequestParam(required = false) String clientName) {
 
         log.info(
                 "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {}; userId: {};",
                 clientName, bundesland, standortnummer, schulnummer, userId
         );
+        if (clientName == null) {
+            log.error("ClientName not defined, returning 400.");
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        }
 
         Bundesland bundeslandTyped;
         try {
