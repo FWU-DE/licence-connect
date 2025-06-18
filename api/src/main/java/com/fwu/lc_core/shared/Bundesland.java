@@ -1,30 +1,24 @@
 package com.fwu.lc_core.shared;
 
 public enum Bundesland {
-    MV("MV"),
-    RP("RP"),
-    BW("BW"),
-    BY("BY"),
-    BE("BE"),
-    BB("BB"),
-    HB("HB"),
-    HH("HH"),
-    HE("HE"),
-    NI("NI"),
-    NW("NW"),
-    SL("SL"),
-    SN("SN"),
-    ST("ST"),
-    SH("SH"),
-    TH("TH"),
+    MV,
+    RP,
+    BW,
+    BY,
+    BE,
+    BB,
+    HB,
+    HH,
+    HE,
+    NI,
+    NW,
+    SL,
+    SN,
+    ST,
+    SH,
+    TH,
     //TODO: ONCE WE CONNECT TO PRODUCTION ARIX API, MAKE STK ONLY AVAILABLE IN TEST CODE OR REMOVE IT COMPLETELY
-    STK("STK");
-
-    public final String value;
-
-    Bundesland(String value) {
-        this.value = value;
-    }
+    STK;
 
     public static Bundesland fromAbbreviation(String abbreviation){
         return switch(abbreviation){
@@ -52,6 +46,6 @@ public enum Bundesland {
     }
 
     public String toISOIdentifier() {
-        return "DE-" + value;
+        return "DE-" + this.toString();
     }
 }

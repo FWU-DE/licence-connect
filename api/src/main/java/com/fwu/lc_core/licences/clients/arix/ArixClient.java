@@ -56,26 +56,24 @@ public class ArixClient {
             throw new IllegalArgumentException("You must provide a Bundesland.");
         }
         if (isNullOrEmpty(standortnummer)) {
-            return bundesland.value;
+            return bundesland.toString();
         }
         if (isNullOrEmpty(schulnummer)) {
-            return Stream
-                .of(bundesland.toString(), standortnummer)
-                .collect(Collectors.joining("/"));
+            return concatenateWithSlash(bundesland.toString(), standortnummer);
         }
         if (isNullOrEmpty(userId)) {
-            return Stream
-                .of(bundesland.toString(), standortnummer, schulnummer)
-                .collect(Collectors.joining("/"));     
+            return concatenateWithSlash(bundesland.toString(), standortnummer, schulnummer);     
         }
-        return Stream
-            .of(bundesland.toString(), standortnummer, schulnummer, userId)
-            .collect(Collectors.joining("/"));
+        return concatenateWithSlash(bundesland.toString(), standortnummer, schulnummer, userId);
     }
 
 
     private static Boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
+    }
+
+    private static String concatenateWithSlash(String... strings) {
+        return Stream.of(strings).collect(Collectors.joining("/"));
     }
 }
 
