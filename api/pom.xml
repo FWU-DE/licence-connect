@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.fwu</groupId>
     <artifactId>lc_core</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
     <name>lc_core</name>
     <description>Licence Connect Core Application</description>
     <url/>
@@ -49,7 +49,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
         <dependency>

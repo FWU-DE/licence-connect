@@ -1,8 +1,8 @@
 package com.fwu.lc_core.licences.clients.arix;
 
+import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.Bundesland;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,15 +20,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class ArixClientTests {
-    @Value("${arix.accepting.url}")
+    @Value("${arix.url}")
     private String baseUrlAccepting;
     @Value("${arix.rejecting.url}")
     private String baseUrlRejecting;
 
-    @Test
-    public void RequestPermissions_GivenCorrectBundesland_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+    @ParameterizedTest
+    @MethodSource("provideCorrectInput")
+    public void RequestPermissions_GivenCorrectInput_Yields_Result(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting);
-        var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), null, null, null).block();
+        var permissions = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId).block();
 
         assertThat(permissions).isNotNull();
         for (ODRLPolicy.Permission p : permissions) {
@@ -36,16 +37,6 @@ public class ArixClientTests {
         }
     }
 
-    @Test
-    public void RequestPermissions_GivenCorrectBundeslandAndStandort_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
-        ArixClient arixClient = new ArixClient(baseUrlAccepting);
-        var permissions = arixClient.getPermissions(Bundesland.valueOf("STK"), "STR", null, null).block();
-
-        assertThat(permissions).isNotNull();
-        for (ODRLPolicy.Permission p : permissions) {
-            assertThat(p.assigner).isEqualTo(LicenceHolder.ARIX);
-        }
-    }
 
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
@@ -58,20 +49,26 @@ public class ArixClientTests {
     @Test
     public void RequestLicences_notWhitelisted_throwsError() {
         var arixClient = new ArixClient(baseUrlRejecting);
-        var permissionsMono = arixClient.getPermissions(Bundesland.valueOf("BY"), "ORT1", null, null);
+        var permissionsMono = arixClient.getPermissions(Bundesland.BY, "ORT1", null, null);
         StepVerifier.create(permissionsMono).expectError().verify();
     }
 
     private static Stream<Arguments> provideIncorrectInfo() {
         return Stream.of(
-                Arguments.of("BY", "Std", null, "userId"),
-                Arguments.of("BY", null, "Schule", "userId"),
                 Arguments.of(null, "Std", "Schule", "userId"),
-                Arguments.of("BY", null, "Schule", "userId"),
-                Arguments.of("BY", null, "Schule", "userId"),
-                Arguments.of("BY", null, null, "userId"),
-                Arguments.of("BY", null, "Schule", null),
                 Arguments.of(null, null, null, null)
+        );
+    }
+    private static Stream<Arguments> provideCorrectInput() {
+        return Stream.of(
+                Arguments.of(Bundesland.STK, "STR", null, null),
+                Arguments.of(Bundesland.BY, null, "Schule", "userId"),
+                Arguments.of(Bundesland.BY, null, "Schule", "userId"),
+                Arguments.of(Bundesland.BY, "Std", null, "userId"),
+                Arguments.of(Bundesland.BY, null, "Schule", "userId"),
+                Arguments.of(Bundesland.BY, null, null, "userId"),
+                Arguments.of(Bundesland.BY, null, "Schule", null),
+                Arguments.of(Bundesland.STK, null, null, null)
         );
     }
 }

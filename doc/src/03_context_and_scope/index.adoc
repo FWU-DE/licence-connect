@@ -47,9 +47,11 @@ Rel(admin, lc, "Enable licence holder for specific consumers")
 SSO Provider for educational purposes.
 https://www.vidis.schule/
 
-Due to the sign in via VIDIS, licence holders only have pseudonyms of users.
-In order to assign actual licences to users, the request to LC Halt goes through VIDIS.
-That way, VIDIS and LC Halt can potentially use data that is not available to the licence holder.
+Due to the sign in via VIDIS, licence holders only have pseudonyms of users with an extra ID assigned by VIDIS.
+In order to assign actual licences to users, the request to LC Core goes through VIDIS.
+That way, VIDIS and LC Core can potentially use data that is not available to the licence holder, e.g. the user id in the federal state idp of the user.
+
+See <<vidis-interface>> for more details on how VIDIS communicates with LC Core.
 
 |LC Halt|
 LC Halt is a demo system intended to demonstrate licence management.
