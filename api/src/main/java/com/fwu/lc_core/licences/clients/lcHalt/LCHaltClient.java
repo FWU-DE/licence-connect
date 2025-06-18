@@ -2,6 +2,7 @@ package com.fwu.lc_core.licences.clients.lcHalt;
 
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 
+import com.fwu.lc_core.shared.Bundesland;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ public class LCHaltClient {
     @Value("${lc-halt.client-api-key}")
     private String lcHaltClientApiKey;
 
-    public Mono<List<ODRLPolicy.Permission>> getPermissions(String bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         try {
             assertParametersAreValid(bundesland, standortnummer, schulnummer, userId);
         } catch (IllegalArgumentException e) {
@@ -58,7 +59,7 @@ public class LCHaltClient {
                 });
     }
 
-    private static void assertParametersAreValid(String bundesland, String standortnummer, String schulnummer, String userId) {
+    private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         if (isNullOrEmpty(userId)) {
             throw new IllegalArgumentException("You must provide a userId parameter.");
         }

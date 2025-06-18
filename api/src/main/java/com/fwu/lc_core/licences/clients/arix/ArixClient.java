@@ -1,6 +1,7 @@
 package com.fwu.lc_core.licences.clients.arix;
 
 import com.fwu.lc_core.licences.models.ODRLPolicy;
+import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -15,11 +16,11 @@ import java.util.stream.Stream;
 public class ArixClient {
     private final String apiUrl;
 
-    public ArixClient(@Value("${arix.accepting.url}") String apiUrl) {
+    public ArixClient(@Value("${arix.url}") String apiUrl) {
         this.apiUrl = apiUrl;
     }
 
-    public Mono<List<ODRLPolicy.Permission>> getPermissions(String bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         String uri;
         try {
             uri = constructRequestUri(bundesland, standortnummer, schulnummer, userId);
@@ -50,12 +51,12 @@ public class ArixClient {
                 });
     }
 
-    private static String constructRequestUri(String bundesland, String standortnummer, String schulnummer, String userId) {
-        if (isNullOrEmpty(bundesland)) {
+    private static String constructRequestUri(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+        if (bundesland == null) {
             throw new IllegalArgumentException("You must provide a Bundesland.");
         }
         if (isNullOrEmpty(standortnummer)) {
-            return bundesland;
+            return bundesland.value;
         }
         if (isNullOrEmpty(schulnummer)) {
             return Stream

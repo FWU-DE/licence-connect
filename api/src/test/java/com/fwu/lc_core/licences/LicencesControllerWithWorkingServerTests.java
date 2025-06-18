@@ -119,19 +119,19 @@ class LicencesControllerWithWorkingServerTests {
         assertThat(result).doesNotContain(test);
     }
 
-    @Test
-    void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest() {
-        var requestDto = new RelaxedLicencesRequestDto("ABC", null, null, null);
 
+    @ParameterizedTest
+    @MethodSource("provideInvalidInput")
+    void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest(String bundesland, String standortnummer, String schulnummer, String userId) {
         webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1/licences/request")
                         .queryParam("clientName", GENERIC_LICENCES_TEST_CLIENT_NAME)
-                        .queryParam("bundesland", requestDto.bundesland())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .queryParam("bundesland", bundesland)
+                        .queryParam("standortnummer", standortnummer)
+                        .queryParam("schulnummer", schulnummer)
+                        .queryParam("userId", userId).build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
@@ -139,7 +139,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
-    @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
+    @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*local.*")
     void Authenticated_Request_WithValidBody_Returns_CorrectLicences(String bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
         var response = webTestClient
                 .get()
@@ -153,7 +153,8 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<ODRLPolicy>() {})
+                .expectBody(new ParameterizedTypeReference<ODRLPolicy>() {
+                })
                 .returnResult()
                 .getResponseBody();
 
@@ -181,11 +182,12 @@ class LicencesControllerWithWorkingServerTests {
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(new ParameterizedTypeReference<ODRLPolicy>() {
+                })
                 .returnResult()
                 .getResponseBody();
 
-        assertThat(result).isNull();
+        assertThat(extractLicenceCodesFrom(result).size()).isEqualTo(0);
     }
 
     @Test
@@ -208,7 +210,7 @@ class LicencesControllerWithWorkingServerTests {
     }
 
     @Test
-    @EnabledIfSystemProperty(named="spring.profiles.active", matches = ".*local.*")
+    @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*local.*")
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         String expectedFirstLog = "GET /v1/licences/request: clientName: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
         String expectedSecondLog = "Found 6 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
@@ -244,7 +246,16 @@ class LicencesControllerWithWorkingServerTests {
                 Arguments.of("BY", "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
         );
     }
+
+    private static Stream<Arguments> provideInvalidInput() {
+        return Stream.of(
+                Arguments.of("ABC", null, null, null),
+                Arguments.of("DE_BB", null, null, null),
+                Arguments.of("BBB", null, null, null)
+        );
+    }
 }
+
 
 @SpringBootTest
 @AutoConfigureWebTestClient

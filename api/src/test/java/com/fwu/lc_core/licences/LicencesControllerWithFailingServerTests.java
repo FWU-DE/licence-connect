@@ -24,7 +24,7 @@ import java.util.EnumSet;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {"arix.url=${arix.rejecting.url}"})
 @AutoConfigureWebTestClient
 @ExtendWith(OutputCaptureExtension.class)
 @Import(LicencesControllerWithFailingArixServerTests.CustomTestConfig.class)
@@ -42,16 +42,6 @@ class LicencesControllerWithFailingArixServerTests {
 
     @TestConfiguration
     static class CustomTestConfig {
-
-        @Autowired
-        private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-
-        @Autowired
-        private LCHaltClient lchaltClient;
-
-        @Value("${arix.rejecting.url}")
-        String arixUrlRejecting;
-
         @Bean
         @Primary // Ensures this bean overrides the default one in the context
         public LicencesCollector licencesCollector() {
