@@ -83,11 +83,15 @@ public class LicencesController {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
         }
 
-        Bundesland bundeslandTyped;
-        try {
-            bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
-        } catch (IllegalArgumentException e) {
-            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        Bundesland bundeslandTyped = null;
+        // Not all licence holders require a bundesland, so we allow it to be null.
+        // ARIX requires it, LC-Halt does not.
+        if (bundesland != null) {
+            try {
+                bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
+            } catch (IllegalArgumentException e) {
+                return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            }
         }
 
         var licencee = new Licencee(bundeslandTyped, standortnummer, schulnummer, userId);
