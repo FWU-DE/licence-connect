@@ -2,6 +2,7 @@ package com.fwu.lc_core.config.swagger;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
@@ -19,9 +20,16 @@ public class SwaggerConfig {
     @Value("${swagger.target.url}")
     private String targetUrl;
 
+    @Value("${app.version}")
+    private String appVersion;
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
+                .info(new Info()
+                        .title("LicenceConnect Core API")
+                        .version(appVersion)
+                        .description("API for retrieving licences from different licence holding systems in unified ODRL format."))
                 .components(new Components()
                         .addSecuritySchemes("apiKey", new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
