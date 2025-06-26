@@ -84,6 +84,8 @@ public class LicencesController {
         }
 
         Bundesland bundeslandTyped = null;
+        // Not all licence holders require a bundesland, so we allow it to be null.
+        // ARIX requires it, LC-Halt does not.
         if (bundesland != null) {
             try {
                 bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
