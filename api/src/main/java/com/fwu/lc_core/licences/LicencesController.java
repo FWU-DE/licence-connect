@@ -83,11 +83,13 @@ public class LicencesController {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
         }
 
-        Bundesland bundeslandTyped;
-        try {
-            bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
-        } catch (IllegalArgumentException e) {
-            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        Bundesland bundeslandTyped = null;
+        if (bundesland != null) {
+            try {
+                bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
+            } catch (IllegalArgumentException e) {
+                return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            }
         }
 
         var licencee = new Licencee(bundeslandTyped, standortnummer, schulnummer, userId);
