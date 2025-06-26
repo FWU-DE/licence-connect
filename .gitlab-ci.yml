@@ -144,9 +144,12 @@ dockerize_lc_halt:
     # Only run the job for pushes to main
     - if: $CI_COMMIT_BRANCH == 'fix/fix-dockerize-lc-halt-job-in-gitlab-ci'
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
-    - docker push $LC_HALT_RELEASE_IMAGE
+    - |
+      docker logout
+      echo $CI_REGISTRY
+      echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+      docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
+      docker push $LC_HALT_RELEASE_IMAGE
 
 deploy_api:
   stage: deploy
