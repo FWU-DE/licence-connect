@@ -15,6 +15,8 @@ router = APIRouter(prefix="/admin/media-licence-assignment", tags=["Administrati
 async def list_media_licence_assignments():
     """
     This endpoint returns all existing assignments.
+
+    It is only accessible with the admin API key.
     """
     return await media_management.get_all_assignments()
 
@@ -33,6 +35,9 @@ async def assign_licenced_media(
     - to a single user
     - to all users of a bundesland
     - to all users of a schule in a bundesland
+
+    It is only accessible with the admin API key.
+    ---
     """
     return await media_management.set_assignment(licenced_media_body)
 
@@ -46,6 +51,8 @@ async def assign_licenced_media(
 async def show_media_licence_assignment(id: str):
     """
     This endpoint allows to retrieve a single assignment using it's id.
+
+    It is only accessible with the admin API key.
     """
     return await media_management.get_assignment(id)
 
@@ -54,5 +61,7 @@ async def show_media_licence_assignment(id: str):
 async def delete_media_licence_assignment(id: str):
     """
     This endpoint allows to delete a single assignment using it's id.
+
+    It is only accessible with the admin API key.
     """
     return await media_management.delete_assignment(id)

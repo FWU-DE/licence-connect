@@ -89,7 +89,7 @@ We use `@type` `Set`, because this is the most sensible option and [used like th
 The `uid` is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) that is dynamically generated for each request and represented as an IRI.
 
 > Alternatives for a UUID were discussed. 
-E.g. constructing a semantic id based on the request parameters (may leak information) or persisting/logging the policies previously handed out (too much effort without an explicit requierement).
+E.g. constructing a semantic id based on the request parameters (may leak information) or persisting/logging the policies previously handed out (too much effort without an explicit requirement).
 
 Each medium from the ARIX response is mapped to one permission.
 
