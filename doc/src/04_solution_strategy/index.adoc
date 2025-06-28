@@ -21,3 +21,18 @@ That would enable integrations without changes to the code of licence connect co
 The current connections to the BiLo v1 and v2 APIs deviate from the solution strategy described above.
 To integrate them, Licence Connect Core provides dedicated endpoints.
 This is due to different requirements of BiLo when retrieving the licences as a licence consumer.
+
+---
+
+=== Integrating a licence holding system
+
+To integrate a new licence holding system, the following steps need to be taken:
+
+1. Create a module for the client in `api/src/main/java/com/fwu/lc_core/licences/clients`
+2. Implement a client that calls the licence holding system to retrieve licences. You can use the `LCHaltClient` or `ArixClient` as guides.
+3. Implement a parser that converts the contents returned by the licence holding system into a `List<ODRLPolicy.Permission>.`. You can use the `LCHaltParser` or `ArixParser` as guides.
+4. In the client, implement a method `public Mono<List<ODRLPolicy.Permission>> getPermissions()` that retrieves the licences from the licence holding system and uses the newly implemented parser to parse them. The method can use any or all of the four parameters `bundesland`, `standortnummer`, `schulnummer` and `userId`.
+5. Add an enum case for the new licence holding system to the `LicenceHolder` enum, naming it after the licence holding system being integrated.
+6. In the `LicenceCollector.permissionsFor(Licencee licencee, LicenceHolder licenceHolder)` method, add a case to the switch statement that calls the new client and returns the licences. You can use the cases for LC-Halt or Arix as guides.
+
+Now, once you enable the new licence holding system for a `clientName` via the `/admin/client-licence-holder-mapping` endpoint, you will be able to retrieve licences from the newly integrated system for that `clientName`.
