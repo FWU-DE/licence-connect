@@ -2,8 +2,6 @@ from fastapi import Depends, FastAPI
 from app.util.auth import handle_api_key
 from app.media_management import licenced_media_controller, media_assignment_controller
 
-_description = """"""
-
 app = FastAPI(
     title="LicenceConnect Halt (LC-Halt)",
     version="0.2.0",
