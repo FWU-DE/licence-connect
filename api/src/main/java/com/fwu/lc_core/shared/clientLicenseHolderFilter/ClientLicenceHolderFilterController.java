@@ -1,6 +1,10 @@
 package com.fwu.lc_core.shared.clientLicenseHolderFilter;
 
+import com.fwu.lc_core.config.swagger.SwaggerConfig;
 import com.fwu.lc_core.shared.LicenceHolder;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +15,11 @@ import java.util.EnumSet;
 
 
 @Slf4j
+@Tag(
+        name = "Admin",
+        description = "Manage access to licence holders for clients",
+        extensions = @Extension(properties = {@ExtensionProperty(name = SwaggerConfig.TAG_ORDER, value = "2")})
+)
 @RestController
 @Validated
 @AllArgsConstructor
