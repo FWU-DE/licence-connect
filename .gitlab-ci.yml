@@ -142,9 +142,8 @@ dockerize_lc_halt:
     - if: $CI_COMMIT_TAG
       when: never
     # Only run the job for pushes to main
-    - if: $CI_COMMIT_BRANCH == 'develop'
+    - if: $CI_COMMIT_BRANCH == 'main'
   script:
-    - docker logout
     - echo "$CI_JOB_TOKEN" | docker login $CI_REGISTRY -u gitlab-ci-token --password-stdin
     - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
     - docker push $LC_HALT_RELEASE_IMAGE
