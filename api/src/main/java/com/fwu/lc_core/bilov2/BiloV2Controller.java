@@ -2,8 +2,12 @@ package com.fwu.lc_core.bilov2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fwu.lc_core.config.swagger.SwaggerConfig;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +25,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Slf4j
+@Tag(
+        name = "Bildungslogin V2",
+        description = "Retrieve licences from BiLo V2 for a given client and user",
+        extensions = @Extension(properties = {@ExtensionProperty(name = SwaggerConfig.TAG_ORDER, value = "5")})
+)
 @RestController
 public class BiloV2Controller {
     @Autowired

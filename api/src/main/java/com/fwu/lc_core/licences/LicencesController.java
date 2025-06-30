@@ -1,12 +1,16 @@
 package com.fwu.lc_core.licences;
 
+import com.fwu.lc_core.config.swagger.SwaggerConfig;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 
 import com.fwu.lc_core.shared.Bundesland;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +21,11 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
+@Tag(
+        name = "Licences",
+        description = "Retrieve licences for a given client and licencee in standardized ODRL format",
+        extensions = @Extension(properties = {@ExtensionProperty(name = SwaggerConfig.TAG_ORDER, value = "3")})
+)
 @RestController
 public class LicencesController {
 
@@ -26,7 +35,7 @@ public class LicencesController {
         this.licencesCollector = licencesCollector;
     }
 
-    @Operation(summary = "Fetch licences for the given user.",
+    @Operation(
             parameters = {
                     @Parameter(
                             in = ParameterIn.QUERY,
