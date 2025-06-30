@@ -18,7 +18,7 @@ Person(admin, "Administrator", "")
 System_Ext(licence_consumer, "Licence Consumer", "e.g. Educational Offer, Publisher, Bilo")
 System_Ext(vidis, "VIDIS", "")
 
-System_Ext(lcmedia, "LC-Media", "A demo Licence Consuming system")
+System_Ext(lcmedia, "LC-Media", "A demo licence consuming system")
 
 System(lc, "Licence Connect Core", "")
 
