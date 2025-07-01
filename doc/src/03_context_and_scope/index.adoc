@@ -15,8 +15,10 @@ Person_Ext(student, "Student", "")
 Person_Ext(teacher, "Teacher", "")
 Person(admin, "Administrator", "")
 
-System_Ext(licence_consumer, "Licence Consumer", "z. B. Educational Offer, Publisher, Bilo")
+System_Ext(licence_consumer, "Licence Consumer", "e.g. Educational Offer, Publisher, Bilo")
 System_Ext(vidis, "VIDIS", "")
+
+System_Ext(lcmedia, "LC-Media", "A demo licence consuming system")
 
 System(lc, "Licence Connect Core", "")
 
@@ -27,6 +29,7 @@ System_Ext(bilo_v2, "Bilo_v2", "")
 
 Rel(student, licence_consumer, "Use licenced media", "")
 Rel(teacher, licence_consumer, "Use licenced media", "")
+Rel(lcmedia, vidis, "Retrieve relevant licences", "")
 Rel_R(licence_consumer, vidis, "Retrieve relevant licences", "")
 Rel(vidis, lc, "Retrieve relevant licences", "")
 Rel(lc, lchalt, "Retrieve relevant licences","")
@@ -53,8 +56,13 @@ That way, VIDIS and LC Core can potentially use data that is not available to th
 
 See <<vidis-interface>> for more details on how VIDIS communicates with LC Core.
 
-|LC Halt|
-LC Halt is a demo system intended to demonstrate licence management.
+|LC-Halt|
+LC-Halt is a demo licence holding system intended to demonstrate licence management.
+It is reachable under https://halt.licenceconnect.schule
+
+|LC-Media|
+LC-Media is a demo licence consuming system intended to demonstrate licence management.
+It is reachable under https://media.licenceconnect.schule
 
 |Arix|
 ARIX (Antares Repository Interface/XML) is licence holding system developed and run by the Antares Project: https://www.antares.net
