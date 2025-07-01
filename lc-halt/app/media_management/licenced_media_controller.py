@@ -5,7 +5,7 @@ from app.util.logger import logger
 from .media_management import Medium
 from . import media_management
 
-router = APIRouter(tags=["Public"])
+router = APIRouter(tags=["Client interface"])
 
 
 class LicenceResponse(BaseModel):
@@ -34,6 +34,8 @@ async def read_assigned_licences(
     Licences managed by LC-Halt can be retrieved using this endpoint.
 
     Provided with a user id and optionally a bundesland id and/or schul id, LC-Halt will return all media the user is allowed to access.
+
+    This endpoint is only accessible with a valid API key.
     """
     logger.info(
         f"Received request with user_id {user_id}, bundesland_id {bundesland_id}, schul_id {schul_id}"
