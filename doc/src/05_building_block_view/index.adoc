@@ -146,7 +146,7 @@ As a mock for development purposes there are `mock-licence-servers/arix-acceptin
 ====== Authentication
 
 ARIX only responds to whitelisted IPs.
-For development, a VPN with a whitelisted static IP is necessary to successfully query ARIX for licences.
+For local development, a VPN with a whitelisted static IP is necessary to successfully query ARIX for licences.
 
 ==== Client Licence Holder Mapper
 
