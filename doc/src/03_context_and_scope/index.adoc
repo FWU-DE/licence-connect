@@ -67,4 +67,5 @@ It is reachable under https://media.licenceconnect.schule
 |Arix|
 ARIX (Antares Repository Interface/XML) is licence holding system developed and run by the Antares Project: https://www.antares.net
 
+See <<arix-interface>> for more details on ARIX.
 |===
