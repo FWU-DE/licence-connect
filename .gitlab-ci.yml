@@ -5,6 +5,7 @@ stages:
   - deploy
 
 variables:
+  DOCKER_IMAGE: docker:28.2.2
   MAVEN_IMAGE: maven:3-amazoncorretto-21
   MAVEN_LOCAL_REPO: ".m2/repository"
   MAVEN_OPTS: "-Dmaven.repo.local=$MAVEN_LOCAL_REPO -Djava.awt.headless=true"
@@ -50,7 +51,7 @@ build_api:
 test_api:
   tags:
     - docker
-  image: docker:latest
+  image: $DOCKER_IMAGE
   stage: test
   rules:
     # Run the job for a push to a branch that has an existing MR
@@ -135,7 +136,7 @@ dockerize_api:
 dockerize_lc_halt:
   tags:
     - docker
-  image: docker:28.2.2
+  image: $DOCKER_IMAGE
   stage: docker
   rules:
     # Never run the job for a pushed tag
