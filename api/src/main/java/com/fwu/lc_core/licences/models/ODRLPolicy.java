@@ -26,5 +26,9 @@ public class ODRLPolicy {
         public String target;
         public LicenceHolder assigner;
         public ODRLAction action;
+
+        public String toString() {
+            return String.format("Permission{target='%s', assigner=%s, action=%s}", target, assigner, action);
+        }
     }
 }
