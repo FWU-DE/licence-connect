@@ -135,7 +135,7 @@ dockerize_api:
 dockerize_lc_halt:
   tags:
     - docker
-  image: docker:28.2.2
+  image: docker:28.3.0
   stage: docker
   # rules:
   #   # Never run the job for a pushed tag
