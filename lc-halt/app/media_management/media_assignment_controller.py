@@ -49,7 +49,7 @@ async def assign_licenced_media(
     Exemplary SODIX-IDs to be used as value for "id" (with their corresponding titles):  
     - BWS-05558456 -> "Natürlich verpackt"
     - BWS-05050676 -> "Störenfriede"
-    - BWS-05560775 -> "...dass er nicht auf dem Kopf gene konnte."
+    - BWS-05560775 -> "...dass er nicht auf dem Kopf gehen konnte."
     - BWS-05050366 -> "...endlich mobil!"
     - BWS-02958064 -> "Deine Brüste sind wie Trauben!" - Lust und Liebe in der Bibel
     - BWS-05560914 -> "Der Staat bin ich!"
