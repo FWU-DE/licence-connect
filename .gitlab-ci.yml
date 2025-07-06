@@ -98,6 +98,8 @@ test_api:
       LC_HALT_LOG_LEVEL="INFO"
       LC_HALT_CLIENT_API_KEY=${LC_HALT_CLIENT_API_KEY}
       LC_HALT_ADMIN_API_KEY=${LC_HALT_ADMIN_API_KEY}
+      
+      EOF
     - |-
       cat << 'EOF' > .env
       MONGO_INITDB_ROOT_USERNAME="root"
