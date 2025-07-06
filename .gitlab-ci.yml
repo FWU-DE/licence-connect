@@ -1,7 +1,6 @@
 stages:
   - build
-#  - test
-  - docker_build
+  - test
   - docker_publish
   - deploy
 
@@ -48,6 +47,27 @@ build_api:
     paths:
       - target/
     expire_in: 30 min
+
+build_lc_halt_docker_image:
+  tags:
+    - docker
+  image: $DOCKER_IMAGE
+  stage: build
+  rules:
+    # Run the job for a push to a branch that has an existing MR
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Do not run the job for a branch that already has an existing MR, it will be run by the rule before.
+    # This prevents duplicate runs for branches that have open MRs
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # If we got here, there isn't an MR and we have simply pushed to a branch
+    # Run the job for this push
+    - if: $CI_COMMIT_BRANCH
+    # Never run job for a pushed tag
+    - if: $CI_COMMIT_TAG
+      when: never
+  script:
+    - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
 
 #test_api:
 #  tags:
@@ -112,6 +132,21 @@ build_api:
 #  script:
 #    - uv run pytest
 
+push_lc_halt_docker_image:
+  tags:
+    - docker
+  image: $DOCKER_IMAGE
+  stage: docker_publish
+  rules:
+    # Never run the job for a pushed tag
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Only run the job for pushes to main
+    - if: $CI_COMMIT_BRANCH == 'main'
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker push $LC_HALT_RELEASE_IMAGE
+
 dockerize_api:
   tags:
     - docker
@@ -133,35 +168,6 @@ dockerize_api:
       -Ddocker.registry.url=$CI_REGISTRY
       -Dspring-boot.build-image.publish=true
       -Dspring-boot.build-image.imageName=$API_RELEASE_IMAGE
-
-build_lc_halt_docker_image:
-  tags:
-    - docker
-  image: $DOCKER_IMAGE
-  stage: docker_build
-  rules:
-    # Never run the job for a pushed tag
-    - if: $CI_COMMIT_TAG
-      when: never
-    # Only run the job for pushes to main
-    - if: $CI_COMMIT_BRANCH == 'tests/FLC-120-tests-for-lc-halt-integration-in-lc-kern'
-  script:
-    - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
-
-push_lc_halt_docker_image:
-  tags:
-    - docker
-  image: $DOCKER_IMAGE
-  stage: docker_publish
-  rules:
-    # Never run the job for a pushed tag
-    - if: $CI_COMMIT_TAG
-      when: never
-    # Only run the job for pushes to main
-    - if: $CI_COMMIT_BRANCH == 'tests/FLC-120-tests-for-lc-halt-integration-in-lc-kern'
-  script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker push $LC_HALT_RELEASE_IMAGE
 
 deploy_api:
   stage: deploy
