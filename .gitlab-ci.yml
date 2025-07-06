@@ -89,12 +89,14 @@ test_api:
       when: never
   script:
     - apk add --no-cache openjdk21-jre maven
+    - docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup  up --build --wait
     - docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" up --build --wait
     - cd api
     - mvn test $MAVEN_OPTS
     - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
   after_script:
     - docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" down
+    - docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup down
 
 test_lc_halt:
   tags:
