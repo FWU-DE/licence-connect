@@ -101,7 +101,7 @@ test_api:
       
       EOF
     - |-
-      cat << 'EOF' > .env
+      cat << 'EOF' >> .env
       MONGO_INITDB_ROOT_USERNAME="root"
       MONGO_INITDB_ROOT_PASSWORD="password"
       MONGO_DB_NAME="lchalt"
