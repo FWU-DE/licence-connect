@@ -98,6 +98,7 @@ test_api:
   script:
     - apk add --no-cache openjdk21-jre maven
     - |-
+      cat << 'EOF' > .env
       #####################################
       ###     LC Halt Configuration     ###
       #####################################
