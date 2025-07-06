@@ -1,6 +1,7 @@
 package com.fwu.lc_core.licences.clients.lcHalt;
 
 import com.fwu.lc_core.licences.models.ODRLAction;
+import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @SpringBootTest
@@ -49,8 +51,6 @@ public class LCHaltClientTests {
         var expectedLicencedMediaIds = expectedLicencedMedia.stream().map(media -> media.get("id")).toList();
         var testLicences = Map.of(
                 "user_id", expectedUserId,
-//                "bundesland_id", "string",
-//                "schul_id", "string",
                 "licenced_media", expectedLicencedMedia
         );
 
@@ -67,6 +67,52 @@ public class LCHaltClientTests {
         }
     }
 
+    @Test
+    public void RequestPermissions_GivenBundeslandAndSchulId_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
+        var expectedUserId = "test_user_id";
+        var expectedBundesland = Bundesland.BY;
+        var expectedSchulId = "test_schul_id";
+        var expectedMediaId = "test_media_id";
+        var expectedLicencedMedia = List.of(Map.of("id", expectedMediaId));
+        var expectedLicencedMediaIds = expectedLicencedMedia.stream().map(media -> media.get("id")).toList();
+        var testLicences = Map.of(
+                "bundesland_id", expectedBundesland.toString(),
+                "schul_id", expectedSchulId,
+                "licenced_media", expectedLicencedMedia
+        );
+
+        postTestLicences(testLicences);
+
+        var permissions = lchaltClient.getPermissions(expectedBundesland, null, expectedSchulId, expectedUserId).block();
+
+        assertThat(permissions).isNotNull();
+        assertThat(permissions.size()).isEqualTo(expectedLicencedMedia.size());
+        for (ODRLPolicy.Permission p : permissions) {
+            assertThat(p.assigner).isEqualTo(LicenceHolder.LC_HALT);
+            assertThat(p.action).isEqualTo(ODRLAction.Use);
+            assertThat(p.target).isIn(expectedLicencedMediaIds);
+        }
+    }
+
+    @Test
+    public void RequestPermissions_GivenUserIdAndBundesland_ThrowsException() {
+        var exception = assertThrows(IllegalArgumentException.class, () ->
+                lchaltClient.getPermissions(null, null, "test_schul_id", "test_user_id").block()
+        );
+
+        assertThat(exception.getMessage()).isEqualTo("If schulnummer is provided, bundesland must also be provided.");
+    }
+
+    @Test
+    public void RequestPermissions_GivenNoIdentifiers_ThrowsException() {
+        var exception = assertThrows(IllegalArgumentException.class, () ->
+                lchaltClient.getPermissions(null, null, null, null).block()
+        );
+
+        assertThat(exception.getMessage()).isEqualTo("You must provide a userId parameter.");
+    }
+
+    // Helper methods for setup and teardown
     private void postTestLicences(Map<String, Object> licences) {
         var webClient = getLCHaltMediaAssignemtWebClient();
 
