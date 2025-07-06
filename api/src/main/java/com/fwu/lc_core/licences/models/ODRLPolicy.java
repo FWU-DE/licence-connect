@@ -3,6 +3,8 @@ package com.fwu.lc_core.licences.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fwu.lc_core.shared.LicenceHolder;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +25,13 @@ public class ODRLPolicy {
 
     @AllArgsConstructor
     public static class Permission {
+        @Getter
         public String target;
+
+        @Getter
         public LicenceHolder assigner;
+
+        @Getter
         public ODRLAction action;
 
         public String toString() {
