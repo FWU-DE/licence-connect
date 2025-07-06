@@ -42,6 +42,14 @@ build_api:
       when: never
   script:
     - cd api
+    - |-
+      cat << 'EOF' > .env
+      LC_HALT_DOMAIN="http://localhost:8000"
+      
+      LC_HALT_LICENCE_URL="$LC_HALT_DOMAIN/licenced-media"
+      LC_HALT_ENABLED="true"
+      
+      EOF
     - mvn compile $MAVEN_OPTS
   artifacts:
     paths:
@@ -89,13 +97,22 @@ test_api:
       when: never
   script:
     - apk add --no-cache openjdk21-jre maven
+    - echo $LC_HALT_CLIENT_API_KEY
+    - echo $LC_HALT_ADMIN_API_KEY
     - |-
       cat << 'EOF' > .env
+      LC_HALT_DOMAIN="http://localhost:8000"
+      
+      LC_HALT_LICENCE_URL="$LC_HALT_DOMAIN/licenced-media"
+      LC_HALT_ENABLED="true"
+      
       #####################################
       ###     LC Halt Configuration     ###
       #####################################
   
       LC_HALT_LOG_LEVEL="INFO"
+      LC_HALT_CLIENT_API_KEY="test-key"
+      LC_HALT_ADMIN_API_KEY="admin-key"
   
       MONGO_INITDB_ROOT_USERNAME="root"
       MONGO_INITDB_ROOT_PASSWORD="password"
