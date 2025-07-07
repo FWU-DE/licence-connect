@@ -112,7 +112,7 @@ test_api:
       
       EOF
     - |
-      docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup  up --build --wait
+      docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup up --build --wait
       docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" up --build --wait
       cd api
       mvn test $MAVEN_OPTS
