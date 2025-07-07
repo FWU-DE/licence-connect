@@ -87,20 +87,36 @@ test_api:
     # Never run job for a pushed tag
     - if: $CI_COMMIT_TAG
       when: never
-  variables:
-    LC_HALT_LOG_LEVEL: "INFO"
-    MONGO_INITDB_ROOT_USERNAME: "root"
-    MONGO_INITDB_ROOT_PASSWORD: "password"
-    MONGO_DB_NAME: "lchalt"
-    MONGO_DB_HOST: "mongodb"
-    MONGODB_URL: "mongodb://root:password@mongodb/lchalt?authSource=admin"
   script:
     - apk add --no-cache openjdk21-jre maven
-    - docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup  up --build --wait
-    - docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" up --build --wait
-    - cd api
-    - mvn test $MAVEN_OPTS
-    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
+    - |-
+      cat << EOF > .env
+      #####################################
+      ###     LC Halt Configuration     ###
+      #####################################
+      
+      LC_HALT_LOG_LEVEL="INFO"
+      LC_HALT_CLIENT_API_KEY=${LC_HALT_CLIENT_API_KEY}
+      LC_HALT_ADMIN_API_KEY=${LC_HALT_ADMIN_API_KEY}
+      
+      EOF
+    - |-
+      cat << 'EOF' >> .env
+      MONGO_INITDB_ROOT_USERNAME="root"
+      MONGO_INITDB_ROOT_PASSWORD="password"
+      MONGO_DB_NAME="lchalt"
+  
+      MONGO_DB_HOST="mongodb"
+  
+      MONGODB_URL="mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@$MONGO_DB_HOST/$MONGO_DB_NAME?authSource=admin"
+      
+      EOF
+    - |
+      docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup  up --build --wait
+      docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" up --build --wait
+      cd api
+      mvn test $MAVEN_OPTS
+      mvn test -Dspring.profiles.active=local $MAVEN_OPTS
   after_script:
     - docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" down
     - docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup down
