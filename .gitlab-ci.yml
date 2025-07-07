@@ -1,7 +1,7 @@
 stages:
   - build
   - test
-  - docker
+  - docker_publish
   - deploy
 
 variables:
@@ -48,6 +48,27 @@ build_api:
       - target/
     expire_in: 30 min
 
+build_lc_halt_docker_image:
+  tags:
+    - docker
+  image: $DOCKER_IMAGE
+  stage: build
+  rules:
+    # Run the job for a push to a branch that has an existing MR
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Do not run the job for a branch that already has an existing MR, it will be run by the rule before.
+    # This prevents duplicate runs for branches that have open MRs
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # If we got here, there isn't an MR and we have simply pushed to a branch
+    # Run the job for this push
+    - if: $CI_COMMIT_BRANCH
+    # Never run job for a pushed tag
+    - if: $CI_COMMIT_TAG
+      when: never
+  script:
+    - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
+
 test_api:
   tags:
     - docker
@@ -68,12 +89,37 @@ test_api:
       when: never
   script:
     - apk add --no-cache openjdk21-jre maven
-    - docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" up --build --wait
-    - cd api
-    - mvn test $MAVEN_OPTS
-    - mvn test -Dspring.profiles.active=local $MAVEN_OPTS
+    - |-
+      cat << EOF > .env
+      #####################################
+      ###     LC Halt Configuration     ###
+      #####################################
+      
+      LC_HALT_LOG_LEVEL="INFO"
+      LC_HALT_CLIENT_API_KEY=${LC_HALT_CLIENT_API_KEY}
+      LC_HALT_ADMIN_API_KEY=${LC_HALT_ADMIN_API_KEY}
+      
+      EOF
+    - |-
+      cat << 'EOF' >> .env
+      MONGO_INITDB_ROOT_USERNAME="root"
+      MONGO_INITDB_ROOT_PASSWORD="password"
+      MONGO_DB_NAME="lchalt"
+  
+      MONGO_DB_HOST="mongodb"
+  
+      MONGODB_URL="mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@$MONGO_DB_HOST/$MONGO_DB_NAME?authSource=admin"
+      
+      EOF
+    - |
+      docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup up --build --wait
+      docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" up --build --wait
+      cd api
+      mvn test $MAVEN_OPTS
+      mvn test -Dspring.profiles.active=local $MAVEN_OPTS
   after_script:
     - docker compose -f mock-licence-servers/docker-compose.yml -p "$CI_JOB_ID" down
+    - docker compose -f lc-halt/docker-compose.yml -p "$CI_JOB_ID" --profile complete-setup down
 
 test_lc_halt:
   tags:
@@ -111,11 +157,26 @@ test_lc_halt:
   script:
     - uv run pytest
 
+push_lc_halt_docker_image:
+  tags:
+    - docker
+  image: $DOCKER_IMAGE
+  stage: docker_publish
+  rules:
+    # Never run the job for a pushed tag
+    - if: $CI_COMMIT_TAG
+      when: never
+    # Only run the job for pushes to main
+    - if: $CI_COMMIT_BRANCH == 'main'
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker push $LC_HALT_RELEASE_IMAGE
+
 dockerize_api:
   tags:
     - docker
   image: $MAVEN_IMAGE
-  stage: docker
+  stage: docker_publish
   rules:
     # Never run the job for a pushed tag
     - if: $CI_COMMIT_TAG
@@ -132,22 +193,6 @@ dockerize_api:
       -Ddocker.registry.url=$CI_REGISTRY
       -Dspring-boot.build-image.publish=true
       -Dspring-boot.build-image.imageName=$API_RELEASE_IMAGE
-
-dockerize_lc_halt:
-  tags:
-    - docker
-  image: $DOCKER_IMAGE
-  stage: docker
-  rules:
-    # Never run the job for a pushed tag
-    - if: $CI_COMMIT_TAG
-      when: never
-    # Only run the job for pushes to main
-    - if: $CI_COMMIT_BRANCH == 'main'
-  script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build -t $LC_HALT_RELEASE_IMAGE lc-halt
-    - docker push $LC_HALT_RELEASE_IMAGE
 
 deploy_api:
   stage: deploy
