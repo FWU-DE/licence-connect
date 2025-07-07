@@ -74,7 +74,7 @@ public class LCHaltClientTests {
         var expectedLicencedMedia = List.of(Map.of("id", expectedMediaId));
         var expectedLicencedMediaIds = expectedLicencedMedia.stream().map(media -> media.get("id")).toList();
         var testLicences = Map.of(
-                "bundesland_id", expectedBundesland.toString(),
+                "bundesland_id", expectedBundesland.toISOIdentifier(),
                 "schul_id", expectedSchulId,
                 "licenced_media", expectedLicencedMedia
         );
