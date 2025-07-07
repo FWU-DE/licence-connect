@@ -44,7 +44,13 @@ async def assign_licenced_media(
 
     userId: 8e80238b-d651-4c85-9f84-a89fff204c37 (this is the VIDIS user id of the user 'bbmv-l2' in the client 'lc-media-o')  
 
-    bundesland: DE-BB (this is the Bundesland of the 'bbmv-l2' user)  
+    bundesland: DE-BB
+    Attention:
+    The request from VIDIS to LC-Core for users assigned to the `Test Landesportal (IdP)` VIDIS client will always have
+    the bundesland as value to which the `Test Landesportal (IdP)` is currently hardcoded. At the time of writing this,
+    it is `DE-BB`. If the `Test Landesportal (IdP)` is changed to another bundesland, the value will change accordingly.
+    When requesting licences from LC-Halt, LC-Core will *always* use an ISO 3166-2 code for the bundesland
+    (e.g. `DE-BB` for Brandenburg, `DE-BY` for Bayern).
 
     Exemplary SODIX-IDs to be used as value for "id" (with their corresponding titles):  
     - BWS-05558456 -> "Natürlich verpackt"
