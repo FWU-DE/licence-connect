@@ -37,10 +37,12 @@ public class LCHaltClient {
                 .baseUrl(licenceUrl)
                 .build();
 
+        var bundeslandId = bundesland != null ? bundesland.toISOIdentifier() : null;
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("user_id", userId)
-                        .queryParamIfPresent("bundesland_id", Optional.ofNullable(bundesland))
+                        .queryParamIfPresent("bundesland_id", Optional.ofNullable(bundeslandId))
                         .queryParamIfPresent("schul_id", Optional.ofNullable(schulnummer))
                         .build())
                 .header(API_KEY_HEADER, lcHaltClientApiKey)
