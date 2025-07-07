@@ -5,7 +5,6 @@ import com.fwu.lc_core.shared.Bundesland;
 import com.fwu.lc_core.shared.LicenceHolder;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
