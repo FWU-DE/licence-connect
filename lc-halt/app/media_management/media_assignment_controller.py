@@ -42,7 +42,7 @@ async def assign_licenced_media(
 
     ## LC-Media showcase example values
 
-    userId: 8e80238b-d651-4c85-9f84-a89fff204c37 (this is the VIDIS user id of the user 'bbmv-l2' in the client 'lc-media-o')  
+    userId: 8e80238b-d651-4c85-9f84-a89fff204c37 (this is the VIDIS user id of the user 'bbmv-l2' in the client 'lc-media-o')
 
     bundesland: DE-BB
 
@@ -54,21 +54,17 @@ async def assign_licenced_media(
     (e.g. 'DE-BB' for Brandenburg, 'DE-BY' for Bayern). Thus, when assigning media to a bundesland, make sure to use
     the correct ISO 3166-2 code for the bundesland.
 
-    Exemplary SODIX-IDs to be used as value for "id" (with their corresponding titles):  
+    Exemplary SODIX-IDs to be used as value for "id" (with their corresponding titles):
     - BWS-05558456 -> "Natürlich verpackt"
     - BWS-05050676 -> "Störenfriede"
     - BWS-05560775 -> "...dass er nicht auf dem Kopf gehen konnte."
     - BWS-05050366 -> "...endlich mobil!"
-    - BWS-02958064 -> "Deine Brüste sind wie Trauben!" - Lust und Liebe in der Bibel
     - BWS-05560914 -> "Der Staat bin ich!"
     - BWS-02958086 -> "Ein unzuverlässiges Gefühl..." - Die Mutterliebe
-    - BWS-05553540 -> "Happy slapping"
-    - BWS-05553182 -> "Haut der Votze in die Schnauze"
     - BWS-04959365 -> "Heimsuchung" - Ausstellung in der Bundeskunsthalle
     - BWS-02958017 -> "Ich bin keiner, der mit Weisheit geboren wurde" - Leben und Lehre des Konfuzius
     - BWS-04959221 -> "Im Felde unbesiegt!"
     - BWS-05555538 -> "Iss Zucker und sprich süß" [mit Unterrichtsmaterial]
-    - BWS-04958309 -> "Jetzt weiß ich, es war falsch" - Alkohol in der Schwangerschaft
     - BWS-02958063 -> "Küss mich jetzt eintausendmal!" - Eine kleine Kulturgeschichte des Kusses
     - BWS-02958019 -> "Maria hilf!" - Die Wallfahrt nach Altötting
     - BWS-05558483 -> "Re-Cycling"
