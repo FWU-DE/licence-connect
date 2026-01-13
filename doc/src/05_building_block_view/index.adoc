@@ -143,9 +143,37 @@ curl -X POST http://arix.datenbank-bildungsmedien.net/stk/str -H "Content-Type: 
 
 As a mock for development purposes there are `mock-licence-servers/arix-accepting` and `mock-licence-servers/arix-rejecting` in this repository.
 
+====== Parameters
+
+[cols="1,1,2a"]
+|===
+|Parameter|Possible Value|Notes
+
+|[land]|sh, hh, hb, nds, b, nrw, he, s, lsa, mv, by, bw, sl, rlp, th, bb, stk|
+* "stk" is used as an example federal state "Stenkelfeld"
+
+|[standortnummer]|str|
+* Usually the licence plate id of the "Landkreis"
+* Sachsen and Hessen use numbers
+* Bremen, Berlin and Hamburg use a repetition of the first param, e.g. "b/b", "hh/hh"
+* "str" is used as an example location "Stuchtrup" in federal state "Stenkelfeld"
+
+|[schulnummer]||
+* highly individual in each federal state
+
+|[user-id]||
+* depends on the system that created the licence, should in general correspond to the user id that is used to fetch licences
+|===
+
 ====== Authentication
 
 ARIX only responds to whitelisted IPs.
+In case the IP is not whitelisted or not whitelisted for the specific context, it will respond with the following error:
+
+```
+<error>Sorry, interface search not allowed for 62.146.189.75</error>
+```
+
 For local development, a VPN with a whitelisted static IP is necessary to successfully query ARIX for licences.
 
 ==== Client Licence Holder Mapper
