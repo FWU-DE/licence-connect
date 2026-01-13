@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 public class LicenceeFactory {
-    private static final String SCHOOL_DATA_CSV = "schooldata/school_data.csv";
+    private static final String SCHOOL_DATA_CSV = "schooldata/lookup_table.csv";
     private final Map<String, String> schoolDistrictMap = new HashMap<>();
 
     public LicenceeFactory() {
