@@ -80,12 +80,12 @@ public class LicencesController {
     private Mono<ODRLPolicy> request(
             @RequestParam(required = false) String bundesland,
             @RequestParam(required = false) String standortnummer,
-            @RequestParam(required = false) String schulkennung,
+            @RequestParam(required = false) String schulnummer,
             @RequestParam(required = false) String userId,
             @RequestParam(required = false) String clientName) {
         log.info(
                 "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {}; userId: {};",
-                clientName, bundesland, standortnummer, schulkennung, userId
+                clientName, bundesland, standortnummer, schulnummer, userId
         );
 
         if (clientName == null) {
@@ -94,7 +94,7 @@ public class LicencesController {
         }
 
         try {
-            Licencee licencee = this.licenceeFactory.create(bundesland, standortnummer, schulkennung, userId);
+            Licencee licencee = this.licenceeFactory.create(bundesland, standortnummer, schulnummer, userId);
             return licencesCollector.getODRLPolicy(licencee, clientName);
         } catch (Exception e) {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));

@@ -37,7 +37,7 @@ public class LicenceeFactory {
 
     private String mapSchulnummerToStandortnummer(String schulkennung) {
         if (schulkennung == null) {
-            throw new IllegalArgumentException("Schulnummer must be provided for BB bundesland.");
+            throw new IllegalArgumentException("Schulkennung must be provided for BB bundesland.");
         }
         return schoolDistrictMap.getOrDefault(mapSchulkennungToSchulnummer(schulkennung), null);
     }
@@ -46,7 +46,7 @@ public class LicenceeFactory {
         // The "schulkennung" from VIDIS is of the form XX-XX-XXXXXX, where the last part is school number.
         var schulnummerParts = schulkennung.split("-");
         if (schulnummerParts.length != 3) {
-            throw new IllegalArgumentException("Invalid schulkennung format for BB: " + schulkennung);
+            throw new IllegalArgumentException("Invalid Schulkennung format for BB: " + schulkennung);
         }
         return schulnummerParts[2];
     }

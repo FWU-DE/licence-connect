@@ -29,8 +29,8 @@ class LicenceeFactoryTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "BB, INVALID, user1, Invalid schulnummer format for BB",
-            "BB, null, user1, Schulnummer must be provided for BB bundesland",
+            "BB, INVALID, user1, Invalid Schulkennung format for BB",
+            "BB, null, user1, Schulkennung must be provided for BB bundesland",
             "INVALID, 12345, user1, INVALID"
     }, nullValues = "null")
     void create_throws_exception_for_invalid_input(String bundesland, String schulnummer, String userId, String expectedMessagePart) {
