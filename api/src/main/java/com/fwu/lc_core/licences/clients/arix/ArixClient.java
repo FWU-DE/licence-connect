@@ -15,9 +15,12 @@ import java.util.stream.Stream;
 @Component
 public class ArixClient {
     private final String apiUrl;
+    private final int searchLimit;
 
-    public ArixClient(@Value("${arix.url}") String apiUrl) {
+    public ArixClient(@Value("${arix.url}") String apiUrl,
+                      @Value("${arix.search-limit}") int searchLimit) {
         this.apiUrl = apiUrl;
+        this.searchLimit = searchLimit;
     }
 
     public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
@@ -35,7 +38,7 @@ public class ArixClient {
         return webClient.post()
                 .uri(uri)
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .body(BodyInserters.fromFormData("xmlstatement", "<search></search>"))
+                .body(BodyInserters.fromFormData("xmlstatement", "<search limit='" + searchLimit + "'></search>"))
                 .exchangeToMono(response -> response.bodyToMono(String.class))
                 .handle((responseBody, sink) -> {
                     if (responseBody == null || !responseBody.startsWith("<result")) {
