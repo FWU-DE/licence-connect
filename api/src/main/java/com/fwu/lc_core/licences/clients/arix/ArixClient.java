@@ -5,6 +5,7 @@ import com.fwu.lc_core.shared.Bundesland;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -30,10 +31,8 @@ public class ArixClient {
         } catch (IllegalArgumentException e) {
             return Mono.error(e);
         }
-        
-        WebClient webClient = WebClient.builder()
-                .baseUrl(apiUrl)
-                .build();
+
+        WebClient webClient = configureWebClientWithBiggerBuffer(64);
 
         return webClient.post()
                 .uri(uri)
@@ -52,6 +51,19 @@ public class ArixClient {
                         sink.error(e);
                     }
                 });
+    }
+
+    private WebClient configureWebClientWithBiggerBuffer(int sizeInMegaBytes) {
+        ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(sizeInMegaBytes * 1024 * 1024))
+                .build();
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl(this.apiUrl)
+                .exchangeStrategies(strategies)
+                .build();
+
+        return webClient;
     }
 
     private static String constructRequestUri(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
