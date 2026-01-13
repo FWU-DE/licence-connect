@@ -4,3 +4,59 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 
 == Deployment View
+
+=== Infrastructure Overview
+
+The Licence Connect system is deployed on a single virtual machine acting as a Docker host. The various components of the application (API, database, and auxiliary services) are containerized and orchestrated using Docker Compose.
+
+* **Target Host**: `licence-connect-api.fwu.nhnbg`
+* **Orchestration**: Docker Compose
+* **Reverse Proxy**: NGINX (managed within the Docker composition)
+
+=== Deployment Prerequisites
+
+To interact with the deployment environment or for the CI pipeline to function, the following are required:
+
+1.  **VPN Requirement**: The target host is located within the internal network. Accessing the server via SSH or accessing the deployed API endpoints requires an active VPN connection.
+2.  **SSH Access**: The GitLab CI runner uses SSH keys to connect to the target host during deployment. Admins require similar SSH access for troubleshooting.
+3.  **Manual Configuration**: A `.env` file must be manually provisioned on the server before the initial deployment.
+
+=== Continuous Deployment Pipeline
+
+The deployment process is fully automated via GitLab CI. The logic is defined in the `.gitlab-ci.yml` file located in the root of the repository.
+
+* **Job**: `deploy_api`
+* **Trigger**: The pipeline is triggered automatically on a push to the `main` branch.
+
+**Pipeline Steps:**
+
+1.  **Build & Publish**: Docker images for the application are built and pushed to the container registry.
+2.  **Connectivity Check**: The CI runner establishes an SSH connection to `licence-connect-api.fwu.nhnbg`.
+3.  **Artifact Transfer**: Updated configuration files, specifically `docker/docker-compose.yaml` and NGINX configs, are copied to the server via SCP.
+4.  **Service Restart**: The runner executes `docker-compose pull` to fetch the new images, followed by `docker-compose up -d` to restart the services with the new version.
+
+=== Directory Structure on Server
+
+The application is deployed to the following location on the target host:
+
+path: `/var/docker/apps/licenceconnect`
+
+**Typical File Layout:**
+
+*   `docker-compose.yaml`: The orchestration file synchronized from the `docker/` directory in the repository.
+*   `.env`: Local environment variables (see below).
+*   `nginx/`: NGINX configuration directory.
+*   `conf/`: Application specific configuration files (e.g. `application.properties` overrides if mapped).
+
+=== Manual Configuration
+
+While the application code and infrastructure definitions are version-controlled, secrets and environment-specific settings are managed manually to ensure security.
+
+*   **File**: `.env`
+*   **Location**: `/var/docker/apps/licenceconnect/.env`
+*   **Management**: This file is **excluded** from version control. It must be manually created and updated on the server.
+*   **Contents**: It typically contains:
+    *   Database credentials (users, passwords).
+    *   External API tokens.
+    *   Java options (heap size, profiles).
+    *   Host-specific port mappings.

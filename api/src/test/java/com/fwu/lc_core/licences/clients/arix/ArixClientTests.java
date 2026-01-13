@@ -28,7 +28,7 @@ public class ArixClientTests {
     @ParameterizedTest
     @MethodSource("provideCorrectInput")
     public void RequestPermissions_GivenCorrectInput_Yields_Result(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws ParserConfigurationException, IOException, SAXException {
-        ArixClient arixClient = new ArixClient(baseUrlAccepting);
+        ArixClient arixClient = new ArixClient(baseUrlAccepting, 1000);
         var permissions = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId).block();
 
         assertThat(permissions).isNotNull();
@@ -41,16 +41,24 @@ public class ArixClientTests {
     @ParameterizedTest
     @MethodSource("provideIncorrectInfo")
     public void RequestLicences_ArgumentsAreNotANonemptyPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        var arixClient = new ArixClient(baseUrlAccepting);
+        var arixClient = new ArixClient(baseUrlAccepting, 1000);
         var permissionsMono = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId);
         StepVerifier.create(permissionsMono).expectError().verify();
     }
 
     @Test
     public void RequestLicences_notWhitelisted_throwsError() {
-        var arixClient = new ArixClient(baseUrlRejecting);
+        var arixClient = new ArixClient(baseUrlRejecting, 1000);
         var permissionsMono = arixClient.getPermissions(Bundesland.BY, "ORT1", null, null);
         StepVerifier.create(permissionsMono).expectError().verify();
+    }
+
+    @Test
+    public void Constructor_SetsSearchLimit_Correctly() {
+        int expectedLimit = 9999;
+        var arixClient = new ArixClient(baseUrlAccepting, expectedLimit);
+        
+        assertThat(arixClient).hasFieldOrPropertyWithValue("searchLimit", expectedLimit);
     }
 
     private static Stream<Arguments> provideIncorrectInfo() {
