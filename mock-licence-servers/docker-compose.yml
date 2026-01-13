@@ -23,19 +23,6 @@
       retries: 50
       start_period: 5m
 
-  mock-bilo-v1-server:
-    build:
-      context: ..
-      dockerfile: ./mock-licence-servers/bilo-v1/Dockerfile
-    ports:
-      - "1237:1237"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:1237/healthcheck"]
-      interval: 3s
-      timeout: 2s
-      retries: 50
-      start_period: 5m
-
   mock-bilo-v2-server:
     build:
       context: ..

@@ -238,8 +238,8 @@ class LicencesControllerWithWorkingServerTests {
 
     private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
-                Arguments.of("BB", null, null, null, List.of()),
-                Arguments.of("DE-BB", null, null, null, List.of()),
+                Arguments.of("BB", null, "12-34-567890", null, List.of()),
+                Arguments.of("DE-BB", null, "12-34-567890", null, List.of()),
                 Arguments.of("BY", null, null, null, List.of("BY_1_23ui4g23c")),
                 Arguments.of("BY", "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
                 Arguments.of("BY", "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
