@@ -94,7 +94,7 @@ public class LicencesController {
         }
 
         try {
-            Licencee licencee = this.licenceeFactory.create(bundesland, standortnummer, schulnummer, userId);
+            Licencee licencee = this.licenceeFactory.create(bundesland, standortnummer, schulnummer, userId, clientName);
             return licencesCollector.getODRLPolicy(licencee, clientName);
         } catch (Exception e) {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
