@@ -2,6 +2,7 @@ package com.fwu.lc_core.licences;
 
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.shared.Bundesland;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -9,18 +10,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class LicenceeFactory {
     private static final String SCHOOL_DATA_CSV = "schooldata/lookup_table.csv";
     private final Map<String, String> schoolDistrictMap = new HashMap<>();
+    private final List<String> schulnummerStandortnummerMappingEnabledClients;
 
-    public LicenceeFactory() {
+
+    public LicenceeFactory(@Value("${mapping.schulnummer-standortnummer.enabled-clients:}") String schulnummerStandortnummerMappingEnabledClients) {
+        this.schulnummerStandortnummerMappingEnabledClients = schulnummerStandortnummerMappingEnabledClients.isBlank() 
+            ? List.of() 
+            : List.of(schulnummerStandortnummerMappingEnabledClients.split(","));
         loadSchoolData();
     }
 
-    public Licencee create(String bundesland, String standortnummer, String schulkennung, String userId) {
+    public Licencee create(String bundesland, String standortnummer, String schulkennung, String userId, String clientName) {
         Bundesland bundeslandTyped = null;
         // Not all licence holders require a bundesland, so we allow it to be null.
         // ARIX requires it, LC-Halt does not.
@@ -28,11 +35,15 @@ public class LicenceeFactory {
             bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
         }
 
-        if (bundeslandTyped == Bundesland.BB && standortnummer == null) {
+        if (bundeslandTyped == Bundesland.BB && standortnummer == null && isSchulnummerStandortnummerMappingEnabledForClient(clientName)) {
             standortnummer = mapSchulnummerToStandortnummer(schulkennung);
         }
 
         return new Licencee(bundeslandTyped, standortnummer, schulkennung, userId);
+    }
+
+    private boolean isSchulnummerStandortnummerMappingEnabledForClient(String clientName) {
+        return clientName != null && schulnummerStandortnummerMappingEnabledClients.contains(clientName.trim());
     }
 
     private String mapSchulnummerToStandortnummer(String schulkennung) {
