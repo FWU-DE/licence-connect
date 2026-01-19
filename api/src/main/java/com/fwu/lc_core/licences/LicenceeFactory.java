@@ -21,9 +21,9 @@ public class LicenceeFactory {
 
 
     public LicenceeFactory(@Value("${mapping.schulnummer-standortnummer.enabled-clients:}") String schulnummerStandortnummerMappingEnabledClients) {
-        this.schulnummerStandortnummerMappingEnabledClients = schulnummerStandortnummerMappingEnabledClients.isBlank() 
-            ? List.of() 
-            : List.of(schulnummerStandortnummerMappingEnabledClients.split(","));
+        this.schulnummerStandortnummerMappingEnabledClients = schulnummerStandortnummerMappingEnabledClients.isBlank()
+                ? List.of()
+                : List.of(schulnummerStandortnummerMappingEnabledClients.split(","));
         loadSchoolData();
     }
 
