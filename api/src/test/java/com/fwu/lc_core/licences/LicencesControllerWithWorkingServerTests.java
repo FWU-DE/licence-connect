@@ -291,6 +291,7 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
     @Test
     void RequestWhichReturnsTrace() {
         var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
+        var allExistingBeanNames = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
                 .get()
@@ -306,14 +307,7 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
                 .returnResult(String.class)
                 .getResponseBody().blockFirst();
 
-        // In Spring Boot 4.0, validation errors (400 Bad Request) don't include stack traces
-        // because they're not exceptions with stack traces, even when server.error.include-stacktrace=always
-        // The error response should contain the standard error fields
-        assertThat(result)
-                .contains("error")
-                .contains("Bad Request")
-                .contains("status")
-                .contains("400");
+        assertThat(result).containsAnyOf(allExistingBeanNames.toArray(new String[0]));
     }
 }
 
