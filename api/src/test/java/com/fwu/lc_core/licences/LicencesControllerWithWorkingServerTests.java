@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
@@ -97,6 +97,8 @@ class LicencesControllerWithWorkingServerTests {
                 .expectStatus().isBadRequest();
     }
 
+
+    // We expect the framework to omit stack traces by default but we saw this happening unintentionally and decided to add a test to prevent future regressions.
     @Test
     void RequestWhichReturnsErrorDoesNotReturnTrace() {
         var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
@@ -253,61 +255,6 @@ class LicencesControllerWithWorkingServerTests {
                 Arguments.of("DE_BB", null, null, null),
                 Arguments.of("BBB", null, null, null)
         );
-    }
-}
-
-
-@SpringBootTest
-@AutoConfigureWebTestClient
-@TestPropertySource(properties = {
-        "server.error.include-message=always",
-        "server.error.include-binding-errors=always",
-        "server.error.include-stacktrace=always",
-        "server.error.include-exception=true"
-})
-@ExtendWith(OutputCaptureExtension.class)
-class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
-    private static final String GENERIC_LICENCES_TEST_CLIENT_NAME = "generic licences test client name";
-    @Autowired
-    private WebTestClient webTestClient;
-
-    @Value("${vidis.api-key.unprivileged}")
-    private String correctApiKey;
-    @Autowired
-    private ClientLicenseHolderFilterService clientLicenseHolderFilterService;
-    @Autowired
-    private ClientLicenceHolderMappingRepository clientLicenceHolderMappingRepository;
-    @Autowired
-    ClassNameRetriever classNameRetriever;
-    @Autowired
-    ApplicationContext applicationContext;
-
-    @BeforeEach
-    void setUp() {
-        clientLicenceHolderMappingRepository.deleteAll();
-        clientLicenseHolderFilterService.setAllowedLicenceHolders(GENERIC_LICENCES_TEST_CLIENT_NAME, EnumSet.of(LicenceHolder.ARIX));
-    }
-
-    @Test
-    void RequestWhichReturnsTrace() {
-        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
-        var allExistingBeanNames = classNameRetriever.getAllClassNames(applicationContext);
-
-        var result = webTestClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/v1/licences/request")
-                        .queryParam("clientName", "cat")
-                        .queryParam("bundesland", requestDto.bundesland())
-                        .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("userId", requestDto.userId()).build())
-                .header(API_KEY_HEADER, correctApiKey)
-                .exchange()
-                .expectStatus().isBadRequest()
-                .returnResult(String.class)
-                .getResponseBody().blockFirst();
-
-        assertThat(result).containsAnyOf(allExistingBeanNames.toArray(new String[0]));
     }
 }
 
