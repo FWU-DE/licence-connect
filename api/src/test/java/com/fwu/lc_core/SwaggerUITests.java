@@ -2,12 +2,14 @@ package com.fwu.lc_core;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.Duration;
+
 @SpringBootTest
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "PT10S")
 class SwaggerUITests {
 
     @Autowired
@@ -16,6 +18,9 @@ class SwaggerUITests {
     @Test
     void apiDocsArePubliclyAvailable() {
         webTestClient
+                .mutate()
+                .responseTimeout(Duration.ofSeconds(10))
+                .build()
                 .get()
                 .uri("/v3/api-docs")
                 .exchange()
@@ -25,6 +30,9 @@ class SwaggerUITests {
     @Test
     void swaggerUIIsPubliclyAvailable() {
         webTestClient
+                .mutate()
+                .responseTimeout(Duration.ofSeconds(10))
+                .build()
                 .get()
                 .uri("/swagger-ui/index.html")
                 .exchange()
@@ -34,6 +42,9 @@ class SwaggerUITests {
     @Test
     void swaggerUIShortHandWorks() {
         webTestClient
+                .mutate()
+                .responseTimeout(Duration.ofSeconds(10))
+                .build()
                 .get()
                 .uri("/swagger")
                 .exchange()

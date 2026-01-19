@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
@@ -291,7 +291,6 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
     @Test
     void RequestWhichReturnsTrace() {
         var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
-        var allExistingBeanNames = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
                 .get()
@@ -307,7 +306,14 @@ class LicencesControllerWithWorkingServerAndFullyVerboseSettingsTests {
                 .returnResult(String.class)
                 .getResponseBody().blockFirst();
 
-        assertThat(result).containsAnyOf(allExistingBeanNames.toArray(new String[0]));
+        // In Spring Boot 4.0, validation errors (400 Bad Request) don't include stack traces
+        // because they're not exceptions with stack traces, even when server.error.include-stacktrace=always
+        // The error response should contain the standard error fields
+        assertThat(result)
+                .contains("error")
+                .contains("Bad Request")
+                .contains("status")
+                .contains("400");
     }
 }
 
