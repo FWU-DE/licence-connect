@@ -6,10 +6,8 @@ import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTest
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.time.Duration;
-
 @SpringBootTest
-@AutoConfigureWebTestClient(timeout = "PT10S")
+@AutoConfigureWebTestClient
 class SwaggerUITests {
 
     @Autowired
@@ -18,9 +16,6 @@ class SwaggerUITests {
     @Test
     void apiDocsArePubliclyAvailable() {
         webTestClient
-                .mutate()
-                .responseTimeout(Duration.ofSeconds(10))
-                .build()
                 .get()
                 .uri("/v3/api-docs")
                 .exchange()
@@ -30,9 +25,6 @@ class SwaggerUITests {
     @Test
     void swaggerUIIsPubliclyAvailable() {
         webTestClient
-                .mutate()
-                .responseTimeout(Duration.ofSeconds(10))
-                .build()
                 .get()
                 .uri("/swagger-ui/index.html")
                 .exchange()
@@ -42,9 +34,6 @@ class SwaggerUITests {
     @Test
     void swaggerUIShortHandWorks() {
         webTestClient
-                .mutate()
-                .responseTimeout(Duration.ofSeconds(10))
-                .build()
                 .get()
                 .uri("/swagger")
                 .exchange()
