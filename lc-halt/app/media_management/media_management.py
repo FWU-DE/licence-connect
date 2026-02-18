@@ -2,7 +2,6 @@ from typing import Annotated, List, Optional
 from bson import ObjectId
 from fastapi import HTTPException, Response, status
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
-from pymongo import ReturnDocument
 from app.util.logger import logger
 from app.util.db import db
 
@@ -28,9 +27,9 @@ class LicencedMediaAssignmentModel(BaseModel):
     # but provided as `id` in the API requests and responses.
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
 
-    user_id: Optional[str] = Field(...)
-
-    bundesland_id: Optional[str] = Field(...)
+    bundesland_id: str = Field(...)
+    
+    landkreis_id: Optional[str] = Field(...)
 
     schul_id: Optional[str] = Field(...)
 
@@ -40,14 +39,14 @@ class LicencedMediaAssignmentModel(BaseModel):
         populate_by_name=True,
         arbitrary_types_allowed=True,
         json_schema_extra={
-            "example": {"user_id": "1234", "licenced_media": ["BWS-05050634"]}
+            "example": {"bundesland_id": "BB", "landkreis_id": "LK-01", "schul_id": "SCH-01", "licenced_media": ["BWS-05050634"]}
         },
     )
 
 
 class LicencedMediaAssignment(BaseModel):
-    user_id: Optional[str] = None
-    bundesland_id: Optional[str] = None
+    bundesland_id: str
+    landkreis_id: Optional[str] = None
     schul_id: Optional[str] = None
     licenced_media: list[Medium]
 
@@ -64,24 +63,24 @@ async def set_assignment(
     media_to_licence: LicencedMediaAssignment,
 ):
     logger.info(media_to_licence)
-    assert_media_assignment_is_valid(media_to_licence)
+    validate_media_assignment(media_to_licence)
 
     new_licenced_media = await licenced_media_assignment_collection.insert_one(
         media_to_licence.model_dump(by_alias=True, exclude=["id"])
     )
-    created_user_media = await licenced_media_assignment_collection.find_one(
+    created_media = await licenced_media_assignment_collection.find_one(
         {"_id": new_licenced_media.inserted_id}
     )
-    return created_user_media
+    return created_media
 
 
 async def get_assignment(id: str):
     if (
-        user_media := await licenced_media_assignment_collection.find_one(
+        media := await licenced_media_assignment_collection.find_one(
             {"_id": ObjectId(id)}
         )
     ) is not None:
-        return user_media
+        return media
 
     raise HTTPException(
         status_code=404,
@@ -104,18 +103,12 @@ async def delete_assignment(id: str):
 
 
 async def get_all_assigned_media(
-    user_id: str | None, bundesland_id: str | None = None, schul_id: str | None = None
+    bundesland_id: str, landkreis_id: str | None = None, schul_id: str | None = None
 ):
     # The maximum number of items is not optional. If this is an issue we need to implement limit & offset params.
-    assignments = await licenced_media_assignment_collection.find(
-        {
-            "$or": [
-                {"user_id": user_id, "bundesland_id": None, "schul_id": None},
-                {"bundesland_id": bundesland_id, "schul_id": schul_id, "user_id": None},
-                {"bundesland_id": bundesland_id, "schul_id": None, "user_id": None},
-            ]
-        }
-    ).to_list(10000)
+    assignments = await licenced_media_assignment_collection.find({
+        "bundesland_id": bundesland_id, "landkreis_id": landkreis_id, "schul_id": schul_id
+    }).to_list(10000)
 
     assigned_media = []
 
@@ -127,27 +120,16 @@ async def get_all_assigned_media(
     return assigned_media
 
 
-def assert_media_assignment_is_valid(assignment: LicencedMediaAssignment):
-    if (
-        (assignment.user_id is None)
-        and (assignment.bundesland_id is None)
-        and (assignment.schul_id is None)
-    ):
+def validate_media_assignment(assignment: LicencedMediaAssignment):
+    if(assignment.bundesland_id is None):
         raise HTTPException(
             status_code=400,
-            detail="Media must be assigned to specific users or bundesland/schule",
+            detail="Bundesland must be provided",
+        )
+    
+    if(assignment.landkreis_id is None) and (assignment.schul_id is not None):
+        raise HTTPException(
+            status_code=400,
+            detail="Landkreis must be provided in order to use schul_id as well",
         )
 
-    if (assignment.schul_id is not None) and (assignment.bundesland_id is None):
-        raise HTTPException(
-            status_code=400,
-            detail="Schulkennung is only valid in combination with bundesland",
-        )
-
-    if (assignment.user_id is not None) and (
-        (assignment.bundesland_id is not None) | (assignment.schul_id is not None)
-    ):
-        raise HTTPException(
-            status_code=400,
-            detail="Media may only be assigned to specific users OR bundesland/schule",
-        )

@@ -32,11 +32,11 @@ class LicenceeFactoryTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "BB, INVALID, user1, Invalid Schulkennung format for BB",
-            "BB, null, user1, Schulkennung must be provided for BB bundesland",
-            "INVALID, 12345, user1, INVALID"
+            "BB, INVALID, Invalid Schulkennung format for BB",
+            "BB, null, Schulkennung must be provided for BB bundesland",
+            "INVALID, 12345, INVALID"
     }, nullValues = "null")
-    void create_throws_exception_for_invalid_input(String bundesland, String schulnummer, String userId, String expectedMessagePart) {
+    void create_throws_exception_for_invalid_input(String bundesland, String schulnummer, String expectedMessagePart) {
         assertThatThrownBy(() -> licenceeFactory.create(bundesland, null, schulnummer, "bildungsmediatken-bbmv-o"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(expectedMessagePart);
