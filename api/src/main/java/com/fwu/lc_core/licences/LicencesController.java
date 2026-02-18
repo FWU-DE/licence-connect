@@ -1,9 +1,16 @@
 package com.fwu.lc_core.licences;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.fwu.lc_core.config.swagger.SwaggerConfig;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.licences.models.ODRLPolicy;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.extensions.Extension;
@@ -11,12 +18,6 @@ import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -81,11 +82,10 @@ public class LicencesController {
             @RequestParam(required = false) String bundesland,
             @RequestParam(required = false) String standortnummer,
             @RequestParam(required = false) String schulnummer,
-            @RequestParam(required = false) String userId,
             @RequestParam(required = false) String clientName) {
         log.info(
-                "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {}; userId: {};",
-                clientName, bundesland, standortnummer, schulnummer, userId
+                "GET /v1/licences/request: clientName: {}; bundesland: {}; standortnummer: {}; schulnummer: {};",
+                clientName, bundesland, standortnummer, schulnummer
         );
 
         if (clientName == null) {
@@ -94,7 +94,7 @@ public class LicencesController {
         }
 
         try {
-            Licencee licencee = this.licenceeFactory.create(bundesland, standortnummer, schulnummer, userId, clientName);
+            Licencee licencee = this.licenceeFactory.create(bundesland, standortnummer, schulnummer, clientName);
             return licencesCollector.getODRLPolicy(licencee, clientName);
         } catch (Exception e) {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));

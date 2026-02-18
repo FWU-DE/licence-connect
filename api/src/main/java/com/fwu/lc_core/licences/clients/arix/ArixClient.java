@@ -1,17 +1,19 @@
 package com.fwu.lc_core.licences.clients.arix;
 
-import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.Bundesland;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
+import com.fwu.lc_core.shared.Bundesland;
+
+import reactor.core.publisher.Mono;
 
 @Component
 public class ArixClient {
@@ -24,10 +26,10 @@ public class ArixClient {
         this.searchLimit = searchLimit;
     }
 
-    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer) {
         String uri;
         try {
-            uri = constructRequestUri(bundesland, standortnummer, schulnummer, userId);
+            uri = constructRequestUri(bundesland, standortnummer, schulnummer);
         } catch (IllegalArgumentException e) {
             return Mono.error(e);
         }
@@ -66,20 +68,20 @@ public class ArixClient {
         return webClient;
     }
 
-    private static String constructRequestUri(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    private static String constructRequestUri(Bundesland bundesland, String standortnummer, String schulnummer) {
         if (bundesland == null) {
             throw new IllegalArgumentException("You must provide a Bundesland.");
         }
+        
         if (isNullOrEmpty(standortnummer)) {
             return bundesland.toString();
         }
+
         if (isNullOrEmpty(schulnummer)) {
             return concatenateWithSlash(bundesland.toString(), standortnummer);
         }
-        if (isNullOrEmpty(userId)) {
-            return concatenateWithSlash(bundesland.toString(), standortnummer, schulnummer);     
-        }
-        return concatenateWithSlash(bundesland.toString(), standortnummer, schulnummer, userId);
+        
+        return concatenateWithSlash(bundesland.toString(), standortnummer, schulnummer);
     }
 
 
