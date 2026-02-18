@@ -104,7 +104,7 @@ async def delete_assignment(id: str):
 
 
 async def get_all_assigned_media(
-    user_id: str, bundesland_id: str | None = None, schul_id: str | None = None
+    user_id: str | None, bundesland_id: str | None = None, schul_id: str | None = None
 ):
     # The maximum number of items is not optional. If this is an issue we need to implement limit & offset params.
     assignments = await licenced_media_assignment_collection.find(

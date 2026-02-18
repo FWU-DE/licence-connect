@@ -79,7 +79,7 @@ public class LicencesController {
                             })})
     @GetMapping("/v1/licences/request")
     private Mono<ODRLPolicy> request(
-            @RequestParam(required = false) String bundesland,
+            @RequestParam(required = true) String bundesland,
             @RequestParam(required = false) String standortnummer,
             @RequestParam(required = false) String schulnummer,
             @RequestParam(required = false) String clientName) {
