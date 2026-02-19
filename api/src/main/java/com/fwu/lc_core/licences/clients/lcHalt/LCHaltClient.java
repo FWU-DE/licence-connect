@@ -41,7 +41,7 @@ public class LCHaltClient {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("bundesland_id", Optional.ofNullable(bundeslandId))
-                        .queryParamIfPresent("standortnummer", Optional.ofNullable(standortnummer))
+                        .queryParamIfPresent("landkreis_id", Optional.ofNullable(standortnummer))
                         .queryParamIfPresent("schul_id", Optional.ofNullable(schulnummer))
                         .build())
                 .header(API_KEY_HEADER, lcHaltClientApiKey)

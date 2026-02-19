@@ -52,7 +52,7 @@ public class LCHaltClientTests {
         var expectedLicencedMediaIds = expectedLicencedMedia.stream().map(media -> media.get("id")).toList();
         var testLicences = Map.of(
                 "bundesland_id", expectedBundesland.toISOIdentifier(),
-                "standortnummer", expectedStandortnummer,
+                "landkreis_id", expectedStandortnummer,
                 "licenced_media", expectedLicencedMedia
         );
 
