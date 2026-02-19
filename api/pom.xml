@@ -128,7 +128,7 @@
                 <configuration>
                     <image>
                         <createdDate>${maven.build.timestamp}</createdDate>
-                        <builder>paketobuildpacks/builder-jammy-tiny</builder>
+                        <builder>paketobuildpacks/builder-jammy-java-tiny</builder>
                     </image>
                     <docker>
                         <publishRegistry>
