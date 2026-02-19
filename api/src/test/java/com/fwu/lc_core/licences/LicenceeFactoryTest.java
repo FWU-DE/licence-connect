@@ -46,7 +46,6 @@ class LicenceeFactoryTest {
     void check_schulnummer_standortnummer_mapping_disabled_for_other_clients() {
         String bundesland = "BB";
         String schulnummer = "12-34-567890";
-        String userId = "user1";
         String clientId = "some-other-client";
 
         Licencee licencee = licenceeFactory.create(bundesland, null, schulnummer, clientId);
