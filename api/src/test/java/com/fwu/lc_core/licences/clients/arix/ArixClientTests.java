@@ -1,8 +1,11 @@
 package com.fwu.lc_core.licences.clients.arix;
 
-import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.shared.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLPolicy;
+import java.io.IOException;
+import java.util.stream.Stream;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -10,13 +13,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.xml.sax.SAXException;
+
+import com.fwu.lc_core.licences.models.ODRLPolicy;
+import com.fwu.lc_core.shared.Bundesland;
+import com.fwu.lc_core.shared.LicenceHolder;
+
 import reactor.test.StepVerifier;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class ArixClientTests {
@@ -29,7 +31,7 @@ public class ArixClientTests {
     @MethodSource("provideCorrectInput")
     public void RequestPermissions_GivenCorrectInput_Yields_Result(Bundesland bundesland, String standortnummer, String schulnummer, String userId) throws ParserConfigurationException, IOException, SAXException {
         ArixClient arixClient = new ArixClient(baseUrlAccepting, 1000);
-        var permissions = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId).block();
+        var permissions = arixClient.getPermissions(bundesland, standortnummer, schulnummer).block();
 
         assertThat(permissions).isNotNull();
         for (ODRLPolicy.Permission p : permissions) {
@@ -42,14 +44,14 @@ public class ArixClientTests {
     @MethodSource("provideIncorrectInfo")
     public void RequestLicences_ArgumentsAreNotANonemptyPrefix(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
         var arixClient = new ArixClient(baseUrlAccepting, 1000);
-        var permissionsMono = arixClient.getPermissions(bundesland, standortnummer, schulnummer, userId);
+        var permissionsMono = arixClient.getPermissions(bundesland, standortnummer, schulnummer);
         StepVerifier.create(permissionsMono).expectError().verify();
     }
 
     @Test
     public void RequestLicences_notWhitelisted_throwsError() {
         var arixClient = new ArixClient(baseUrlRejecting, 1000);
-        var permissionsMono = arixClient.getPermissions(Bundesland.BY, "ORT1", null, null);
+        var permissionsMono = arixClient.getPermissions(Bundesland.BY, "ORT1", null);
         StepVerifier.create(permissionsMono).expectError().verify();
     }
 

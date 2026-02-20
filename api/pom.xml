@@ -64,7 +64,6 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
-            <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -128,7 +127,7 @@
                 <configuration>
                     <image>
                         <createdDate>${maven.build.timestamp}</createdDate>
-                        <builder>paketobuildpacks/builder-jammy-tiny</builder>
+                        <builder>paketobuildpacks/builder-jammy-java-tiny</builder>
                     </image>
                     <docker>
                         <publishRegistry>
