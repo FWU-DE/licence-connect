@@ -35,7 +35,7 @@ def endpoint(land=None, standortnummer=None, schulnummer=None, userid=None):
     request_type, parsed_request = parse_request(xml_statement)
     match request_type:
         case RequestType.Search:
-            licences = get_example_licences(land, standortnummer, schulnummer, userid)
+            licences = get_example_licences(land, standortnummer, schulnummer)
             answer_xml = format_response(licences, parsed_request.fields)
             return Response(answer_xml, mimetype="text/xml")
         case RequestType.Other:

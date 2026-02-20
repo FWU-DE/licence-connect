@@ -42,8 +42,6 @@ async def assign_licenced_media(
 
     ## LC-Media showcase example values
 
-    userId: 8e80238b-d651-4c85-9f84-a89fff204c37 (this is the VIDIS user id of the user 'bbmv-l2' in the client 'lc-media-o')
-
     bundesland: DE-BB
 
     ### A note about the bundesland value:

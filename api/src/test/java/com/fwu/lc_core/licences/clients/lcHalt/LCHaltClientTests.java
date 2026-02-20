@@ -1,10 +1,13 @@
 package com.fwu.lc_core.licences.clients.lcHalt;
 
-import com.fwu.lc_core.licences.models.ODRLAction;
-import com.fwu.lc_core.shared.Bundesland;
-import com.fwu.lc_core.shared.LicenceHolder;
-import com.fwu.lc_core.licences.models.ODRLPolicy;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.fwu.lc_core.licences.models.ODRLAction;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
+import com.fwu.lc_core.shared.Bundesland;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.fwu.lc_core.shared.LicenceHolder;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
@@ -42,46 +44,21 @@ public class LCHaltClientTests {
     }
 
     @Test
-    public void RequestPermissions_GivenUserID_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
-        var expectedUserId = "test_user_id";
-        var expectedMediaId = "test_media_id";
-        var expectedLicencedMedia = List.of(Map.of("id", expectedMediaId));
-        var expectedLicencedMediaIds = expectedLicencedMedia.stream().map(media -> media.get("id")).toList();
-        var testLicences = Map.of(
-                "user_id", expectedUserId,
-                "licenced_media", expectedLicencedMedia
-        );
-
-        postTestLicences(testLicences);
-
-        var permissions = lchaltClient.getPermissions(null, null, null, expectedUserId).block();
-
-        assertThat(permissions).isNotNull();
-        assertThat(permissions.size()).isEqualTo(expectedLicencedMedia.size());
-        for (ODRLPolicy.Permission p : permissions) {
-            assertThat(p.assigner).isEqualTo(LicenceHolder.LC_HALT);
-            assertThat(p.action).isEqualTo(ODRLAction.Use);
-            assertThat(p.target).isIn(expectedLicencedMediaIds);
-        }
-    }
-
-    @Test
-    public void RequestPermissions_GivenBundeslandAndSchulId_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
-        var expectedUserId = "test_user_id";
+    public void RequestPermissions_GivenBundeslandAndStandortnummer_Yields_Result() throws ParserConfigurationException, IOException, SAXException {
         var expectedBundesland = Bundesland.BY;
-        var expectedSchulId = "test_schul_id";
+        var expectedStandortnummer = "test_standortnummer";
         var expectedMediaId = "test_media_id";
         var expectedLicencedMedia = List.of(Map.of("id", expectedMediaId));
         var expectedLicencedMediaIds = expectedLicencedMedia.stream().map(media -> media.get("id")).toList();
         var testLicences = Map.of(
                 "bundesland_id", expectedBundesland.toISOIdentifier(),
-                "schul_id", expectedSchulId,
+                "landkreis_id", expectedStandortnummer,
                 "licenced_media", expectedLicencedMedia
         );
 
         postTestLicences(testLicences);
 
-        var permissions = lchaltClient.getPermissions(expectedBundesland, null, expectedSchulId, expectedUserId).block();
+        var permissions = lchaltClient.getPermissions(expectedBundesland, expectedStandortnummer, null).block();
 
         assertThat(permissions).isNotNull();
         assertThat(permissions.size()).isEqualTo(expectedLicencedMedia.size());
@@ -93,21 +70,12 @@ public class LCHaltClientTests {
     }
 
     @Test
-    public void RequestPermissions_GivenUserIdAndBundesland_ThrowsException() {
+    public void RequestPermissions_GivenNoBundesland_ThrowsException() {
         var exception = assertThrows(IllegalArgumentException.class, () ->
-                lchaltClient.getPermissions(null, null, "test_schul_id", "test_user_id").block()
+                lchaltClient.getPermissions(null, null, null).block()
         );
 
-        assertThat(exception.getMessage()).isEqualTo("If schulnummer is provided, bundesland must also be provided.");
-    }
-
-    @Test
-    public void RequestPermissions_GivenNoIdentifiers_ThrowsException() {
-        var exception = assertThrows(IllegalArgumentException.class, () ->
-                lchaltClient.getPermissions(null, null, null, null).block()
-        );
-
-        assertThat(exception.getMessage()).isEqualTo("You must provide a userId parameter.");
+        assertThat(exception.getMessage()).isEqualTo("Bundesland is required.");
     }
 
     // Helper methods for setup and teardown

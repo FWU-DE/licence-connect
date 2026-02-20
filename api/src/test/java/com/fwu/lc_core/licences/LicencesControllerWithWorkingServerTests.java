@@ -1,12 +1,12 @@
 package com.fwu.lc_core.licences;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fwu.lc_core.config.ClassNameRetriever;
-import com.fwu.lc_core.licences.models.ODRLPolicy;
-import com.fwu.lc_core.shared.LicenceHolder;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
-import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.fail;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -16,25 +16,25 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.stream.Stream;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fwu.lc_core.config.ClassNameRetriever;
 import static com.fwu.lc_core.licences.TestHelper.extractLicenceCodesFrom;
+import com.fwu.lc_core.licences.models.ODRLPolicy;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
+import com.fwu.lc_core.shared.LicenceHolder;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenceHolderMappingRepository;
+import com.fwu.lc_core.shared.clientLicenseHolderFilter.ClientLicenseHolderFilterService;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatBothLogsHaveTheSameTraceId;
 import static com.fwu.lc_core.shared.clientLicenseHolderFilter.loggingAssertions.assertThatFirstLogComesBeforeSecondLog;
-import static org.assertj.core.api.AssertionsForClassTypes.fail;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -82,7 +82,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void Authenticated_Request_Without_ClientName_Parameter_Returns_BadRequest() {
-        var requestDto = new RelaxedLicencesRequestDto("BY", null, null, null);
+        var requestDto = new RelaxedLicencesRequestDto("BY", null, null);
 
         webTestClient
                 .get()
@@ -91,7 +91,7 @@ class LicencesControllerWithWorkingServerTests {
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
@@ -101,7 +101,7 @@ class LicencesControllerWithWorkingServerTests {
     // We expect the framework to omit stack traces by default but we saw this happening unintentionally and decided to add a test to prevent future regressions.
     @Test
     void RequestWhichReturnsErrorDoesNotReturnTrace() {
-        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null, "qwr");
+        var requestDto = new RelaxedLicencesRequestDto("Non-existent Bundesland", "STR", null);
         var test = classNameRetriever.getAllClassNames(applicationContext);
 
         var result = webTestClient
@@ -111,7 +111,7 @@ class LicencesControllerWithWorkingServerTests {
                         .queryParam("clientName", "cat")
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest()
@@ -124,7 +124,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @ParameterizedTest
     @MethodSource("provideInvalidInput")
-    void Authenticated_Request_WithInvalidBundesland_Returns_BadRequest(String bundesland, String standortnummer, String schulnummer, String userId) {
+    void Authenticated_Request_WithInvalidInput_Returns_BadRequest(String bundesland, String standortnummer, String schulnummer) {
         webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -133,7 +133,7 @@ class LicencesControllerWithWorkingServerTests {
                         .queryParam("bundesland", bundesland)
                         .queryParam("standortnummer", standortnummer)
                         .queryParam("schulnummer", schulnummer)
-                        .queryParam("userId", userId).build())
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isBadRequest();
@@ -142,7 +142,7 @@ class LicencesControllerWithWorkingServerTests {
     @ParameterizedTest
     @MethodSource("provideValidInputAndOutput")
     @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*local.*")
-    void Authenticated_Request_WithValidBody_Returns_CorrectLicences(String bundesland, String standortnummer, String schulnummer, String userId, List<String> expectedLicenceCodes) {
+    void Authenticated_Request_WithValidBody_Returns_CorrectLicences(String bundesland, String standortnummer, String schulnummer, List<String> expectedLicenceCodes) {
         var response = webTestClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -151,7 +151,7 @@ class LicencesControllerWithWorkingServerTests {
                         .queryParam("bundesland", bundesland)
                         .queryParam("standortnummer", standortnummer)
                         .queryParam("schulnummer", schulnummer)
-                        .queryParam("userId", userId).build())
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
@@ -169,7 +169,7 @@ class LicencesControllerWithWorkingServerTests {
 
     @Test
     void Authenticated_Request_WithInvalidClientName_Returns_emptyResponse() {
-        var requestDto = new RelaxedLicencesRequestDto("BY", null, null, null);
+        var requestDto = new RelaxedLicencesRequestDto("BY", null, null);
         String unregisteredClientName = "unregistered client name";
 
         var result = webTestClient
@@ -180,7 +180,7 @@ class LicencesControllerWithWorkingServerTests {
                         .queryParam("bundesland", requestDto.bundesland())
                         .queryParam("standortnummer", requestDto.standortnummer())
                         .queryParam("schulnummer", requestDto.schulnummer())
-                        .queryParam("userId", requestDto.userId()).build())
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk()
@@ -215,7 +215,7 @@ class LicencesControllerWithWorkingServerTests {
     @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*local.*")
     void licenceRequest_Logs_Result_Count(CapturedOutput output) {
         String expectedFirstLog = "GET /v1/licences/request: clientName: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
-        String expectedSecondLog = "Found 6 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
+        String expectedSecondLog = "Found 4 licences in total for client: " + GENERIC_LICENCES_TEST_CLIENT_NAME;
 
         webTestClient
                 .get()
@@ -225,7 +225,7 @@ class LicencesControllerWithWorkingServerTests {
                         .queryParam("bundesland", "BY")
                         .queryParam("standortnummer", "ORT1")
                         .queryParam("schulnummer", "f3453b")
-                        .queryParam("userId", "student.2").build())
+                        .build())
                 .header(API_KEY_HEADER, correctApiKey)
                 .exchange()
                 .expectStatus().isOk();
@@ -240,20 +240,20 @@ class LicencesControllerWithWorkingServerTests {
 
     private static Stream<Arguments> provideValidInputAndOutput() {
         return Stream.of(
-                Arguments.of("BB", null, "12-34-567890", null, List.of()),
-                Arguments.of("DE-BB", null, "12-34-567890", null, List.of()),
-                Arguments.of("BY", null, null, null, List.of("BY_1_23ui4g23c")),
-                Arguments.of("BY", "ORT1", null, null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
-                Arguments.of("BY", "ORT1", "f3453b", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2")),
-                Arguments.of("BY", "ORT1", "f3453b", "student.2", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2", "UIOC_QWUE_QASD_REIJ", "HPOA_SJKC_EJKA_WHOO"))
+                Arguments.of("BY", null, null, List.of("BY_1_23ui4g23c")),
+                Arguments.of("BY", "ORT1", null, List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1")),
+                Arguments.of("BY", "ORT1", "f3453b", List.of("BY_1_23ui4g23c", "ORT1_LIZENZ_1", "F3453_LIZENZ_1", "F3453_LIZENZ_2"))
         );
     }
 
     private static Stream<Arguments> provideInvalidInput() {
         return Stream.of(
-                Arguments.of("ABC", null, null, null),
-                Arguments.of("DE_BB", null, null, null),
-                Arguments.of("BBB", null, null, null)
+                Arguments.of(null, null, null),
+                Arguments.of("ABC", null, null),
+                Arguments.of("DE_BB", null, null),
+                Arguments.of("BBB", null, null),
+                Arguments.of(null, "STAND-NR-1", "SCHULNR-ABCDEF"),
+                Arguments.of(null, "STAND-NR-1", null)
         );
     }
 }
@@ -262,6 +262,5 @@ class LicencesControllerWithWorkingServerTests {
 record RelaxedLicencesRequestDto(
         @JsonProperty String bundesland,
         @JsonProperty String standortnummer,
-        @JsonProperty String schulnummer,
-        @JsonProperty String userId) {
+        @JsonProperty String schulnummer) {
 }

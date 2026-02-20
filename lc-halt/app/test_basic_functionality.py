@@ -1,7 +1,5 @@
-from asyncio import get_event_loop
 import os
 from fastapi.testclient import TestClient
-import pytest
 
 from .main import app
 
@@ -38,13 +36,13 @@ def test_licenced_media_without_key_unauthorized():
 
 def test_licenced_media_with_client_key_success():
     response = client.get(
-        "/licenced-media?user_id=1", headers={"x-api-key": client_api_key}
+        "/licenced-media?bundesland_id=1", headers={"x-api-key": client_api_key}
     )
     assert response.status_code == 200
 
 
 def test_licenced_media_with_admin_key_success():
     response = client.get(
-        "/licenced-media?user_id=1", headers={"x-api-key": admin_api_key}
+        "/licenced-media?bundesland_id=1", headers={"x-api-key": admin_api_key}
     )
     assert response.status_code == 200

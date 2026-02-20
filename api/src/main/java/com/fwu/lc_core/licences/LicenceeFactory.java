@@ -1,17 +1,18 @@
 package com.fwu.lc_core.licences;
 
-import com.fwu.lc_core.licences.models.Licencee;
-import com.fwu.lc_core.shared.Bundesland;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+
+import com.fwu.lc_core.licences.models.Licencee;
+import com.fwu.lc_core.shared.Bundesland;
 
 @Component
 public class LicenceeFactory {
@@ -27,7 +28,7 @@ public class LicenceeFactory {
         loadSchoolData();
     }
 
-    public Licencee create(String bundesland, String standortnummer, String schulkennung, String userId, String clientName) {
+    public Licencee create(String bundesland, String standortnummer, String schulkennung, String clientName) {
         Bundesland bundeslandTyped = null;
         // Not all licence holders require a bundesland, so we allow it to be null.
         // ARIX requires it, LC-Halt does not.
@@ -39,7 +40,7 @@ public class LicenceeFactory {
             standortnummer = mapSchulnummerToStandortnummer(schulkennung);
         }
 
-        return new Licencee(bundeslandTyped, standortnummer, schulkennung, userId);
+        return new Licencee(bundeslandTyped, standortnummer, schulkennung);
     }
 
     private boolean isSchulnummerStandortnummerMappingEnabledForClient(String clientName) {

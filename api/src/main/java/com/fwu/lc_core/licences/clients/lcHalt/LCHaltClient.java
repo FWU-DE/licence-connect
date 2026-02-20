@@ -1,20 +1,19 @@
 package com.fwu.lc_core.licences.clients.lcHalt;
 
-import com.fwu.lc_core.licences.models.ODRLPolicy;
-
-import com.fwu.lc_core.shared.Bundesland;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.fwu.lc_core.licences.models.ODRLPolicy;
+import com.fwu.lc_core.shared.Bundesland;
 import static com.fwu.lc_core.shared.Constants.API_KEY_HEADER;
+
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Component
 @ConditionalOnProperty(name="lc-halt.enabled", havingValue="true")
@@ -26,9 +25,9 @@ public class LCHaltClient {
     @Value("${lc-halt.client-api-key}")
     private String lcHaltClientApiKey;
 
-    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
+    public Mono<List<ODRLPolicy.Permission>> getPermissions(Bundesland bundesland, String standortnummer, String schulnummer) {
         try {
-            assertParametersAreValid(bundesland, standortnummer, schulnummer, userId);
+            assertParametersAreValid(bundesland, standortnummer, schulnummer);
         } catch (IllegalArgumentException e) {
             return Mono.error(e);
         }
@@ -37,12 +36,10 @@ public class LCHaltClient {
                 .baseUrl(licenceUrl)
                 .build();
 
-        var bundeslandId = bundesland != null ? bundesland.toISOIdentifier() : null;
-
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("user_id", userId)
-                        .queryParamIfPresent("bundesland_id", Optional.ofNullable(bundeslandId))
+                        .queryParam("bundesland_id", bundesland.toISOIdentifier())
+                        .queryParamIfPresent("landkreis_id", Optional.ofNullable(standortnummer))
                         .queryParamIfPresent("schul_id", Optional.ofNullable(schulnummer))
                         .build())
                 .header(API_KEY_HEADER, lcHaltClientApiKey)
@@ -61,13 +58,13 @@ public class LCHaltClient {
                 });
     }
 
-    private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer, String userId) {
-        if (isNullOrEmpty(userId)) {
-            throw new IllegalArgumentException("You must provide a userId parameter.");
+    private static void assertParametersAreValid(Bundesland bundesland, String standortnummer, String schulnummer) {
+        if (bundesland == null) {
+            throw new IllegalArgumentException("Bundesland is required.");
         }
 
-        if (bundesland == null && isNotNullOrEmpty(schulnummer)) {
-            throw new IllegalArgumentException("If schulnummer is provided, bundesland must also be provided.");
+        if (standortnummer == null && isNotNullOrEmpty(schulnummer)) {
+            throw new IllegalArgumentException("If schulnummer is provided, standortnummer must also be provided.");
         }
     }
 
