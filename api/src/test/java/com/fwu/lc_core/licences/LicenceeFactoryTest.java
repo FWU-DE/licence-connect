@@ -1,16 +1,15 @@
 package com.fwu.lc_core.licences;
 
-import com.fwu.lc_core.licences.models.Licencee;
-import com.fwu.lc_core.shared.Bundesland;
-
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import com.fwu.lc_core.licences.models.Licencee;
+import com.fwu.lc_core.shared.Bundesland;
 
 @SpringBootTest
 class LicenceeFactoryTest {
@@ -20,25 +19,25 @@ class LicenceeFactoryTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "BY, 12345, user1, null",
-            "BB, 12-34-567890, user1, DISTRICT_1",
-            "BB, 12-34-999111, user1, null",
-            "null, 12345, user1, null"
+            "BY, 12345, null",
+            "BB, 12-34-567890, DISTRICT_1",
+            "BB, 12-34-999111, null",
+            "null, 12345, null"
     }, nullValues = "null")
-    void create_valid_licencees(String bundesland, String schulnummer, String userId, String expectedStandort) {
-        Licencee licencee = licenceeFactory.create(bundesland, null,  schulnummer, userId, "bildungsmediatken-bbmv-o");
+    void create_valid_licencees(String bundesland, String schulnummer, String expectedStandort) {
+        Licencee licencee = licenceeFactory.create(bundesland, null,  schulnummer, "bildungsmediatken-bbmv-o");
 
-        assertLicencee(licencee, bundesland, expectedStandort, schulnummer, userId);
+        assertLicencee(licencee, bundesland, expectedStandort, schulnummer);
     }
 
     @ParameterizedTest
     @CsvSource(value = {
-            "BB, INVALID, user1, Invalid Schulkennung format for BB",
-            "BB, null, user1, Schulkennung must be provided for BB bundesland",
-            "INVALID, 12345, user1, INVALID"
+            "BB, INVALID, Invalid Schulkennung format for BB",
+            "BB, null, Schulkennung must be provided for BB bundesland",
+            "INVALID, 12345, INVALID"
     }, nullValues = "null")
-    void create_throws_exception_for_invalid_input(String bundesland, String schulnummer, String userId, String expectedMessagePart) {
-        assertThatThrownBy(() -> licenceeFactory.create(bundesland, null, schulnummer, userId, "bildungsmediatken-bbmv-o"))
+    void create_throws_exception_for_invalid_input(String bundesland, String schulnummer, String expectedMessagePart) {
+        assertThatThrownBy(() -> licenceeFactory.create(bundesland, null, schulnummer, "bildungsmediatken-bbmv-o"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(expectedMessagePart);
     }
@@ -47,15 +46,14 @@ class LicenceeFactoryTest {
     void check_schulnummer_standortnummer_mapping_disabled_for_other_clients() {
         String bundesland = "BB";
         String schulnummer = "12-34-567890";
-        String userId = "user1";
         String clientId = "some-other-client";
 
-        Licencee licencee = licenceeFactory.create(bundesland, null, schulnummer, userId, clientId);
+        Licencee licencee = licenceeFactory.create(bundesland, null, schulnummer, clientId);
 
-        assertLicencee(licencee, bundesland, null, schulnummer, userId);
+        assertLicencee(licencee, bundesland, null, schulnummer);
     }
 
-    private void assertLicencee(Licencee actual, String expectedBundeslandStr, String expectedStandort, String expectedSchulnummer, String expectedUserId) {
+    private void assertLicencee(Licencee actual, String expectedBundeslandStr, String expectedStandort, String expectedSchulnummer) {
         Bundesland expectedBundesland = null;
         if (expectedBundeslandStr != null) {
             expectedBundesland = Bundesland.fromAbbreviation(expectedBundeslandStr);
@@ -64,6 +62,5 @@ class LicenceeFactoryTest {
         assertThat(actual.bundesland()).isEqualTo(expectedBundesland);
         assertThat(actual.standortnummer()).isEqualTo(expectedStandort);
         assertThat(actual.schulnummer()).isEqualTo(expectedSchulnummer);
-        assertThat(actual.userId()).isEqualTo(expectedUserId);
     }
 }

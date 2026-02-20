@@ -15,10 +15,6 @@ SCHOOL_1_LICENCE_1 = ArixLicence(id="F3453_LIZENZ_1", licence="2099-01-01")
 SCHOOL_1_LICENCE_2 = ArixLicence(id="F3453_LIZENZ_2", licence="2099-01-01")
 SCHOOL_2_LICENCE_1 = ArixLicence(id="6bgqc95qx", licence="2099-01-01")
 SCHOOL_2_LICENCE_2 = ArixLicence(id="32869q43cb34", licence="2099-01-01")
-USER_1_LICENCE_1 = ArixLicence(id="20394_LIZENZ_1", licence="2099-01-01")
-USER_1_LICENCE_2 = ArixLicence(id="20394_LIZENZ_2", licence="2099-01-01")
-USER_2_LICENCE_1 = ArixLicence(id="UIOC_QWUE_QASD_REIJ", licence="2099-01-01")
-USER_2_LICENCE_2 = ArixLicence(id="HPOA_SJKC_EJKA_WHOO", licence="2099-01-01")
 
 land_licences = {
     "NW": [NW_LICENCE_1, NW_LICENCE_2],
@@ -34,10 +30,6 @@ schul_licences = {
     "f3453b": [SCHOOL_1_LICENCE_1, SCHOOL_1_LICENCE_2],
     "0mß5234cv": [SCHOOL_2_LICENCE_1, SCHOOL_2_LICENCE_2],
 }
-user_licences = {
-    "20394": [USER_1_LICENCE_1, USER_1_LICENCE_2],
-    "student.2": [USER_2_LICENCE_1, USER_2_LICENCE_2],
-}
 
 
 def get(l, k):
@@ -48,11 +40,9 @@ def get_example_licences(
     land: Optional[str],
     standortnummer: Optional[str],
     schulnummer: Optional[str],
-    userid: Optional[str],
 ):
     return (
         get(land_licences, land)
         + get(standort_licences, standortnummer)
         + get(schul_licences, schulnummer)
-        + get(user_licences, userid)
     )

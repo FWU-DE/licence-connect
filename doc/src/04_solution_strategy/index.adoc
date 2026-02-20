@@ -20,7 +20,7 @@ You can use the `LCHaltClient` or `ArixClient` as guides.
 3. Implement a parser that converts the contents returned by the licence holding system into a `List<ODRLPolicy.Permission>.`. 
 You can use the `LCHaltParser` or `ArixParser` as guides.
 4. In the client, implement a method `public Mono<List<ODRLPolicy.Permission>> getPermissions()` that retrieves the licences from the licence holding system and uses the newly implemented parser to parse them. 
-The method can use any or all of the four parameters `bundesland`, `standortnummer`, `schulnummer` and `userId`.
+The method can use any or all of the three parameters `bundesland`, `standortnummer` and `schulnummer`.
 5. Add an enum case for the new licence holding system to the `LicenceHolder` enum, naming it after the licence holding system being integrated.
 6. In the `LicenceCollector.permissionsFor(Licencee licencee, LicenceHolder licenceHolder)` method, add the new client and return the licences. 
 You can use the usage for LC-Halt or Arix as guides.

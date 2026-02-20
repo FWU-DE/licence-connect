@@ -62,10 +62,10 @@ public class LicencesCollector {
 
     private Mono<List<ODRLPolicy.Permission>> permissionsFor(Licencee licencee, LicenceHolder licenceHolder) {
         if (licenceHolder.equals(LicenceHolder.ARIX)) {
-            return arixClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
+            return arixClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer());
         }
         if (licenceHolder.equals(LicenceHolder.LC_HALT) && "true".equals(lcHaltEnabled)) {
-            return lcHaltClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer(), licencee.userId());
+            return lcHaltClient.getPermissions(licencee.bundesland(), licencee.standortnummer(), licencee.schulnummer());
         }
         return Mono.just(new ArrayList<>());
     }

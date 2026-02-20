@@ -88,11 +88,11 @@ package Licences {
     [LicencesCollector] as lcollector
 }
 
-vidis --> lcontroller: Fragt nach Lizenzen für \n(Bundesland, Schulnummer, UserId, ClientName)
-lcontroller --> lcollector: Fragt nach Lizenzen für \n(Bundesland, Schulnummer, UserId, ClientName)
+vidis --> lcontroller: Fragt nach Lizenzen für \n(Bundesland, Landkreis, Schulnummer, ClientName)
+lcontroller --> lcollector: Fragt nach Lizenzen für \n(Bundesland, Landkreis, Schulnummer, ClientName)
 lcollector --> client_mapper: Fragt nach freigegebenen \n Lizenzhaltern für ClientName
-lcollector --> arix_client: Ruft Lizenzen ab für \n(Bundesland, Schulnummer, UserId)
-lcollector --> lchalt_client: Ruft Lizenzen ab für \n(Bundesland, Schulnummer, UserId)
+lcollector --> arix_client: Ruft Lizenzen ab für \n(Bundesland, Landkreis, Schulnummer)
+lcollector --> lchalt_client: Ruft Lizenzen ab für \n(Bundesland, Landkreis, Schulnummer)
 arix_client --> arix
 lchalt_client --> lchalt
 
@@ -111,10 +111,6 @@ The following list contains the parameters and how VIDIS obtains them:
 |`clientName`
 |Each system connected to the VIDIS-SSO has a dedicated client.
 The id of this client will also be the clientId VIDIS provides to LC Core for this query.
-
-|`userId`
-|The `userId` is usually the id of the user in the IDP of the federal state. 
-E.g. if a user has the userId "abc" in the bavarian school portal, VIDIS will request licences for this userId, *not* the id assigned by VIDIS.
 
 |`bundesland`
 |The federal state where the user account originated from.
