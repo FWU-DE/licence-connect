@@ -49,16 +49,23 @@ public class LicenceeFactory {
     }
 
     private String mapSchulnummerToStandortnummer(String schulkennung) {
-        return schoolDistrictMap.getOrDefault(mapSchulkennungToSchulnummer(schulkennung), null);
+        var extractedSchulnummer = schulkennung;
+        if (schulkennung.contains("-")) {
+            extractedSchulnummer = mapSchulkennungToSchulnummer(schulkennung);
+        }
+
+        return schoolDistrictMap.getOrDefault(extractedSchulnummer, null);
     }
 
     private static String mapSchulkennungToSchulnummer(String schulkennung) {
         // The "schulkennung" from VIDIS is of the form XX-XX-XXXXXX, where the last part is school number.
         var schulnummerParts = schulkennung.split("-");
+        
         if (schulnummerParts.length != 3) {
             log.error("Invalid Schulkennung format provided: {}", schulkennung);
             throw new IllegalArgumentException("Invalid Schulkennung format for BB: " + schulkennung);
         }
+
         return schulnummerParts[2];
     }
 
