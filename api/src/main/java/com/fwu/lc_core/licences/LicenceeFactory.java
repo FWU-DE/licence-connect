@@ -14,7 +14,10 @@ import org.springframework.stereotype.Component;
 import com.fwu.lc_core.licences.models.Licencee;
 import com.fwu.lc_core.shared.Bundesland;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class LicenceeFactory {
     private static final String SCHOOL_DATA_CSV = "schooldata/lookup_table.csv";
     private final Map<String, String> schoolDistrictMap = new HashMap<>();
@@ -30,13 +33,11 @@ public class LicenceeFactory {
 
     public Licencee create(String bundesland, String standortnummer, String schulkennung, String clientName) {
         Bundesland bundeslandTyped = null;
-        // Not all licence holders require a bundesland, so we allow it to be null.
-        // ARIX requires it, LC-Halt does not.
         if (bundesland != null) {
             bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
         }
 
-        if (bundeslandTyped == Bundesland.BB && standortnummer == null && isSchulnummerStandortnummerMappingEnabledForClient(clientName)) {
+        if (bundeslandTyped == Bundesland.BB && standortnummer == null && schulkennung != null && isSchulnummerStandortnummerMappingEnabledForClient(clientName)) {
             standortnummer = mapSchulnummerToStandortnummer(schulkennung);
         }
 
@@ -48,9 +49,6 @@ public class LicenceeFactory {
     }
 
     private String mapSchulnummerToStandortnummer(String schulkennung) {
-        if (schulkennung == null) {
-            throw new IllegalArgumentException("Schulkennung must be provided for BB bundesland.");
-        }
         return schoolDistrictMap.getOrDefault(mapSchulkennungToSchulnummer(schulkennung), null);
     }
 
@@ -58,6 +56,7 @@ public class LicenceeFactory {
         // The "schulkennung" from VIDIS is of the form XX-XX-XXXXXX, where the last part is school number.
         var schulnummerParts = schulkennung.split("-");
         if (schulnummerParts.length != 3) {
+            log.error("Invalid Schulkennung format provided: {}", schulkennung);
             throw new IllegalArgumentException("Invalid Schulkennung format for BB: " + schulkennung);
         }
         return schulnummerParts[2];
