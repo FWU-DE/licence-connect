@@ -13,7 +13,11 @@ services:
       lc-halt:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://licence-connect:8080/v1/healthcheck && curl -f http://lc-halt:80/health"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://licence-connect:8080/v1/healthcheck && curl -f http://lc-halt:80/health",
+        ]
       interval: 5s
       timeout: 5s
       retries: 100
@@ -23,12 +27,13 @@ services:
     # On deployment, the image will be pulled in the deploy job in `.gitlab-ci.yaml`.
     # This way, we can easily use locally built images in development without docker compose wanting to pull them
     # from the gitcr.fwu.de registry and failing because of locally missing credentials for that registry.
-#    pull_policy: always
+    #    pull_policy: always
     container_name: licence-connect
     restart: unless-stopped
     env_file: ../.env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/data/database.h2;DB_CLOSE_ON_EXIT=FALSE
+      - JAVA_TOOL_OPTIONS=-XX:MaxDirectMemorySize=128m -Xmx512m -Xms256m -XX:+UseContainerSupport
     volumes:
       - ${DB_FILE_PATH:-./db}:/workspace/data
     expose:
@@ -39,7 +44,7 @@ services:
     # On deployment, the image will be pulled in the deploy job in `.gitlab-ci.yaml`.
     # This way, we can easily use locally built images in development without docker compose wanting to pull them
     # from the gitcr.fwu.de registry and failing because of locally missing credentials for that registry.
-#    pull_policy: always
+    #    pull_policy: always
     container_name: lc-halt
     env_file: ../.env
     restart: unless-stopped
@@ -57,7 +62,15 @@ services:
     volumes:
       - ./lc-halt-db:/data/db
     healthcheck:
-      test: [ "CMD", "mongosh", "--port", "27017", "--eval", "db.adminCommand('ping')" ]
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--port",
+          "27017",
+          "--eval",
+          "db.adminCommand('ping')",
+        ]
       interval: 10s
       timeout: 10s
       retries: 5
