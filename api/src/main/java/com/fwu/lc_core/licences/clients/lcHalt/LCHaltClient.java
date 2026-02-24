@@ -63,7 +63,7 @@ public class LCHaltClient {
             throw new IllegalArgumentException("Bundesland is required.");
         }
 
-        if (standortnummer == null && isNotNullOrEmpty(schulnummer)) {
+        if (bundesland != Bundesland.BB && standortnummer == null && isNotNullOrEmpty(schulnummer)) {
             throw new IllegalArgumentException("If schulnummer is provided, standortnummer must also be provided.");
         }
     }

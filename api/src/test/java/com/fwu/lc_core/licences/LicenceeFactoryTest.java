@@ -20,9 +20,8 @@ class LicenceeFactoryTest {
     @ParameterizedTest
     @CsvSource(value = {
             "BY, 12345, null",
-            "BB, 12-34-567890, DISTRICT_1",
-            "BB, 12-34-999111, null",
-            "null, 12345, null"
+            "BB, DE-BB-567890, DISTRICT_1",
+            "BY, DE-BY-199999, null"
     }, nullValues = "null")
     void create_valid_licencees(String bundesland, String schulnummer, String expectedStandort) {
         Licencee licencee = licenceeFactory.create(bundesland, null,  schulnummer, "bildungsmediatken-bbmv-o");
@@ -32,9 +31,9 @@ class LicenceeFactoryTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "BB, INVALID, Invalid Schulkennung format for BB",
-            "BB, null, Schulkennung must be provided for BB bundesland",
-            "INVALID, 12345, INVALID"
+            "BB, INVALID, Invalid Schulkennung or schulnummer format",
+            "INVALID, 12345, INVALID",
+            "null, 12345, Abbreviation cannot be null"
     }, nullValues = "null")
     void create_throws_exception_for_invalid_input(String bundesland, String schulnummer, String expectedMessagePart) {
         assertThatThrownBy(() -> licenceeFactory.create(bundesland, null, schulnummer, "bildungsmediatken-bbmv-o"))
