@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
 from app.util.auth import handle_api_key
-from app.util.seed_data import seed_initial_data
+from app.util.seed import seed_initial_data
 from app.media_management import licenced_media_controller, media_assignment_controller
 from fastapi.middleware.cors import CORSMiddleware
 
