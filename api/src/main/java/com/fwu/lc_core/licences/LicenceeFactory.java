@@ -31,34 +31,40 @@ public class LicenceeFactory {
         loadSchoolData();
     }
 
-    public Licencee create(String bundesland, String standortnummer, String schulkennung, String clientName) {
-        Bundesland bundeslandTyped = null;
-        if (bundesland != null) {
-            bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
+    public Licencee create(String bundesland, String standortnummer, String schulnummer, String clientName) {
+        Bundesland bundeslandTyped = Bundesland.fromAbbreviation(bundesland);
+
+        if (bundeslandTyped == Bundesland.BB && standortnummer == null && schulnummer != null && isSchulnummerStandortnummerMappingEnabledForClient(clientName)) {
+            standortnummer = mapSchulnummerToStandortnummer(schulnummer);
         }
 
-        if (bundeslandTyped == Bundesland.BB && standortnummer == null && schulkennung != null && isSchulnummerStandortnummerMappingEnabledForClient(clientName)) {
-            standortnummer = mapSchulnummerToStandortnummer(schulkennung);
-        }
-
-        return new Licencee(bundeslandTyped, standortnummer, schulkennung);
+        return new Licencee(bundeslandTyped, standortnummer, schulnummer);
     }
 
     private boolean isSchulnummerStandortnummerMappingEnabledForClient(String clientName) {
         return clientName != null && schulnummerStandortnummerMappingEnabledClients.contains(clientName.trim());
     }
 
-    private String mapSchulnummerToStandortnummer(String schulkennung) {
-        var extractedSchulnummer = schulkennung;
-        if (schulkennung.contains("-")) {
-            extractedSchulnummer = mapSchulkennungToSchulnummer(schulkennung);
+    private String mapSchulnummerToStandortnummer(String schulnummer) {
+        var extractedSchulnummer = schulnummer;
+        if (isValidSchulkennungFormat(schulnummer)) {
+            extractedSchulnummer = mapSchulkennungToSchulnummer(schulnummer);
         }
 
-        return schoolDistrictMap.getOrDefault(extractedSchulnummer, null);
+        var mappedSchoolDistrict = schoolDistrictMap.get(extractedSchulnummer);
+        if (mappedSchoolDistrict == null) {
+            throw new IllegalArgumentException("Invalid Schulkennung or schulnummer format: " + schulnummer);
+        }
+
+        return mappedSchoolDistrict;
+    }
+
+    private static Boolean isValidSchulkennungFormat(String schulnummerOrSchulkennung) {
+        return schulnummerOrSchulkennung.matches("^[A-Z]{2}-[A-Z]{2}-\\d+$");
     }
 
     private static String mapSchulkennungToSchulnummer(String schulkennung) {
-        // The "schulkennung" from VIDIS is of the form XX-XX-XXXXXX, where the last part is school number.
+        // The "schulkennung" from VIDIS is of the form DE-BB-XXXXXX, where the last part is school number.
         var schulnummerParts = schulkennung.split("-");
         
         if (schulnummerParts.length != 3) {
