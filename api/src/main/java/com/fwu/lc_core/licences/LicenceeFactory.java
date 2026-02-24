@@ -64,7 +64,7 @@ public class LicenceeFactory {
     }
 
     private static String mapSchulkennungToSchulnummer(String schulkennung) {
-        // The "schulkennung" from VIDIS is of the form DE-BB-XXXXXX, where the last part is school number.
+        // The "schulkennung" from VIDIS is of the form XX-XX-XXXXXX, where the last part is school number.
         var schulnummerParts = schulkennung.split("-");
         
         if (schulnummerParts.length != 3) {
