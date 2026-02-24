@@ -21,7 +21,11 @@ public enum Bundesland {
     STK;
 
     public static Bundesland fromAbbreviation(String abbreviation){
-        return switch(abbreviation){
+        if (abbreviation == null) {
+            throw new IllegalArgumentException("Abbreviation cannot be null");
+        }
+        
+        return switch(abbreviation) {
             case "MV", "DE-MV" -> Bundesland.MV;
             case "RP", "DE-RP" -> Bundesland.RP;
             case "BW", "DE-BW" -> Bundesland.BW;
