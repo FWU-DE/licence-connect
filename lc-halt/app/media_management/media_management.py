@@ -107,7 +107,11 @@ async def get_all_assigned_media(
 ):
     # The maximum number of items is not optional. If this is an issue we need to implement limit & offset params.
     assignments = await licenced_media_assignment_collection.find({
-        "bundesland_id": bundesland_id, "landkreis_id": landkreis_id, "schul_id": schul_id
+        "$or": [
+            {"bundesland_id": bundesland_id, "landkreis_id": None, "schul_id": None},
+            {"bundesland_id": bundesland_id, "landkreis_id": landkreis_id, "schul_id": None},
+            {"bundesland_id": bundesland_id, "landkreis_id": landkreis_id, "schul_id": schul_id},
+        ]
     }).to_list(10000)
 
     assigned_media = []
